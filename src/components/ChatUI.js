@@ -3,39 +3,16 @@ import { Configuration, OpenAIApi } from "openai";
 import Markdown from "markdown-to-jsx";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { solarizedlight } from "react-syntax-highlighter/dist/esm/styles/prism";
-
-
+import Button from '@mui/material/Button';
+import SendIcon from '@mui/icons-material/Send';
+import { CssBaseline, AppBar, Toolbar, Typography, Container, TextField } from "@mui/material";       
 
 const ChatUI = () => {
   const [messages, setMessages] = useState([
     {
-            role: 'system',
-            content: "Ask technical Python few-line code snippet questions and offer a), b) and c) as given answers to choose from. Make it hard. Respond in markdown. Only one question at a time. After user's answer just reply with \"Correct. Next questions:\" or  \"Incorrect. Next questions:\" and continue with the next question. Then ask the next question without any further explanation.",
-        },
-        {
-            role: 'assistant',
-            content: "Question 1: What is the output of the following Python code snippet?\n\n```python\ndef foo(n):\n    return n * 2\n\nresult = [foo(x) for x in range(3)]\nprint(result)\n```\n\na) `[0, 2, 4]`\nb) `6`\nc) `TypeError`",
-        },
-        {
-            role: 'user',
-            content: "a"
-        },
-        {
-            role: 'assistant',
-            content: "Correct. Next question:\n\nQuestion 2: What is the output of the following Python code snippet?\n\n```python\ndef bar(a, b):\n    return a + b, a * b\n\nx, y = bar(2, 3)\nprint(x, y)\n```\n\na) `5 6`\nb) `(5, 6)`\nc) `TypeError`",
-        },
-        {
-            role: 'user',
-            content: "a"
-        },
-        {
-            role: 'assistant',
-            content: "Correct. Next question:\n\nQuestion 3: What is the output of the following Python code snippet?\n\n```python\nx = 5\ny = 2\n\nresult = x / y\nprint(result)\n```\n\na) `2.5`\nb) `2`\nc) `2.0`",
-        },
-        {
-            role: 'user',
-            content: "b"
-        }
+        role: 'system',
+        content: "Ask technical Python few-line code snippet questions and offer a), b) and c) as given answers to choose from. Make it hard. Respond in markdown. Only one question at a time. After user's answer just reply with \"Correct. Next questions:\" or  \"Incorrect. Next questions:\" and continue with the next question. Then ask the next question without any further explanation.",
+    }
 ]);
 
   const addMessage = async (content, role) => {
@@ -65,8 +42,14 @@ const ChatUI = () => {
     e.target.reset();
   };
 
+  const handleButtonClick = (answer) => {
+    addMessage(answer, "user");
+  };
+
   return (
     <div>
+      <div className="container">
+      <div className="chat-container">
       <div className="chat-window">
         {messages.map((message, index) => (
           <div key={index} className={`message ${message.role}`}>
@@ -86,10 +69,20 @@ const ChatUI = () => {
           </div>
         ))}
       </div>
-      <form onSubmit={handleMessageSubmit}>
-        <input type="text" name="message" placeholder="Type your message..." />
-        <button type="submit">Send</button>
-      </form>
+      {/* <form onSubmit={handleMessageSubmit}>
+        <TextField id="outlined-basic" label="Input" variant="outlined" type="text" name="message" placeholder="Type your message..." />
+        <Button variant="contained" endIcon={<SendIcon />} type="submit">Send</Button>
+        </form> */}
+        <div>
+
+          <Button variant="contained" onClick={() => handleButtonClick("Next question")}>Next Question</Button>
+          <Button variant="contained" onClick={() => handleButtonClick("a)")} disabled={messages[messages.length - 1].role === "user"}>a)</Button>
+          <Button variant="contained" onClick={() => handleButtonClick("b)")} disabled={messages[messages.length - 1].role === "user"}>b)</Button>
+          <Button variant="contained" onClick={() => handleButtonClick("c)")} disabled={messages[messages.length - 1].role === "user"}>c)</Button>
+        </div>
+
+      </div>
+      </div>
     </div>
   );
 };

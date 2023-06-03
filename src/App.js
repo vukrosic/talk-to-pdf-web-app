@@ -2,9 +2,6 @@ import logo from './logo.svg';
 import './App.css';
 import { Auth } from './components/auth';
 import { db } from './config/firebase';
-import CodeEditor from './components/CodeEditor';
-// import AnswerOptions from './components/AnswerOptions';
-import ChatInterface from './components/ChatInterface';
 import ChatUI from "./components/ChatUI";
 
 function App() {
@@ -13,7 +10,6 @@ function App() {
   return (
     <div className="App">
       {/* <Auth /> */}
-      <h1>Chat Application</h1>
       <ChatUI />
     </div>
   );
