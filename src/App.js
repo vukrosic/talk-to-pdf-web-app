@@ -3,7 +3,7 @@ import './App.css';
 import { Auth } from './components/auth';
 import { db } from './config/firebase';
 import CodeEditor from './components/CodeEditor';
-import AnswerOptions from './components/AnswerOptions';
+// import AnswerOptions from './components/AnswerOptions';
 import ChatInterface from './components/ChatInterface';
 import ChatUI from "./components/ChatUI";
 
