@@ -1,23 +1,20 @@
 import logo from './logo.svg';
 import './App.css';
+import { Auth } from './components/auth';
+import { db } from './config/firebase';
+import CodeEditor from './components/CodeEditor';
+import AnswerOptions from './components/AnswerOptions';
+import ChatInterface from './components/ChatInterface';
+import ChatUI from "./components/ChatUI";
 
 function App() {
+  // const [ movies, setMovies ] = useState([]);
+  // cosnt getMovieList()
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {/* <Auth /> */}
+      <h1>Chat Application</h1>
+      <ChatUI />
     </div>
   );
 }
