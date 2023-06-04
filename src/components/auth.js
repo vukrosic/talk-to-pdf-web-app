@@ -7,7 +7,7 @@ const provider = new GoogleAuthProvider();
 auth.languageCode = 'it';
 
 
-export const Auth = () => {
+function Auth() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -77,3 +77,5 @@ export const Auth = () => {
         </div>
     );
 };
+
+export default Auth;

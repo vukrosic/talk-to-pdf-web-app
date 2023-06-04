@@ -1,40 +1,31 @@
-// import * as React from 'react';
-// import { styled } from '@mui/material/styles';
-// import Box from '@mui/material/Box';
-// import Rating from '@mui/material/Rating';
-// import FavoriteIcon from '@mui/icons-material/Favorite';
-// import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-// import Typography from '@mui/material/Typography';
+import React, { useState } from 'react';
 
-// const StyledRating = styled(Rating)({
-//   '& .MuiRating-iconFilled': {
-//     color: '#ff6d75',
-//   },
-//   '& .MuiRating-iconHover': {
-//     color: '#ff3d47',
-//   },
-// });
+function Feedback() {
+  const [feedback, setFeedback] = useState('');
 
-// export default function CustomizedRating() {
-//   return (
-//     <Box
-//       sx={{
-//         '& > legend': { mt: 2 },
-//       }}
-//     >
-//       <Typography component="legend">Custom icon and color</Typography>
-//       <StyledRating
-//         name="customized-color"
-//         defaultValue={2}
-//         getLabelText={(value: number) => `${value} Heart${value !== 1 ? 's' : ''}`}
-//         precision={0.5}
-//         icon={<FavoriteIcon fontSize="inherit" />}
-//         emptyIcon={<FavoriteBorderIcon fontSize="inherit" />}
-//       />
-//       <Typography component="legend">10 stars</Typography>
-//       <Rating name="customized-10" defaultValue={2} max={10} />
-//     </Box>
-//   );
-// }
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Here you can perform any necessary actions with the submitted feedback
+    console.log(feedback);
+    setFeedback('');
+  };
 
-// //https://mui.com/material-ui/react-rating/
+  const handleChange = (e) => {
+    setFeedback(e.target.value);
+  };
+
+  return (
+    <div>
+      <h1>Feedback Page</h1>
+      <form onSubmit={handleSubmit}>
+        <label>
+          Feedback:
+          <textarea value={feedback} onChange={handleChange} />
+        </label>
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  );
+}
+
+export default Feedback;
