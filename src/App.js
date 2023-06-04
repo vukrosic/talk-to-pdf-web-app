@@ -24,9 +24,9 @@ function Navigation() {
   );
 }
 
-function HomePage() {
-  return <h1>Home Page</h1>;
-}
+// function HomePage() {
+//   return <h1>Home Page</h1>;
+// }
 
 function App() {
   return (
@@ -35,11 +35,10 @@ function App() {
         <Navigation />
 
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<ChatUI />} />
           <Route path="/feedback" element={<Feedback />} />
           <Route path="/chat" element={<ChatUI />} />
           <Route path="/auth" element={<Auth />} />
-          {/* Add more routes for your pages */}
         </Routes>
 
         {/* <Auth /> */}

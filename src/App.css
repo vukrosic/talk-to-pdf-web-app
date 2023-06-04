@@ -38,3 +38,45 @@
 }
 /* Import Roboto font */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap');
+
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  min-height: 100vh;
+}
+
+.button-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 80%;
+}
+
+.language-select {
+  margin-right: 10px;
+}
+
+.generate-button,
+.answer-button {
+  margin-left: 15px;
+}
+
+.chat-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.chat-window {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  width: 80%;
+  background-color: #f5f5f5;
+}

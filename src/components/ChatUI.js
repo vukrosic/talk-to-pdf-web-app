@@ -10,7 +10,7 @@ import { message } from "antd";
 const ChatUI = () => {
   const [currentQuestion, setCurrentQuestion] = useState("");
   const [currentAnswer, setCurrentAnswer] = useState("");
-  const [selectedLanguage, setSelectedLanguage] = useState("javascript");
+  const [selectedLanguage, setSelectedLanguage] = useState("python");
 
   const [messagesQuestion, setMessagesQuestion] = useState([{ role: "system", content:"Generate code snippet in " + selectedLanguage + " and a question that asks something about it. Do not answer it." }]);
   const [messagesAnswer, setMessageAnswer] = useState([{ role: "system", content:"Answer the following question about the code snippet." }]);
@@ -34,17 +34,30 @@ const ChatUI = () => {
     }
   };
 
-  const CodeBlock = ({ code }) => (
-    <Markdown
-      options={{
-        overrides: {
-          pre: ({ children }) => (
-            <SyntaxHighlighter language={selectedLanguage} style={solarizedlight}>{children.props.children}</SyntaxHighlighter>
-          ),
-        },
-      }}
-    >{code}</Markdown>
-  );
+  const CodeBlock = ({ code }) => {
+    console.log("Selected Language:", selectedLanguage); // Debug statement
+  
+    return (
+      <Markdown
+        options={{
+          overrides: {
+            pre: ({ children }) => {
+              console.log("Code:", children.props.children); // Debug statement
+  
+              return (
+                <SyntaxHighlighter language={selectedLanguage} style={solarizedlight}>
+                  {children.props.children}
+                </SyntaxHighlighter>
+              );
+            },
+          },
+        }}
+      >
+        {code}
+      </Markdown>
+    );
+  };
+  
 
   const handleLanguageChange = (event) => {
     setSelectedLanguage(event.target.value);
@@ -53,22 +66,28 @@ const ChatUI = () => {
 
   return (
     <div className="container">
+      <div className="button-group">
+        <LanguageSelect
+          selectedLanguage={selectedLanguage}
+          handleLanguageChange={handleLanguageChange}
+          className="language-select"
+        />
+        <Button variant="contained" className="generate-button" onClick={() => callOpenAIAPI(messagesQuestion, true)}>
+          Generate Question
+        </Button>
+        <Button variant="contained" className="answer-button" onClick={() => callOpenAIAPI(messagesAnswer, false)}>
+          Answer Question
+        </Button>
+      </div>
       <div className="chat-container">
         <div className="chat-window">
           <CodeBlock code={currentQuestion} />
           <CodeBlock code={currentAnswer} />
         </div>
-        <div>
-          <LanguageSelect
-            selectedLanguage={selectedLanguage}
-            handleLanguageChange={handleLanguageChange}
-          />
-          <Button variant="contained" onClick={() => {callOpenAIAPI(messagesQuestion, true); console.log(messagesQuestion)}}>Generate Question</Button>
-          <Button variant="contained" onClick={() => callOpenAIAPI(messagesAnswer, false)}>Answer Question</Button>
-        </div>
       </div>
     </div>
   );
+  
 };
 
 export default ChatUI;
