@@ -20,8 +20,6 @@ const ChatUI = () => {
 
     const configuration = new Configuration({ apiKey: "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" });
     const openai = new OpenAIApi(configuration);
-    console.log(messages);
-    console.log('aaaaaaaaaaaaaaaaaaaa');
     try {
       const completion = await openai.createChatCompletion({ model: "gpt-3.5-turbo", messages });
       
@@ -35,15 +33,11 @@ const ChatUI = () => {
   };
 
   const CodeBlock = ({ code }) => {
-    console.log("Selected Language:", selectedLanguage); // Debug statement
-  
     return (
       <Markdown
         options={{
           overrides: {
             pre: ({ children }) => {
-              console.log("Code:", children.props.children); // Debug statement
-  
               return (
                 <SyntaxHighlighter language={selectedLanguage} style={solarizedlight}>
                   {children.props.children}
