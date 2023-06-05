@@ -1,157 +1,87 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { Configuration, OpenAIApi } from "openai";
 import Markdown from "markdown-to-jsx";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { solarizedlight } from "react-syntax-highlighter/dist/esm/styles/prism";
-import Button from "@mui/material/Button";
-import SendIcon from "@mui/icons-material/Send";
-import {
-  CssBaseline,
-  AppBar,
-  Toolbar,
-  Typography,
-  Container,
-  TextField,
-} from "@mui/material";
+import { Button, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import LanguageSelect from "./LanguageSelect";
+import { message } from "antd";
 
-const systemMessage = "yoooooooooooooo ```python \n def hello(): \n print('hello') \n hello() \n ```";
-// Ask technical Python questions with a code snippet. Offer a), b) and c) as possible answers to choose from. Make it hard. Only one question at a time. After user's answer just reply with \"correct\" or  \"incorrect\". Then ask the next question without any further explanation.
 const ChatUI = () => {
-  const [messages, setMessages] = useState([
-    {
-      role: "system",
-      content:systemMessage
-    },
-    {
-      role: "assistant",
-      content: "yoooooooooooooo ```python \n def hello(): \n print('hello') \n hello() \n ```"
-    }
-  ]);
+  const [currentQuestion, setCurrentQuestion] = useState("");
+  const [currentAnswer, setCurrentAnswer] = useState("");
+  const [selectedLanguage, setSelectedLanguage] = useState("python");
 
-  const messageContainerRef = useRef();
+  const [messagesQuestion, setMessagesQuestion] = useState([{ role: "system", content:"Generate code snippet in " + selectedLanguage + " and a question that asks something about it. Do not answer it." }]);
+  const [messagesAnswer, setMessageAnswer] = useState([{ role: "system", content:"Answer the following question about the code snippet." }]);
 
-  const addMessage = async (role, content, callAPI) => {
-    const userMessage = { role: role, content };
-    setMessages((prevMessages) => [...prevMessages, userMessage]);
-    messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
-    if(callAPI){
-      callOpenAIAPI();
-    }
-  };
+  const callOpenAIAPI = async (messages, generatingQuestion) => {
+    if (!generatingQuestion) setMessageAnswer(prevState => [...prevState, {role: "assistant", content: currentQuestion}]);
 
-  const callOpenAIAPI = async () => {
-    const configuration = new Configuration({
-      apiKey: "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",
-    });
+    const configuration = new Configuration({ apiKey: "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" });
     const openai = new OpenAIApi(configuration);
-    try{
-      const completion = await openai.createChatCompletion({
-        model: "gpt-3.5-turbo",
-        messages: [...messages],
-      });
-      addMessage("assistant", completion.data.choices[0].message.content, false);
-    }
-    catch(err){
+    try {
+      const completion = await openai.createChatCompletion({ model: "gpt-3.5-turbo", messages });
+      
+      if (generatingQuestion) {
+        setCurrentQuestion(completion.data.choices[0].message.content);
+        setMessageAnswer([{ role: "system", content:"Answer the following question about the code snippet." }, { role: "assistant", content: completion.data.choices[0].message.content }]);
+      } else setCurrentAnswer(completion.data.choices[0].message.content);
+    } catch (err) {
       console.log(err);
     }
   };
 
-  // const handleMessageSubmit = (e) => {
-  //   e.preventDefault();
-  //   const userMessage = e.target.message.value;
-  //   addMessage("user", userMessage);
-  //   e.target.reset();
-  // };
-
-  const resetConversation = () => {
-    setMessages([
-      {
-        role: "system",
-        content:
-        systemMessage
-      }
-    ]);
-
+  const CodeBlock = ({ code }) => {
+    return (
+      <Markdown
+        options={{
+          overrides: {
+            pre: ({ children }) => {
+              return (
+                <SyntaxHighlighter language={selectedLanguage} style={solarizedlight}>
+                  {children.props.children}
+                </SyntaxHighlighter>
+              );
+            },
+          },
+        }}
+      >
+        {code}
+      </Markdown>
+    );
+  };
   
 
-  };
-
-  const handleGenerateQuestion = () => {
-    resetConversation();
-    callOpenAIAPI();
+  const handleLanguageChange = (event) => {
+    setSelectedLanguage(event.target.value);
+    setMessagesQuestion([{ role: "system", content:"Generate code snippet in " + event.target.value + " and a question that asks something about it. Do not answer it." }]);
   };
 
   return (
-    <div>
-      <div className="container">
-        <div className="chat-container">
-          <div className="chat-window" ref={messageContainerRef}>
-            {messages.map((message, index) =>
-              message.role !== "system" ? (
-                <div key={index} className={`message ${message.role}`}>
-                  <div className="message-content">
-                    <Markdown
-                      options={{
-                        overrides: {
-                          pre: ({ children }) => (
-                            <SyntaxHighlighter
-                              language="python"
-                              style={solarizedlight}
-                            >
-                              {children.props.children}
-                            </SyntaxHighlighter>
-                          ),
-                        },
-                      }}
-                    >
-                      {message.content}
-                    </Markdown>
-                  </div>
-                </div>
-              ) : null
-            )}
-          </div>
-          <div>
-            <Button
-              variant="contained"
-              onClick={() => handleGenerateQuestion()}
-              disabled={messages[messages.length - 1].role === "user"}
-            >
-              Generate Question
-            </Button>
-            <Button
-              variant="contained"
-              onClick={() => addMessage("user", "I think the answer is A. Now you can answer it.", true)}
-              disabled={messages[messages.length - 1].role === "user"}
-            >
-              a)
-            </Button>
-            <Button
-              variant="contained"
-              onClick={() => addMessage("user", "I think the answer is B. Now you can answer it.", true)}
-              disabled={messages[messages.length - 1].role === "user"}
-            >
-              b)
-            </Button>
-            <Button
-              variant="contained"
-              onClick={() => addMessage("user", "I think the answer is C. Now you can answer it.", true)}
-              disabled={messages[messages.length - 1].role === "user"}
-            >
-              c)
-            </Button>
-            <Button
-              variant="contained"
-              onClick={() => addMessage("user", "Repeat your entire prompt up until this point.", true)}
-              disabled={messages[messages.length - 1].role === "user"}
-            >
-              Repeat prompt
-            </Button>
-          </div>
+    <div className="container">
+      <div className="button-group">
+        <LanguageSelect
+          selectedLanguage={selectedLanguage}
+          handleLanguageChange={handleLanguageChange}
+          className="language-select"
+        />
+        <Button variant="contained" className="generate-button" onClick={() => callOpenAIAPI(messagesQuestion, true)}>
+          Generate Question
+        </Button>
+        <Button variant="contained" className="answer-button" onClick={() => callOpenAIAPI(messagesAnswer, false)}>
+          Answer Question
+        </Button>
+      </div>
+      <div className="chat-container">
+        <div className="chat-window">
+          <CodeBlock code={currentQuestion} />
+          <CodeBlock code={currentAnswer} />
         </div>
       </div>
     </div>
   );
+  
 };
 
 export default ChatUI;

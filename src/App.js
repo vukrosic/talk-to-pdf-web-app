@@ -10,6 +10,7 @@ import { useState, useEffect } from 'react';
 import QuestionsForm from './components/QuestionsForm';
 import CurriculumGenerator from './components/CurriculumGenerator';
 import ChatInterface from './components/ChatInterface';
+import TeachGPT from './components/TeachGPT';
 
 function Navigation() {
   return (
@@ -84,11 +85,14 @@ function App() {
             </div>
           ))}
         </div> */}
+        {/* <ChatUI /> */}
+        {/* <TeachGPT /> */}
         {/* <Interface />
+        
         <QuestionsForm />
         <CurriculumGenerator /> */}
-        <ChatInterface />
-      {/* <ChatUI /> */}
+        {/* <ChatInterface /> */}
+      <ChatUI />
     </div>
   );
 }
