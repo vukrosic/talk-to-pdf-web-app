@@ -5,7 +5,7 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { solarizedlight } from "react-syntax-highlighter/dist/esm/styles/prism";
 import Button from "@mui/material/Button";
 
-const Omg = () => {
+const QnACodeSnippet = () => {
   const [currentQuestion, setCurrentQuestion] = useState("");
   const [currentAnswer, setCurrentAnswer] = useState("");
 
@@ -85,6 +85,7 @@ const Omg = () => {
       <div className="container">
         <div className="chat-container">
         <div className="chat-window" ref={messageContainerRef}>
+        <h1> QnACodeSnippet </h1>
         <div>
       <Markdown
         options={{
@@ -137,4 +138,4 @@ const Omg = () => {
   );
 };
 
-export default Omg;
+export default QnACodeSnippet;

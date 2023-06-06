@@ -2,110 +2,59 @@ import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import Feedback from './components/Feedback';
 import ChatUI from './components/ChatUI';
 import Auth from './components/Auth';
-import OrderPyCode from './components/OrderPyCode';
-import Interface from './components/Interface';
 import { db } from './config/firebase'
 import { getDocs, collection } from 'firebase/firestore';
 import { useState, useEffect } from 'react';
 import QuestionsForm from './components/QuestionsForm';
-import CurriculumGenerator from './components/CurriculumGenerator';
-import ChatInterface from './components/ChatInterface';
 import TeachGPT from './components/TeachGPT';
 import CurriculumBuilder from './components/CurriculumBuilder';
-import Omg from './components/omg';
+import QnACodeSnippet from './components/QnACodeSnippet';
+import {AppBar, Toolbar, Typography, Button, Box} from '@mui/material';
 
 function Navigation() {
   return (
-    <nav>
-      <ul>
-        <li>
-          <Link to="/">Home</Link>
-        </li>
-        <li>
-          <Link to="/chat">111</Link>
-        </li>
-        <li>
-          <Link to="/feedback">Feedback</Link>
-        </li>
-        <li>
-          <Link to="/auth">Auth</Link>
-        </li>
-        <li>
-          <Link to="/orderpycode">OrderPyCode</Link>
-        </li>
-        <li>
-          <Link to="/curriculum">Curriculum Builder</Link>
-        </li>
-        <li>
-          <Link to="/chatinterface">Curriculum Builder</Link>
-        </li>
-      </ul>
-    </nav>
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Personal Teacher GPT
+          </Typography>
+          <Button color="inherit" component={Link} to="/">
+            Home
+          </Button>
+          <Button color="inherit" component={Link} to="/curriculum">
+            Curriculum Builder
+          </Button>
+          <Button color="inherit" component={Link} to="/TeachGPT">
+          TeachGPT
+          </Button>
+          <Button color="inherit" component={Link} to="/feedback">
+            Feedback
+          </Button>
+          <Button color="inherit" component={Link} to="/auth">
+            Login
+          </Button>
+        </Toolbar>
+      </AppBar>
+    </Box>
   );
 }
 
-// function HomePage() {
-//   return <h1>Home Page</h1>;
-// }
 
 function App() {
-  const [movieList, setMovieList] = useState([]);
-  const moviesCollectionRef = collection(db, "movies");
-
-  useEffect(() => {
-    const getMovieList = async () => {
-      try{
-        const data = await getDocs(moviesCollectionRef);
-        const filteredData = data.docs.map((doc) => ({...doc.data(), id: doc.id}));
-        setMovieList(filteredData);
-      }
-      catch(error){
-        console.log(error);
-      }
-    };
-
-    getMovieList();
-  }, []);
-
   return (
     <div className="App">
       <Router>
         <Navigation />
-
         <Routes>
-          <Route path="/" element={<ChatUI />} />
-          <Route path="/feedback" element={<Feedback />} />
-          <Route path="/chat" element={<ChatUI />} />
+          <Route path="/"/>
           <Route path="/auth" element={<Auth />} />
-          <Route path="/orderpycode" element={<OrderPyCode />} />
           <Route path="/curriculum" element={<CurriculumBuilder />} />
-          <Route path="/chatinterface" element={<ChatInterface />} />
+          <Route path="/qnacodesnippet" element={<QnACodeSnippet />} />
+          <Route path="/TeachGPT" element={<TeachGPT />} />
+          <Route path="/feedback" element={<Feedback />} />
         </Routes>
-
-       
-
-        {/* <Auth /> */}
       </Router>
-      {/* <div>
-          {movieList.map((movie) => (
-            <div>
-              <h1> {movie.title} </h1>
-              <p> {movie.releaseDate} </p>
-              <p> {movie.receivedAnOscar} </p>
-            </div>
-          ))}
-        </div> */}
-        {/* <ChatUI /> */}
-        {/* <TeachGPT /> */}
-        {/* <QuestionsForm /> */}
-        <Omg />
-
-        
-        {/* <Interface />
-
-        <QuestionsForm />
-        <CurriculumGenerator /> */}
-        {/* <ChatInterface /> */}
     </div>
   );
 }

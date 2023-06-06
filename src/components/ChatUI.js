@@ -128,6 +128,10 @@
 
 
 
+
+
+
+
 // import React, { useState } from "react";
 // import Markdown from "markdown-to-jsx";
 // import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -186,46 +190,105 @@
 
 
 
+import React, { useState } from 'react';
+import {
+  Grid,
+  Card,
+  CardHeader,
+  CardContent,
+  Typography,
+  Container,
+  TextField,
+  IconButton,
+} from '@mui/material';
+import { styled } from '@mui/system';
+import DeveloperBoardSharpIcon from '@mui/icons-material/DeveloperBoardSharp';
+import AccountCircleSharpIcon from '@mui/icons-material/AccountCircleSharp';
+import Markdown from 'markdown-to-jsx';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { solarizedlight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
+const MessageContainer = styled('div')(({ theme }) => ({
+  paddingTop: theme.spacing(2),
+}));
 
-
-
-
-
-import React from "react";
-import Markdown from "markdown-to-jsx";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { solarizedlight } from "react-syntax-highlighter/dist/esm/styles/prism";
+const MessageCard = styled(Card)(({ theme, messageRole }) => ({
+  marginTop: theme.spacing(1),
+  elevation: messageRole === 'user' ? 1 : 3,
+}));
 
 const ChatUI = ({ messages }) => {
+  const filteredMessages = messages.filter((message) => message.role !== 'system');
+  const [newMessage, setNewMessage] = useState('');
+
+  const handleInputChange = (event) => {
+    setNewMessage(event.target.value);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const role = 'user'; // Assuming the new message is from the user
+    const content = newMessage;
+
+    // Create a new message object
+    const newMessageObj = {
+      role,
+      content,
+    };
+
+    // Update the messages prop with the new message
+    const updatedMessages = [...messages, newMessageObj];
+    // Perform any additional logic on the updated messages if needed
+
+    console.log('New message:', newMessageObj);
+    setNewMessage(''); // Clear the input field after submitting
+  };
+
   return (
     <div>
-      <div className="chat-window">
-        {messages.map((message, index) => (
-          <div key={index} className={`message ${message.role}`}>
-            <div className="message-content">
-              <Markdown
-                options={{
-                  overrides: {
-                    pre: ({ children }) => (
-                      <SyntaxHighlighter
-                        language="javascript"
-                        style={solarizedlight}
-                        children={children.props.children}
-                      />
-                    ),
-                  },
-                }}
-              >
-                {message.content}
-              </Markdown>
-            </div>
-          </div>
-        ))}
-      </div>
+      <Container>
+        <MessageContainer>
+          <Grid container>
+            {filteredMessages.map((message, index) => (
+              <Grid key={index} item xs={12}>
+                <MessageCard messageRole={message.role}>
+                  <CardHeader
+                    avatar={
+                      message.role === 'user' ? (
+                        <AccountCircleSharpIcon sx={{ fontSize: 32 }} color="primary" />
+                      ) : (
+                        <DeveloperBoardSharpIcon sx={{ fontSize: 32 }} color="secondary" />
+                      )
+                    }
+                  />
+
+                  <CardContent>
+                    <Typography variant="body2">
+                      <Markdown
+                        options={{
+                          overrides: {
+                            pre: ({ children }) => (
+                              <SyntaxHighlighter
+                                language="javascript"
+                                style={solarizedlight}
+                                children={children.props.children}
+                              />
+                            ),
+                          },
+                        }}
+                      >
+                        {message.content}
+                      </Markdown>
+                    </Typography>
+                  </CardContent>
+                </MessageCard>
+              </Grid>
+            ))}
+          </Grid>
+        </MessageContainer>
+      </Container>
     </div>
   );
 };
 
 export default ChatUI;
-

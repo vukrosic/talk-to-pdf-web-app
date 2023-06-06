@@ -33,6 +33,7 @@ const TeachGPT = () => {
   };
 
   return (
+
     <Box
       component="form"
       onSubmit={handleSubmit}
@@ -44,6 +45,7 @@ const TeachGPT = () => {
         height: '100%',
       }}
     >
+        <h1>Teach GPT - chat interface</h1>
       <Box
         sx={{
           display: 'flex',
