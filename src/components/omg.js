@@ -5,7 +5,7 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { solarizedlight } from "react-syntax-highlighter/dist/esm/styles/prism";
 import Button from "@mui/material/Button";
 
-const ChatUI = () => {
+const Omg = () => {
   const [currentQuestion, setCurrentQuestion] = useState("");
   const [currentAnswer, setCurrentAnswer] = useState("");
 
@@ -40,7 +40,7 @@ const ChatUI = () => {
       console.log("messagesAnswer: ", messagesAnswer);
     }
     const configuration = new Configuration({
-      apiKey: "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",
+      apiKey: "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",
     });
     const openai = new OpenAIApi(configuration);
     try{
@@ -137,4 +137,4 @@ const ChatUI = () => {
   );
 };
 
-export default ChatUI;
+export default Omg;

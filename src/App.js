@@ -11,6 +11,8 @@ import QuestionsForm from './components/QuestionsForm';
 import CurriculumGenerator from './components/CurriculumGenerator';
 import ChatInterface from './components/ChatInterface';
 import TeachGPT from './components/TeachGPT';
+import CurriculumBuilder from './components/CurriculumBuilder';
+import Omg from './components/omg';
 
 function Navigation() {
   return (
@@ -20,7 +22,7 @@ function Navigation() {
           <Link to="/">Home</Link>
         </li>
         <li>
-          <Link to="/chat">Chat</Link>
+          <Link to="/chat">111</Link>
         </li>
         <li>
           <Link to="/feedback">Feedback</Link>
@@ -30,6 +32,12 @@ function Navigation() {
         </li>
         <li>
           <Link to="/orderpycode">OrderPyCode</Link>
+        </li>
+        <li>
+          <Link to="/curriculum">Curriculum Builder</Link>
+        </li>
+        <li>
+          <Link to="/chatinterface">Curriculum Builder</Link>
         </li>
       </ul>
     </nav>
@@ -62,15 +70,17 @@ function App() {
   return (
     <div className="App">
       <Router>
-        {/* <Navigation /> */}
+        <Navigation />
 
-        {/* <Routes>
+        <Routes>
           <Route path="/" element={<ChatUI />} />
           <Route path="/feedback" element={<Feedback />} />
           <Route path="/chat" element={<ChatUI />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/orderpycode" element={<OrderPyCode />} />
-        </Routes> */}
+          <Route path="/curriculum" element={<CurriculumBuilder />} />
+          <Route path="/chatinterface" element={<ChatInterface />} />
+        </Routes>
 
        
 
@@ -87,12 +97,15 @@ function App() {
         </div> */}
         {/* <ChatUI /> */}
         {/* <TeachGPT /> */}
-        {/* <Interface />
+        {/* <QuestionsForm /> */}
+        <Omg />
+
         
+        {/* <Interface />
+
         <QuestionsForm />
         <CurriculumGenerator /> */}
         {/* <ChatInterface /> */}
-      <ChatUI />
     </div>
   );
 }
