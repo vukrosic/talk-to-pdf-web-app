@@ -2,6 +2,17 @@ import React, { useState } from "react";
 import { callOpenAIAPI } from "./CallOpenAIAPI";
 import ChatUI from "./ChatUI";
 import { Grid, TextareaAutosize, CardHeader, CardContent, Typography, TextField, Button, Snackbar } from '@mui/material';
+import { db } from '../config/firebase';
+import { collection, addDoc } from 'firebase/firestore';
+import { auth } from "../config/firebase";
+import { updateDoc, doc } from 'firebase/firestore';
+import {
+  arrayUnion,
+  getDocs,
+  setDoc,
+  query,
+  where
+} from 'firebase/firestore';
 
 
 const CurriculumBuilder = () => {
@@ -18,7 +29,33 @@ const CurriculumBuilder = () => {
   // "You are buildi\nng a software engineering curriculum on simple python. It should have a form of 1. module \n a) submodule \n i. subsubmodule.",
   const [newMessage, setNewMessage] = useState('');
 
-  const [curriculum, setCurriculum] = useState([]);
+  const [curriculum, setCurriculum] = useState([
+    {
+      title: 'Test Module1qw1231',
+      subModules: [
+        {
+          title: 'Test Submodule1',
+          subSubModules: [
+            {
+              title: 'Test SubSubModule1',
+            },
+            {
+              title: 'Test SubSubModule6',
+            }
+          ],
+          title2: 'Test Submodule2',
+          subSubModules2: [
+            {
+              title: 'Test SubSubModule2',
+            },
+            {
+              title: 'Test SubSubModule2',
+            }
+          ],
+        },
+      ],
+    },
+  ]);
   const [isMessageLimitExceeded, setMessageLimitExceeded] = useState(false);
 
 
@@ -70,16 +107,6 @@ const CurriculumBuilder = () => {
   };
 
 
-  // const addMessage = (content) => {
-  //   const newMessage = {
-  //     role: "assistant",
-  //     content: content,
-  //   };
-  //   console.log("adding message");
-  //   console.log([...messages, newMessage]);
-  //   setMessages((prevMessages) => [...prevMessages, newMessage]);
-  // };
-
   const addMessage = (content) => {
     const newMessage = {
       role: "assistant",
@@ -98,22 +125,6 @@ const CurriculumBuilder = () => {
     setNewMessage(event.target.value);
   };
   
-  // const handleSubmit =  async() => {
-  //   const newUserMessage = {
-  //     role: "user",
-  //     content: newMessage,
-  //   };
-
-  //   setMessages((prevMessages) => [...prevMessages, newUserMessage]);
-  //   setNewMessage('');
-
-  //   const response = await callOpenAIAPI([...messages, newUserMessage], "gpt-3.5-turbo");
-  //   parseCurriculum(response);
-  //   addMessage(response);
-  //   console.log(messages);
-  //   // set new message after cuz react is retarded and doesn't update state immediately but also doesn't return a promise
-
-  // };
   
   const handleSubmit = async () => {
     if (messages.length >= 5) {
@@ -133,6 +144,44 @@ const CurriculumBuilder = () => {
     parseCurriculum(response);
     addMessage(response);
   };
+
+
+
+  const handleSaveCurriculum = async () => {
+    if (!auth.currentUser) {
+      // Alert or handle the situation when a user is not signed-in
+      console.error('User not signed in');
+      return;
+    }
+
+    const curriculumsRef = collection(
+      db,
+      `users/${auth.currentUser.uid}/curriculums`
+    );
+
+    const existingCurriculumQuery = query(
+      curriculumsRef,
+      where('title', '==', curriculum[0].title)
+    );
+
+    try {
+      const existingCurriculumSnapshot = await getDocs(existingCurriculumQuery);
+      if (existingCurriculumSnapshot.empty) {
+        // No curriculum with the same title exists, create a new one
+        await addDoc(curriculumsRef, curriculum[0]);
+        console.log('Curriculum successfully added to user');
+      } else {
+        // Curriculum with the same title exists, update it
+        const existingCurriculumDoc = existingCurriculumSnapshot.docs[0];
+        await setDoc(existingCurriculumDoc.ref, curriculum[0]);
+        console.log('Curriculum successfully updated');
+      }
+    } catch (error) {
+      console.error('Error saving curriculum to user:', error);
+    }
+  };
+
+
   
   
 
@@ -143,23 +192,47 @@ const CurriculumBuilder = () => {
       </div>
       <ChatUI messages={messages} />
       <div style={{ display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
-        <form style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', width: '80vw' }}>
-          <TextareaAutosize
-            aria-label="New Message"
-            placeholder="New Message"
-            rowsMin={3}
-            value={newMessage}
-            onChange={handleInputChange}
-            style={{ width: '100%', padding: '8px', fontSize: '16px', borderRadius: '4px', resize: 'vertical' }}
-          />
-          <Button 
-            variant="contained" 
+      <form
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'flex-start',
+          width: '80vw',
+          gap: '8px',
+        }}
+      >
+        <TextareaAutosize
+          aria-label="New Message"
+          placeholder="New Message"
+          rowsMin={3}
+          value={newMessage}
+          onChange={handleInputChange}
+          style={{
+            width: '100%',
+            padding: '8px',
+            fontSize: '16px',
+            borderRadius: '4px',
+            resize: 'vertical',
+          }}
+        />
+        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+          <Button
+            variant="contained"
+            onClick={handleSaveCurriculum}
+            style={{ backgroundColor: curriculum ? undefined : '#ccc' }}
+            disabled={curriculum.length === 0}
+          >
+            Save Curriculum
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
             onClick={handleSubmit}
-            style={{ marginTop: '8px', alignSelf: 'flex-end' }}
           >
             Submit
           </Button>
-        </form>
+        </div>
+      </form>
       </div>
       <Snackbar
         open={isMessageLimitExceeded}

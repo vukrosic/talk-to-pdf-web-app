@@ -10,6 +10,7 @@ import TeachGPT from './components/TeachGPT';
 import CurriculumBuilder from './components/CurriculumBuilder';
 import QnACodeSnippet from './components/QnACodeSnippet';
 import {AppBar, Toolbar, Typography, Button, Box} from '@mui/material';
+import LandingPage from './components/LandingPage';
 
 function Navigation() {
   return (
@@ -34,6 +35,9 @@ function Navigation() {
           <Button color="inherit" component={Link} to="/auth">
             Login
           </Button>
+          <Button color="inherit" component={Link} to="/LandingPage">
+            Login
+          </Button>
         </Toolbar>
       </AppBar>
     </Box>
@@ -53,6 +57,7 @@ function App() {
           <Route path="/qnacodesnippet" element={<QnACodeSnippet />} />
           <Route path="/TeachGPT" element={<TeachGPT />} />
           <Route path="/feedback" element={<Feedback />} />
+          <Route path="/LandingPage" element={<LandingPage />} />
         </Routes>
       </Router>
     </div>
