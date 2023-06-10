@@ -2,6 +2,8 @@ import { auth } from '../config/firebase';
 import { createUserWithEmailAndPassword, signInWithPopup, signOut, GoogleAuthProvider } from 'firebase/auth';
 import { useState } from 'react';
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { collection, addDoc, setDoc, doc } from 'firebase/firestore';
+import { db } from '../config/firebase';
 
 const provider = new GoogleAuthProvider();
 auth.languageCode = 'it';
@@ -15,7 +17,18 @@ function Auth() {
 
     const signIn = async () => {
         try{
-            await createUserWithEmailAndPassword(auth, email, password);
+            const userCredentials = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredentials.user;
+            const docRef = doc(collection(db, 'users'), user.uid);
+    
+            await setDoc(docRef, {
+                uid: user.uid,
+                email: user.email,
+                displayName: user.displayName,
+                providerId: user.providerId,
+                photoURL: user.photoURL,
+                freeTrial: 10
+            });
         }
         catch(error){
             console.log(error);
@@ -23,13 +36,22 @@ function Auth() {
     }
 
     const signInWithGoogle = async () => {
-        try{
-            signInWithPopup(auth, provider)
-        }
-        catch(error){
+        try {
+            const userCredentials = await signInWithPopup(auth, provider);
+            const user = userCredentials.user;
+            const docRef = doc(collection(db, 'users'), user.uid);
+    
+            await setDoc(docRef, {
+                uid: user.uid,
+                email: user.email,
+                displayName: user.displayName,
+                providerId: user.providerId,
+                photoURL: user.photoURL,
+            });
+        } catch (error) {
             console.log(error);
-        };
-    }
+        }
+    };
 
     const signOut_ = async () => {
         try{
@@ -46,7 +68,7 @@ function Auth() {
             <div className="col-md-6 col-lg-4">
                 <div className="card mt-5">
                 <div className="card-body">
-                    <h1 className="text-center mb-4">Login</h1>
+                    <h1 className="text-center mb-4">Login / Register</h1>
                     <div className="form-group">
                     <label htmlFor="email">Email</label>
                     <input
@@ -68,8 +90,7 @@ function Auth() {
                     />
                     </div>
                     <button onClick={signIn} className="btn btn-primary btn-block">Sign in</button>
-                    <button onClick={signInWithGoogle} className="btn btn-secondary btn-block mt-2">Sign in with google</button>
-                    <button onClick={signOut_} className="btn btn-danger btn-block mt-2">Sign out</button>
+                    <button onClick={signInWithGoogle} className="btn btn-danger btn-block mt-2">Sign in with google</button>
                 </div>
                 </div>
             </div>

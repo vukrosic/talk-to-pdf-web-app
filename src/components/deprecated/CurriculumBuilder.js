@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { callOpenAIAPI } from "./CallOpenAIAPI";
-import ChatUI from "./ChatUI";
+import { callOpenAIAPI } from "../CallOpenAIAPI";
+import ChatUI from "../ChatUI";
 import { Grid, TextareaAutosize, CardHeader, CardContent, Typography, TextField, Button, Snackbar } from '@mui/material';
-import { db } from '../config/firebase';
+import { db } from '../../config/firebase';
 import { collection, addDoc } from 'firebase/firestore';
-import { auth } from "../config/firebase";
+import { auth } from "../../config/firebase";
 import { updateDoc, doc } from 'firebase/firestore';
 import {
   arrayUnion,

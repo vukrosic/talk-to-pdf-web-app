@@ -1,18 +1,59 @@
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Route, Routes, Link, Navigate } from 'react-router-dom';
 import Feedback from './components/Feedback';
-import ChatUI from './components/ChatUI';
-import Auth from './components/Auth';
-import { db } from './config/firebase'
-import { getDocs, collection } from 'firebase/firestore';
-import { useState, useEffect } from 'react';
-import QuestionsForm from './components/QuestionsForm';
+import SignIn from './components/SignIn';
 import TeachGPT from './components/TeachGPT';
-import CurriculumBuilder from './components/CurriculumBuilder';
-import QnACodeSnippet from './components/QnACodeSnippet';
-import {AppBar, Toolbar, Typography, Button, Box} from '@mui/material';
-import LandingPage from './components/LandingPage';
+import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
+import { signOut_ as signOut } from './components/AuthFunctions.js';
+import { auth } from './config/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
+import { createCheckoutSession } from './stripe/createCheckoutSession';
+import { usePremiumStatus } from './stripe/usePremiumStatus';
+import { AppBlocking } from '@mui/icons-material';
+import Stripe from 'stripe';
+import { collection, addDoc, setDoc, doc, getDoc } from 'firebase/firestore';
+import { db } from './config/firebase';
 
-function Navigation() {
+
+function Navigation({ user }) {
+  const readData = async () => {
+    try {
+      const docRef = doc(db, "users", user.uid);
+      const docSnap = await getDoc(docRef);
+      if(docSnap.exists()) { 
+        console.log("Document data:", docSnap.data().stripeId);
+        return docSnap.data().stripeId;
+      } else {
+        console.log("Document does not exist");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  
+  async function handleManageBilling() {
+    const baseUrl = `${window.location.protocol}//${window.location.host}`;
+
+    const stripeID = await readData();
+    try {
+      const stripe = Stripe('sk_test_51MBmbKKEQZnOTK3DkJ9kd4xmMSBldLb2aPXhJzmKuIkiL9dGWCka6JezH1dRHDJS5sOKr0VlsW3pWVo8DX4emhT8002KxkxVKj');
+  
+      // Create a customer portal session
+      const session = await stripe.billingPortal.sessions.create({
+        customer: stripeID,
+        return_url: baseUrl,
+      });
+  
+      // Redirect the user to the customer portal session
+      window.location = session.url;
+    } catch (err) {
+      console.error(err);
+      alert('Error creating customer portal session');
+    }
+  }
+
+  const userisPremium = usePremiumStatus(user);
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -23,43 +64,76 @@ function Navigation() {
           <Button color="inherit" component={Link} to="/">
             Home
           </Button>
-          <Button color="inherit" component={Link} to="/curriculum">
-            Curriculum Builder
-          </Button>
-          <Button color="inherit" component={Link} to="/TeachGPT">
-          TeachGPT
-          </Button>
           <Button color="inherit" component={Link} to="/feedback">
             Feedback
           </Button>
-          <Button color="inherit" component={Link} to="/auth">
-            Login
-          </Button>
-          <Button color="inherit" component={Link} to="/LandingPage">
-            Login
-          </Button>
+          {user ? (
+            <div>
+              {userisPremium ? (
+                <Button color="inherit" component={Link} to="/premium">
+                You are Premium 🍪
+                </Button>
+              ) : (
+                <Button
+
+                  color="inherit"
+                  onClick={() => createCheckoutSession(user.uid)}
+                >
+                  Get Premium
+                </Button>
+              )}
+              <Button color="inherit" onClick={signOut}>
+                Sign Out
+              </Button>
+            </div>
+          ) : (
+            <Button color="inherit" component={Link} to="/signin">
+              Sign In
+            </Button>
+          )}
+          {/* <form method="POST" action="/create-customer-portal-session">
+            <button type="submit">Manage billing</button>
+          </form> */}
+          <Button color="inherit" onClick={handleManageBilling}>
+              Manage subscription
+            </Button>
         </Toolbar>
       </AppBar>
     </Box>
   );
 }
 
-
 function App() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+      setLoading(false);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
   return (
     <div className="App">
-      <Router>
-        <Navigation />
-        <Routes>
-          <Route path="/"/>
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/curriculum" element={<CurriculumBuilder />} />
-          <Route path="/qnacodesnippet" element={<QnACodeSnippet />} />
-          <Route path="/TeachGPT" element={<TeachGPT />} />
-          <Route path="/feedback" element={<Feedback />} />
-          <Route path="/LandingPage" element={<LandingPage />} />
-        </Routes>
-      </Router>
+      {loading ? (
+        <div>Loading...</div>
+      ) : (
+        <Router>
+          <Navigation user={user} />
+          <Routes>
+            <Route path="/" element={<TeachGPT />} />
+            <Route path="/signin" element={user ? <Navigate to="/" /> : <SignIn />} />
+            <Route path="/feedback" element={<Feedback />} />
+          </Routes>
+        </Router>
+      )}
     </div>
   );
 }
