@@ -55,7 +55,7 @@ const TeachGPT = () => {
 
   const defaultMessagesQuiz = [{
     role: "assistant",
-    content: "Generate coding challenges and quizzes designed to test the user's understanding of various programming concepts in python. When users submit their solutions, evaluate the correctness and provide appropriate feedback or hints.",
+    content: "As an AI language model, I'm here to help you with coding challenges and quizzes to test your understanding of various programming concepts in Python. Below you will find a set of challenging tasks designed to push your skills to the next level. Take your time to solve them, and when you're ready, submit your solutions for evaluation. I'll provide feedback and hints to guide you along the way.\n\nExample challenge 1:\nWrite a Python function that takes a list of integers as input and returns the sum of the squares of all the even numbers in the list. I will generate only one challenge for now.",
   },
   {
     role: "assistant",
@@ -112,40 +112,35 @@ const TeachGPT = () => {
     //   alert("Resetting conversation...");
     //   setMessagesLesson([
         
+    let updatedMessages;
+    const newMessage = { role: "user", content: input.trim() };
+  
     
-    if (input.trim() !== "") {
-      const newMessage = { role: "user", content: input.trim() };
-    
-      let updatedMessages;
-      // set updatedMessages only
-      switch (tabValue) {
-        case 0:
-          updatedMessages = newMessage.content ? [...messagesLesson, newMessage] : messagesLesson;
-          setMessagesLesson(updatedMessages);
-          break;
-        case 1:
-          updatedMessages = newMessage.content ? [...messagesSnippet, newMessage] : messagesSnippet;
-          setMessagesSnippet(updatedMessages);
-          break;
-        case 2:
-          updatedMessages = newMessage.content ? [...messagesQuiz, newMessage] : messagesQuiz;
-          setMessagesQuiz(updatedMessages);
-          break;
-        case 3:
-          updatedMessages = newMessage.content ? [...messagesDataStruc, newMessage] : messagesDataStruc;
-          setMessagesDataStruc(updatedMessages);
-          break;
-        case 4:
-          updatedMessages = newMessage.content ? [...messagesDebugCode, newMessage] : messagesDebugCode;
-          setMessagesDebugCode(updatedMessages);
-          break;
-        default:
-          return;
-      }
+    // set updatedMessages only
+    switch (tabValue) {
+      case 0:
+        updatedMessages = newMessage.content ? [...messagesLesson, newMessage] : messagesLesson;
+        setMessagesLesson(updatedMessages);
+        break;
+      case 1:
+        updatedMessages = newMessage.content ? [...messagesSnippet, newMessage] : messagesSnippet;
+        setMessagesSnippet(updatedMessages);
+        break;
+      case 2:
+        updatedMessages = newMessage.content ? [...messagesQuiz, newMessage] : messagesQuiz;
+        setMessagesQuiz(updatedMessages);
+        break;
+      case 3:
+        updatedMessages = newMessage.content ? [...messagesDataStruc, newMessage] : messagesDataStruc;
+        setMessagesDataStruc(updatedMessages);
+        break;
+      case 4:
+        updatedMessages = newMessage.content ? [...messagesDebugCode, newMessage] : messagesDebugCode;
+        setMessagesDebugCode(updatedMessages);
+        break;
+      default:
+        return;
     }
-
-
-
     
 
     let apiCallType;
@@ -248,13 +243,14 @@ const TeachGPT = () => {
 
       <Box sx={{ width: "60%", mt: 2, mx: "auto" }}>
       <TextField
-        fullWidth
-        id="outlined-basic"
-        label="Your message"
-        variant="outlined"
-        value={input}
-        onChange={handleInputChange}
-        autoComplete="new-password"
+         fullWidth
+          id="outlined-multiline-static"
+          label="Your message"
+          multiline
+          rows={4}
+          variant="outlined"
+          value={input}
+          onChange={handleInputChange}
       />
     </Box>
     <Box sx={{ width: "60%", mx: "auto", textAlign: "right" }}>
