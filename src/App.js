@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link, Navigate } from 'react-router-dom';
 import Feedback from './components/Feedback';
+import About from './components/About';
 import SignIn from './components/SignIn';
 import TeachGPT from './components/TeachGPT';
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
@@ -13,6 +14,7 @@ import { AppBlocking } from '@mui/icons-material';
 import Stripe from 'stripe';
 import { collection, addDoc, setDoc, doc, getDoc } from 'firebase/firestore';
 import { db } from './config/firebase';
+import Python from './components/languages/Python';
 
 
 function Navigation({ user }) {
@@ -61,11 +63,17 @@ function Navigation({ user }) {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Personal Teacher GPT
           </Typography>
-          <Button color="inherit" component={Link} to="/">
-            Home 
+          <Button color="inherit" component={Link} to="/python">
+            Python 
           </Button>
+          {/* <Button color="inherit" component={Link} to="/java">
+            Java 
+          </Button> */}
           <Button color="inherit" component={Link} to="/feedback">
             Feedback 
+          </Button>
+          <Button color="inherit" component={Link} to="/about">
+            About 
           </Button>
           {user ? (
             <div>
@@ -130,9 +138,11 @@ function App() {
         <Router>
           <Navigation user={user} />
           <Routes>
-            <Route path="/" element={<TeachGPT />} />
+            <Route path="/" element={<Python />} />
+            <Route path="/python" element={<Python />} />
             <Route path="/signin" element={user ? <Navigate to="/" /> : <SignIn />} />
             <Route path="/feedback" element={<Feedback />} />
+            <Route path="/about" element={<About />} />
           </Routes>
         </Router>
       )}
