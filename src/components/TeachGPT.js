@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { callOpenAIAPI } from "./CallOpenAIAPI";
+// import { callOpenAIAPI } from "./CallOpenAIAPI";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
@@ -8,9 +8,10 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import ChatUI from "./ChatUI";
 
+
+
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
-
   return (
     <Typography
       component="div"
@@ -32,60 +33,49 @@ function a11yProps(index) {
   };
 }
 
-const TeachGPT = () => {
-  const [input, setInput] = useState("");  
+const initialMessages = () => ({
+  lesson: [{
+    role: "assistant",
+    content: "Count 1 to 10.",
+  }],
 
-  const defaultMessagesLesson = [{
+  snippet: [{
     role: "assistant",
-    content: "Generate an interactive advanced python lesson about a random topic from advanced python. User markdown. Generate code snippets, bulletpoints, examples, lists, analysis, etc.",
-  },
-  {
-    role: "assistant",
-    content: "Press submit to get an interactive advanced python lesson.",
-  }];
+    content: "count 10 to 20"
+  }],
 
-  const defaultMessagesSnippet = [{
+  quiz: [{
     role: "assistant",
-    content: "Generate a random code snippet in python and ask me a question about it."
-  },
-  {
-    role: "assistant",
-    content: "Press submit to get a python code snippet and a question about it.",
-  }];
-
-  const defaultMessagesQuiz = [{
-    role: "assistant",
-    content: "As an AI language model, I'm here to help you with coding challenges and quizzes to test your understanding of various programming concepts in Python. Below you will find a set of challenging tasks designed to push your skills to the next level. Take your time to solve them, and when you're ready, submit your solutions for evaluation. I'll provide feedback and hints to guide you along the way.\n\nExample challenge 1:\nWrite a Python function that takes a list of integers as input and returns the sum of the squares of all the even numbers in the list. I will generate only one challenge for now.",
+    content: "As an AI language model, I'm here to help you with coding challenges and quizzes to test your understanding of various programming concepts in Python.",
   },
   {
     role: "assistant",
     content: "Press submit to get a python quiz question.",
-  }];
+  }],
 
-  const defaultMessagesDataStruc = [{
+  datastruc: [{
     role: "assistant",
-    content: "This area focuses on helping users prepare for coding interviews. When users request a problem, you should provide them a comprehensive data structures and algorithms problem to solve in python. Additionally, you should be ready to offer hints, clarifications, and solutions upon request.",
+    content: "This area focuses on helping users prepare for coding interviews. .",
   },
   {
     role: "assistant",
     content: "Press submit to get a data structure and algorithms (python) question.",
-  }];
+  }],
 
-  const defaultMessagesDebugCode = [{
+  code: [{
     role: "assistant",
-    content: "You will generate a random python code that needs to be debugged by the user. Then you will evaluate if the user debugged it successfully.\n\nThe code snippet generator will follow these steps to create a random prompt:\n\n1. Select a random Python programming concept from a list, such as loops, conditional statements, functions, error handling, or classes.\n2. Choose a common error related to the selected concept, such as syntax errors, logic errors, or missing/incorrect function arguments.\n3. Generate a short code snippet that demonstrates the chosen error within the context of the selected concept.\n4. Ensure that the same error and concept combination are not repeated in a set period to maintain variety in the generated prompts.\n\nThe generator will follow this process to create unique prompts that will effectively teach users how to debug various types of errors in python code.",
+    content: "You will generate a random python code.",
   },
   {
     role: "assistant",
     content: "Press submit to get a broken code to debug in python.",
-  }];
+  }]
+});
 
+const TeachGPT = () => {
+  const [input, setInput] = useState("");
   const [tabValue, setTabValue] = useState(0);
-  const [messagesLesson, setMessagesLesson] = useState(defaultMessagesLesson);
-  const [messagesSnippet, setMessagesSnippet] = useState(defaultMessagesSnippet);
-  const [messagesQuiz, setMessagesQuiz] = useState(defaultMessagesQuiz);
-  const [messagesDataStruc, setMessagesDataStruc] = useState(defaultMessagesDataStruc);
-  const [messagesDebugCode, setMessagesDebugCode] = useState(defaultMessagesDebugCode);
+  const [messages, setMessages] = useState(initialMessages());
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
@@ -96,105 +86,116 @@ const TeachGPT = () => {
   };
 
   const resetAllConversation = () => {
-    setMessagesLesson(defaultMessagesLesson);
-    setMessagesSnippet(defaultMessagesSnippet);
-    setMessagesQuiz(defaultMessagesQuiz);
-    setMessagesDataStruc(defaultMessagesDataStruc);
-    setMessagesDebugCode(defaultMessagesDebugCode);
+    setMessages(initialMessages());
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // check how many messages are in the current tab
-    // if there are more than 10, set alert to reset conversation
-    // if (messagesLesson.length > 10) {
-    //   alert("Resetting conversation...");
-    //   setMessagesLesson([
-        
-    let updatedMessages;
-    const newMessage = { role: "user", content: input.trim() };
-  
-    
-    // set updatedMessages only
-    switch (tabValue) {
-      case 0:
-        updatedMessages = newMessage.content ? [...messagesLesson, newMessage] : messagesLesson;
-        setMessagesLesson(updatedMessages);
-        break;
-      case 1:
-        updatedMessages = newMessage.content ? [...messagesSnippet, newMessage] : messagesSnippet;
-        setMessagesSnippet(updatedMessages);
-        break;
-      case 2:
-        updatedMessages = newMessage.content ? [...messagesQuiz, newMessage] : messagesQuiz;
-        setMessagesQuiz(updatedMessages);
-        break;
-      case 3:
-        updatedMessages = newMessage.content ? [...messagesDataStruc, newMessage] : messagesDataStruc;
-        setMessagesDataStruc(updatedMessages);
-        break;
-      case 4:
-        updatedMessages = newMessage.content ? [...messagesDebugCode, newMessage] : messagesDebugCode;
-        setMessagesDebugCode(updatedMessages);
-        break;
-      default:
-        return;
-    }
-    
 
-    let apiCallType;
-  
-    switch (tabValue) {
-      case 0:
-        apiCallType = "lesson";
-        break;
-      case 1:
-        apiCallType = "snippet";
-        break;
-      case 2:
-        apiCallType = "language";
-        break;
-      case 3:
-        apiCallType = "interview";
-        break;
-      case 4:
-        apiCallType = "project_idea";
-        break;
-      default:
-        return;
+    const tabKeys = ["lesson", "snippet", "quiz", "datastruc", "code"]; // Add other keys here
+    const key = tabKeys[tabValue];
+    // if input trim is not emptry
+    if (input.trim()) {
+      const newMessage = { role: "user", content: input };
+      setMessages((prevMessages) => ({
+        ...prevMessages,
+        [key]: [...prevMessages[key], newMessage],
+      }));
+      setInput("");
     }
-    
-  
+
     try {
-      const response = await callOpenAIAPI(updatedMessages, "gpt-3.5-turbo");
-      const aiMessage = { role: "assistant", content: response };
-  
-      switch (apiCallType) {
-        case "lesson":
-          setMessagesLesson((prevMessages) => [...prevMessages, aiMessage]);
-          break;
-        case "snippet":
-          setMessagesSnippet((prevMessages) => [...prevMessages, aiMessage]);
-          break;
-        case "language":
-          setMessagesQuiz((prevMessages) => [...prevMessages, aiMessage]);
-          break;
-        case "interview":
-          setMessagesDataStruc((prevMessages) => [...prevMessages, aiMessage]);
-          break;
-        case "project_idea":
-          setMessagesDebugCode((prevMessages) => [...prevMessages, aiMessage]);
-          break;
-        default:
-          return;
-      }
+      await callOpenAIAPI(messages[key], "gpt-3.5-turbo");
     } catch (error) {
       console.error("Error while calling OpenAI API:", error);
     }
-  
-    setInput("");
   };
+
+
+
+const callOpenAIAPI = async (messages1, model) => {
+  const apiKey = "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";
+  const url = "https://api.openai.com/v1/chat/completions";
+
+
+  const requestBody = {
+    model: model,
+    messages: messages1,
+    stream: true,
+  };
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify(requestBody),
+  });
+
+  const reader = response.body.getReader();
+  let decoder = new TextDecoder();
+  let partialResponse = '';
+  // add a new message to the messages array
+  let newMessage = { role: "assistant", content: "" };
+  const tabKeys = ["lesson", "snippet", "quiz", "datastruc", "code"]; // Add other keys here
+  const key = tabKeys[tabValue];
+  let updatedContent = "";
+
+  setMessages((prevMessages) => ({
+    ...prevMessages,
+    [key]: [...prevMessages[key], newMessage],
+  }));
+
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    partialResponse = decoder.decode(value);
+    const lines = partialResponse.split('\n');
+    for (const line of lines) {
+      if (line.startsWith('data:')) {
+        const data = line.slice(6);
+        if (data.trim() === "[DONE]") {
+          return;
+        } else {
+          const parsedData = JSON.parse(data);
+          if (parsedData.choices && parsedData.choices.length > 0) {
+            const delta = parsedData.choices[0]?.delta;
+            
+            if (delta && delta.hasOwnProperty('content')) {
+              const content = delta.content;
+              updatedContent += content;
+              setMessages((prevMessages) => {
+                const lastIndex = prevMessages[key].length - 1;
+                // Create a new copy of the messages array
+                const newArray = [...prevMessages[key]];
+                // Update the message content in the array
+                newArray[lastIndex] = {
+                  ...newArray[lastIndex],
+                  content: updatedContent,
+                };
+                return {
+                  ...prevMessages,
+                  [key]: newArray,
+                };
+              });
+            } else {
+              console.log('Content property not found in delta.');
+            }
+          }
+          
+        }
+      }
+    }
+
+  }
+};
+
+
+
+
 
   return (
     <Box
@@ -222,23 +223,23 @@ const TeachGPT = () => {
       </Box>
       <TabPanel value={tabValue} index={0}>
         <h1>Advanced Python Lesson</h1>
-        <ChatUI messages={messagesLesson} />
+        <ChatUI messages={messages.lesson} />
       </TabPanel>
       <TabPanel value={tabValue} index={1}>
         <h1>Python Code Snippet Question</h1>
-        <ChatUI messages={messagesSnippet} />
+        <ChatUI messages={messages.snippet} />
       </TabPanel>
       <TabPanel value={tabValue} index={2}>
         <h1>Python Quiz</h1>
-        <ChatUI messages={messagesQuiz} />
+        <ChatUI messages={messages.quiz} />
       </TabPanel>
       <TabPanel value={tabValue} index={3}>
         <h1>Python Data Structures and Algorithms</h1>
-        <ChatUI messages={messagesDataStruc} />
+        <ChatUI messages={messages.datastruc} />
       </TabPanel>
       <TabPanel value={tabValue} index={4}>
         <h1>Python Code Snippet Debugging</h1>
-        <ChatUI messages={messagesDebugCode} />
+        <ChatUI messages={messages.code} />
       </TabPanel>
 
       <Box sx={{ width: "60%", mt: 2, mx: "auto" }}>
