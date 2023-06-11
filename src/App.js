@@ -62,41 +62,43 @@ function Navigation({ user }) {
             Personal Teacher GPT
           </Typography>
           <Button color="inherit" component={Link} to="/">
-            Home
+            Home 
           </Button>
           <Button color="inherit" component={Link} to="/feedback">
-            Feedback
+            Feedback 
           </Button>
           {user ? (
             <div>
               {userisPremium ? (
-                <Button color="inherit" component={Link} to="/premium">
-                You are Premium 🍪
+                <div>
+                <Button color="inherit" onClick={handleManageBilling}>
+                  Manage subscription 
                 </Button>
+                <Button color="inherit" onClick={signOut}>
+                  Sign Out 
+                </Button>
+                </div>
               ) : (
+                <div>
                 <Button
 
                   color="inherit"
                   onClick={() => createCheckoutSession(user.uid)}
                 >
-                  Get Premium
+                  Get Premium 
                 </Button>
+                <Button color="inherit" onClick={signOut}>
+                  Sign Out 
+                </Button>
+              </div>
               )}
-              <Button color="inherit" onClick={signOut}>
-                Sign Out
-              </Button>
+              
             </div>
           ) : (
             <Button color="inherit" component={Link} to="/signin">
               Sign In
             </Button>
           )}
-          {/* <form method="POST" action="/create-customer-portal-session">
-            <button type="submit">Manage billing</button>
-          </form> */}
-          <Button color="inherit" onClick={handleManageBilling}>
-              Manage subscription
-            </Button>
         </Toolbar>
       </AppBar>
     </Box>

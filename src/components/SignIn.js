@@ -47,6 +47,7 @@ function Auth() {
                 displayName: user.displayName,
                 providerId: user.providerId,
                 photoURL: user.photoURL,
+                freeTrial: 10
             });
         } catch (error) {
             console.log(error);

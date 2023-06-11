@@ -7,7 +7,9 @@ import Button from "@mui/material/Button";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import ChatUI from "./ChatUI";
-
+import { auth, db } from "../config/firebase";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { usePremiumStatus } from "../stripe/usePremiumStatus";
 
 
 function TabPanel(props) {
@@ -76,6 +78,12 @@ const TeachGPT = () => {
   const [input, setInput] = useState("");
   const [tabValue, setTabValue] = useState(0);
   const [messages, setMessages] = useState(initialMessages());
+  const [freeMessages, setFreeMessages] = useState(0);
+
+  // effect set message on effect
+  React.useEffect(() => {
+    getFreeMessages();
+  }, []);
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
@@ -89,9 +97,74 @@ const TeachGPT = () => {
     setMessages(initialMessages());
   };
 
+  const getFreeMessages = async () => {
+    try {
+      const docRef = doc(db, "users", auth?.currentUser?.uid);
+      const docSnap = await getDoc(docRef);
+      if(docSnap.exists()) {
+        setFreeMessages(docSnap.data().freeTrial);
+        return docSnap.data().freeTrial;
+      } else {
+        console.log("Document does not exist");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const substractAFreeMessage = async () => {
+    const freeMessagesRemaining = await getFreeMessages();
+    try {
+      const docRef = doc(db, "users", auth?.currentUser?.uid);
+      const docSnap = await setDoc(docRef, {
+        freeTrial: freeMessagesRemaining - 1
+      }, { merge: true });
+      setFreeMessages(freeMessagesRemaining - 1);
+      console.log("Document written with ID: ", docSnap.id);
+    } catch (error) {
+      console.log(error);
+    }
+    
+  }; 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    getFreeMessages();
+    if(freeMessages <= 0) {
+      alert("You have no more free messages left. Please purchase a premium plan.");
+      return;
+    }
+    substractAFreeMessage();
+
+    try {
+      const docRef = doc(db, "users", auth?.currentUser?.id);
+      const docSnap = await getDoc(docRef);
+      if(docSnap.exists()) { 
+        console.log("Document data:", docSnap.data().stripeId);
+        return docSnap.data().freeTrial;
+      } else {
+        console.log("Document does not exist");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+
+    // if the user in not logged in, redirect to /signin
+    if (!auth.currentUser) {
+      console.log("User is not logged in");
+      window.location.href = "/signin";
+      return;
+    }
+
+    // make a for loop that goes through all the messages and check if the length is greater than 5
+    for(let key in messages) {
+      if(messages[key].length >= 5) {
+        alert("Currently we limit the number of messages to 5. Please reset the conversations.");
+        return;
+      }
+    }
 
     const tabKeys = ["lesson", "snippet", "quiz", "datastruc", "code"]; // Add other keys here
     const key = tabKeys[tabValue];
@@ -194,8 +267,7 @@ const callOpenAIAPI = async (messages1, model) => {
 };
 
 
-
-
+  const userisPremium = usePremiumStatus(auth?.currentUser);
 
   return (
     <Box
@@ -263,6 +335,10 @@ const callOpenAIAPI = async (messages1, model) => {
       Submit
     </Button>
     <br/>
+    {!userisPremium ? <div><Typography variant="h6">You have {freeMessages} free messages left.</Typography><br></br> </div>
+    : <div></div>}
+
+    
     <Button
       onClick={resetAllConversation}
       variant="contained"
