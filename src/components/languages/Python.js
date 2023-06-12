@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 // import { callOpenAIAPI } from "./CallOpenAIAPI";
+import { Scrollbar } from 'react-scrollbars-custom';
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
@@ -7,6 +8,7 @@ import Button from "@mui/material/Button";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import ChatUI from "../ChatUI";
+import { MenuItem, Select } from "@mui/material";
 import { auth, db } from "../../config/firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { usePremiumStatus } from "../../stripe/usePremiumStatus";
@@ -57,6 +59,31 @@ const initialMessages = () => ({
   }],
 
   code: [{
+    role: "assistant",
+    content: "Generate a random python code with an intentional bug and ask me to correct it.",
+  }],
+
+  webdev: [{
+    role: "assistant",
+    content: "Generate an interactive advanced python programing language lesson about a random topic from advanced python. Use markdown. Generate code snippets, bulletpoints, examples, lists, analysis, etc. Don't make it too common and predictable topic.",
+  }],
+
+  data_analysis: [{
+    role: "assistant",
+    content: "Generate a random code snippet in python programing language and ask me a question about it. Don't make it too common and predictable code snippet."
+  }],
+
+  game_dev: [{
+    role: "assistant",
+    content: "Generate an interactive advanced machine learning in python programing language lesson about a random topic from machine learning in python. Use markdown. Generate code snippets, bulletpoints, examples, lists, analysis, etc. Don't make it too common and predictable topic.",
+  }],
+
+  scientific_computing: [{
+    role: "assistant",
+    content: "Generate an interactive advanced data structures and algorithms in python programing language lesson about a random topic from data structures and algorithms in python. Use markdown. Generate code snippets, bulletpoints, examples, lists, analysis, etc. Don't make it too common and predictable topic.",
+  }],
+
+  network_programming: [{
     role: "assistant",
     content: "Generate a random python code with an intentional bug and ask me to correct it.",
   }]
@@ -278,13 +305,21 @@ const callOpenAIAPI = async (messages1, model) => {
     <Typography variant="h5">Learn python through a chat conversation.</Typography>
     <br></br>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Tabs value={tabValue} onChange={handleTabChange} aria-label="basic tabs example">
+      {/* <Scrollbar style={{ width: '100%', height: '100%' }}> */}
+        <Tabs
+          value={tabValue}
+          onChange={handleTabChange}
+          aria-label="basic tabs example"
+          variant="scrollable"
+          scrollButtons="auto"
+        >
           <Tab label="Advanced Python Lesson" {...a11yProps(0)} />
           <Tab label="Code Snippet Question" {...a11yProps(1)} />
           <Tab label="Machine Learning / AI Lesson" {...a11yProps(2)} />
           <Tab label="Data Structures and Algorithms Lesson" {...a11yProps(3)} />
           <Tab label="Code Debugging" {...a11yProps(4)} />
         </Tabs>
+      {/* </Scrollbar> */}
       </Box>
       <TabPanel value={tabValue} index={0}>
         <h1>Advanced Python Lesson</h1>
@@ -306,6 +341,14 @@ const callOpenAIAPI = async (messages1, model) => {
         <h1>Python Code Snippet Debugging</h1>
         <ChatUI messages={messages.code} />
       </TabPanel>
+
+      <Select value={tabValue} onChange={handleTabChange} aria-label="basic tabs example">
+        <MenuItem value={0}>Advanced Python Lesson</MenuItem>
+        <MenuItem value={1}>Code Snippet Question</MenuItem>
+        <MenuItem value={2}>Machine Learning / AI Lesson</MenuItem>
+        <MenuItem value={3}>Data Structures and Algorithms Lesson</MenuItem>
+        <MenuItem value={4}>Code Debugging</MenuItem>
+      </Select>
 
       <Box sx={{ width: "60%", mt: 2, mx: "auto" }}>
       <TextField

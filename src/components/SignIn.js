@@ -27,7 +27,7 @@ function Auth() {
                 displayName: user.displayName,
                 providerId: user.providerId,
                 photoURL: user.photoURL,
-                freeTrial: 10
+                freeTrial: 15
             });
         }
         catch(error){
