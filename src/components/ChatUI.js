@@ -218,6 +218,7 @@ const MessageCard = styled(Card)(({ theme, messageRole }) => ({
 }));
 
 const ChatUI = ({ messages }) => {
+  // change {messages.map((message, index) => ( to filteredMessages
   const filteredMessages = messages.filter((message) => message.role !== 'system');
   const [newMessage, setNewMessage] = useState('');
 
@@ -249,7 +250,7 @@ const ChatUI = ({ messages }) => {
       <Container>
         <MessageContainer>
           <Grid container>
-            {filteredMessages.map((message, index) => (
+            {messages.map((message, index) => (
               <Grid key={index} item xs={12}>
                 <MessageCard messageRole={message.role}>
                   <CardHeader
