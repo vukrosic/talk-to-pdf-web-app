@@ -1,111 +1,4 @@
-// import React, { useState } from 'react';
-// import {
-//   Grid,
-//   Card,
-//   CardContent,
-//   Typography,
-//   Container,
-//   TextField,
-//   IconButton,
-//   Button,
-//   Box,
-// } from '@mui/material';
-// import ChatUI from './ChatUI';
-
-// const Collection = ({ item, onClick, isSelected }) => (
-//   <Box mb={1}>
-//     <Button
-//       fullWidth
-//       variant={isSelected ? 'contained' : 'outlined'}
-//       color="primary"
-//       sx={{
-//         bgcolor: isSelected ? '#e0e0e0' : 'transparent',
-//         color: isSelected ? 'red' : 'inherit',
-//         '&:hover': {
-//           color: isSelected ? 'white' : 'inherit',
-//         },
-//       }}
-//       onClick={onClick}
-//     >
-//       {item.id}
-//     </Button>
-//   </Box>
-// );
-
-// const Column = ({ items, onItemClick, selectedItem }) => (
-//   <Grid item>
-//     <Card>
-//       <CardContent>
-//         {items.map((item, index) => (
-//           <Collection
-//             key={index}
-//             item={item}
-//             onClick={() => onItemClick(item)}
-//             isSelected={selectedItem === item}
-//           />
-//         ))}
-//       </CardContent>
-//     </Card>
-//   </Grid>
-// );
-
-// const KnowledgeTreeUI = ({ knowledgeTree }) => {
-//   const [columns, setColumns] = useState([{ items: knowledgeTree }]);
-//   const [selectedItems, setSelectedItems] = useState([]);
-//   const [messages, setMessages] = useState([]);
-
-//   const handleItemClick = (item, columnIndex) => {
-//     setSelectedItems((prevSelectedItems) => {
-//       const newSelectedItems = [...prevSelectedItems.slice(0, columnIndex), item];
-//       return newSelectedItems;
-//     });
-
-//     setColumns((prevColumns) => {
-//       const newColumns = prevColumns.slice(0, columnIndex + 1);
-//       newColumns.push({ items: item.branchingTopics });
-//       return newColumns;
-//     });
-
-//     if (item.messages) {
-//       setMessages((prevMessages) => {
-//         const newMessages = [];
-//         const roles = Object.keys(item.messages);
-//         for (let i = 0; i < roles.length; i++) {
-//           const role = roles[i];
-//           const content = item.messages[role];
-//           newMessages.push({ role, content });
-//         }
-//         return newMessages;
-//       });
-//     } else {
-//       setMessages([]);
-//     }
-//   };
-
-//   return (
-//     <Container>
-//       <Grid container spacing={2} wrap="nowrap">
-//         {columns.map((column, index) => (
-//           <Column
-//             key={index}
-//             items={column.items || []}
-//             onItemClick={(item) => handleItemClick(item, index)}
-//             selectedItem={selectedItems[index]}
-//           />
-//         ))}
-//       </Grid>
-//       {messages.length > 0 && <ChatUI messages={messages} />}
-//     </Container>
-//   );
-// };
-
-// export default KnowledgeTreeUI;
-
-
-
-
-
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setColumns, setSelectedItems, setMessages } from "../store/actions";
 import { Grid, Container } from "@mui/material";
@@ -118,17 +11,22 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
   const selectedItems = useSelector((state) => state.knowledgeTree.selectedItems);
   const messages = useSelector((state) => state.knowledgeTree.messages);
 
+  useEffect(() => {
+    // Reinitialize the columns state when the knowledgeTree prop changes
+    dispatch(setColumns([{ items: knowledgeTree }]));
+  }, [knowledgeTree, dispatch]);
+
   const handleItemClick = (item, columnIndex) => {
     const newSelectedItems = [...selectedItems.slice(0, columnIndex), item];
     const newColumns = columns.slice(0, columnIndex + 1);
-  
+
     if (item.branchingTopics) {
       newColumns.push({ items: item.branchingTopics });
     }
-  
+
     dispatch(setSelectedItems(newSelectedItems));
     dispatch(setColumns(newColumns));
-  
+
     if (item.messages) {
       const messagesArray = Object.keys(item.messages).map((key) => ({
         role: key,
@@ -140,23 +38,25 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
     }
   };
 
-  const renderColumns = (items, columnIndex) => (
-    <Column
-      key={columnIndex}
-      items={items}
-      onItemClick={(item) => handleItemClick(item, columnIndex)}
-      selectedItem={selectedItems[columnIndex]}
-      branchingTopics={items.branchingTopics}
-    />
-  );
-  
+  const renderColumns = (items, columnIndex) => {
+    if (items.length === 0) {
+      return null; // Don't render the column if there are no items
+    }
 
-  console.log("Columns:", JSON.stringify(columns, null, 2));
+    return (
+      <Column
+        key={columnIndex}
+        items={items}
+        onItemClick={(item) => handleItemClick(item, columnIndex)}
+        selectedItem={selectedItems[columnIndex]}
+        branchingTopics={items.branchingTopics}
+      />
+    );
+  };
 
   return (
     <Container>
       <Grid container spacing={2} wrap="nowrap">
-        {renderColumns(knowledgeTree, 0)}
         {columns.map((column, index) => renderColumns(column.items, index))}
       </Grid>
       {messages.length > 0 && <ChatUI messages={messages} />}
