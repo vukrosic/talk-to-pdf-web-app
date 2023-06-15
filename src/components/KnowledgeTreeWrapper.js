@@ -9,7 +9,7 @@ const KnowledgeTreeWrapper = () => {
   useEffect(() => {
     const knowledgeTreeData = [
       {
-        id: "C#1",
+        id: "Python",
         branchingTopics: [
           {
             id: "Algorithms",
@@ -30,28 +30,6 @@ const KnowledgeTreeWrapper = () => {
             branchingTopics: [
               {
                 id: "Integers",
-                branchingTopics: []
-              }
-            ]
-          }
-        ]
-      },
-      {
-        id: "Python",
-        branchingTopics: [
-          {
-            id: "Data Types",
-            branchingTopics: [
-              {
-                id: "Arrays",
-                branchingTopics: []
-              },
-              {
-                id: "Integers",
-                branchingTopics: []
-              },
-              {
-                id: "Lists",
                 branchingTopics: []
               }
             ]

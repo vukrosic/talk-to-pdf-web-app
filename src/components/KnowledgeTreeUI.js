@@ -21,40 +21,46 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
     dispatch(setColumns([(knowledgeTree.map(item => item.id))]));
   }, [knowledgeTree, dispatch]);
 
-  const getBranchingTopicsAndMessages = (path) => {
-    let currentLevel = knowledgeTree;
-    const result = [];
-    for (let i = 0; i < 2; i++) {
-      console.log(i);
-      const topic = currentLevel.find((item) => item.id === path[i]);
-      console.log(topic);
-      if (topic) {
-        result.push(topic.id);
-        currentLevel = topic.branchingTopics;
-        // console.log("branchingTopics:" + JSON.stringify(topic.branchingTopics));
+
+
+  function getBranchingTopics(path) {
+    let currentTopic = knowledgeTree;
+  
+    // Traverse the path
+    for (let i = 0; i < path.length; i++) {
+      const topicId = path[i];
+      const nextTopic = currentTopic.find((topic) => topic.id === topicId);
+  
+      if (nextTopic) {
+        currentTopic = nextTopic.branchingTopics;
       } else {
-        console.log("BREAKKKKKKKKKK");
-        break;
+        // Path is invalid, return empty array
+        return [];
       }
-      console.log("LOL");
     }
   
-    return result;
-  };
+    // Return the IDs of the branching topics of the last topic in the path
+    return currentTopic.map((topic) => topic.id);
+  }
+  
 
   const handleItemClick = (item, columnIndex) => {
-    const newSelectedItems = [...selectedItems.slice(0, columnIndex), item];
-    const newColumns = columns.slice(0, columnIndex + 1);
-    // Assume the getBranchingTopicsAndMessages function is defined
-    const branchingTopics = getBranchingTopicsAndMessages(newSelectedItems);
+    // const result = getBranchingTopics(path);
+    // console.log('Result:', result);
 
-    if (branchingTopics) {
-      newColumns.push(branchingTopics);
-    }
+
+    const newSelectedItems = [...selectedItems.slice(0, columnIndex), item];
+    console.log(newSelectedItems);
+    console.log(["Python", "Algorithms", "Djikstra"]);
+    const branchingTopics = getBranchingTopics(newSelectedItems);
+    console.log('Branching topics:', branchingTopics);
+    const newColumns = [...columns.slice(0, columnIndex + 1), branchingTopics];
+    console.log(newColumns);
+     
 
     dispatch(setSelectedItems(newSelectedItems));
     dispatch(setColumns(newColumns));
-  };
+};
 
   const deleteItem = () => {
 
