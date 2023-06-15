@@ -73,13 +73,16 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
     }
   };
 
-  const handleAddTopic = async (docId) => {
-    await addDocumentToTopic(selectedItems.slice(0, selectedItems.length - 1), docId);
+  const handleAddTopic = async (docId, addToCurrent) => {
+    if(addToCurrent){
+      await addDocumentToTopic(selectedItems.slice(0, selectedItems.length - 1), docId);
+    }else{
+      await addDocumentToTopic(selectedItems.slice(0, selectedItems.length), docId);
+    }
     const currentUser = auth.currentUser;
     if (!currentUser) return;
     const knowledgeTreeRef = collection(db, `users/${currentUser.uid}/KnowledgeTree`);
     const knowledgeTreeData = await fetchKnowledgeTreeData(knowledgeTreeRef);
-    console.log("adding 222222222222");
     dispatch(fetchKnowledgeTree(knowledgeTreeData));
   };
 
@@ -130,7 +133,7 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
           variant="contained"
           color="primary"
           sx={{ mt: 2, bgcolor: '#f5f5f5', color: '#0000a0', width: '200px', '&:hover': { bgcolor: '#007bff', color: '#ffffff' } }}
-          onClick={() => handleAddTopic(newTopic)}
+          onClick={() => handleAddTopic(newTopic, true)}
         >
           Add To Current
         </Button>
@@ -140,7 +143,7 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
           variant="contained"
           color="primary"
           sx={{ mt: 2, bgcolor: '#f5f5f5', color: '#0000a0', width: '200px', '&:hover': { bgcolor: '#007bff', color: '#ffffff' } }}
-          onClick={() => handleAddTopic(newTopic)}
+          onClick={() => handleAddTopic(newTopic, false)}
         >
           Add To Next
         </Button>
