@@ -16,7 +16,6 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
     if (items.length === 0) {
       return null;
     }
-
     return (
       <Column
         key={columnIndex}

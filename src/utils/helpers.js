@@ -3,25 +3,25 @@ import { db } from '../config/firebase';
 import {auth} from '../config/firebase';
 
 const fetchKnowledgeTreeData = async (ref) => {
-  const docsSnapshot = await getDocs(ref);
+  // const docsSnapshot = await getDocs(ref);
 
-  const dataPromises = docsSnapshot.docs.map(async (docSnapshot) => {
-    const docData = {
-      id: docSnapshot.id,
-      ...docSnapshot.data(),
-    };
-    delete docData.messages;
+  // const dataPromises = docsSnapshot.docs.map(async (docSnapshot) => {
+  //   const docData = {
+  //     id: docSnapshot.id,
+  //     ...docSnapshot.data(),
+  //   };
+  //   delete docData.messages;
 
-    const branchingTopicsRef = collection(ref, docSnapshot.id, "branching-topics");
-    const branchingTopicsData = fetchKnowledgeTreeData(branchingTopicsRef);
-    docData.branchingTopics = await branchingTopicsData;
+  //   const branchingTopicsRef = collection(ref, docSnapshot.id, "branching-topics");
+  //   const branchingTopicsData = fetchKnowledgeTreeData(branchingTopicsRef);
+  //   docData.branchingTopics = await branchingTopicsData;
 
-    return docData;
-  });
+  //   return docData;
+  // });
 
-  const results = await Promise.all(dataPromises);
+  // const results = await Promise.all(dataPromises);
 
-  return results;
+  // return results;
 };
 
 

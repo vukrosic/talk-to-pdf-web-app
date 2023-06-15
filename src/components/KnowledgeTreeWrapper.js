@@ -1,29 +1,66 @@
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { fetchKnowledgeTree } from "../store/actions";
-import { auth, db } from "../config/firebase";
-import { collection, getDocs } from "firebase/firestore";
 import KnowledgeTreeContainer from "./KnowledgeTreeContainer";
-import { fetchKnowledgeTreeData } from '../utils/helpers';
-
-
 
 const KnowledgeTreeWrapper = () => {
   const dispatch = useDispatch();
+
   useEffect(() => {
-    
-    const fetchAndDispatchKnowledgeTreeData = async () => {
-      const currentUser = auth.currentUser;
-      if (!currentUser) return;
-      
-      const knowledgeTreeRef = collection(db, `users/${currentUser.uid}/KnowledgeTree`);
-      const knowledgeTreeData = await fetchKnowledgeTreeData(knowledgeTreeRef);
-      console.log(JSON.stringify(knowledgeTreeData));
-      dispatch(fetchKnowledgeTree(knowledgeTreeData));
-    };
+    const knowledgeTreeData = [
+      {
+        id: "C#1",
+        branchingTopics: [
+          {
+            id: "Algorithms",
+            branchingTopics: [
+              {
+                id: "Djikstra",
+                branchingTopics: [
+                  {
+                    id: "Djiktra1",
+                    branchingTopics: []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            id: "Data Types",
+            branchingTopics: [
+              {
+                id: "Integers",
+                branchingTopics: []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: "Python",
+        branchingTopics: [
+          {
+            id: "Data Types",
+            branchingTopics: [
+              {
+                id: "Arrays",
+                branchingTopics: []
+              },
+              {
+                id: "Integers",
+                branchingTopics: []
+              },
+              {
+                id: "Lists",
+                branchingTopics: []
+              }
+            ]
+          }
+        ]
+      }
+    ];
 
-
-    fetchAndDispatchKnowledgeTreeData();
+    dispatch(fetchKnowledgeTree(knowledgeTreeData));
   }, [dispatch]);
 
   return (
