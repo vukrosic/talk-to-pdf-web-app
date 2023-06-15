@@ -16,11 +16,23 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
   const [newTopic, setNewTopic] = useState("");
   const [deleteMode, setDeleteMode] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+  
 
   useEffect(() => {
-    dispatch(setColumns([(knowledgeTree.map(item => item.id))]));
-  }, [knowledgeTree, dispatch]);
 
+    if(selectedItems.length > 0) {
+      setSelectedItem(selectedItems.slice(0, selectedItems.length - 1));
+    }
+    if(columns.length > 1) {
+        setSelectedItem(columns.slice(0, columns.length - 2).concat(columns.slice(-1)));
+    }
+    else {
+      dispatch(setColumns([(knowledgeTree.map(item => item.id))]));
+    }
+
+    console.log(selectedItems);
+    console.log(columns);
+  }, [knowledgeTree, dispatch]);
 
 
   function getBranchingTopics(path) {
@@ -42,22 +54,28 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
     // Return the IDs of the branching topics of the last topic in the path
     return currentTopic.map((topic) => topic.id);
   }
+  const removeItem = () => {
+    const columnIndex = selectedItems.length - 1;
+    const newSelectedItems = selectedItems.slice(0, -1);
+    const newColumns = columns.map((column, index) => {
+    if (index === columnIndex) {
+      return column.filter((item) => item !== selectedItems[columnIndex]);
+    }
+    return column;
+  });
+    dispatch(setSelectedItems(newSelectedItems));
+    dispatch(setColumns(newColumns.slice(0, columnIndex+1)));
+    deleteItem();
+  };
+  
   
 
+
   const handleItemClick = (item, columnIndex) => {
-    // const result = getBranchingTopics(path);
-    // console.log('Result:', result);
-
-
     const newSelectedItems = [...selectedItems.slice(0, columnIndex), item];
-    console.log(newSelectedItems);
-    console.log(["Python", "Algorithms", "Djikstra"]);
     const branchingTopics = getBranchingTopics(newSelectedItems);
-    console.log('Branching topics:', branchingTopics);
     const newColumns = [...columns.slice(0, columnIndex + 1), branchingTopics];
-    console.log(newColumns);
      
-
     dispatch(setSelectedItems(newSelectedItems));
     dispatch(setColumns(newColumns));
 };
@@ -65,6 +83,7 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
   const deleteItem = () => {
 
     dispatch(deleteTopicFromTree(selectedItems));
+    selectedItems.pop();
   }
 
   const handleAddTopic = (docId, addToCurrent) => {
@@ -92,11 +111,6 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
     );
     return column;
 }
-
-  // const handleToggleDeleteMode = () => {
-  //   setDeleteMode((prevDeleteMode) => !prevDeleteMode);
-  //   setSelectedItem(null);
-  // };
 
   return (
     <Container>
@@ -147,11 +161,11 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
               color: "#f5f5f5",
             },
           }}
-          onClick={deleteItem}
+          onClick={removeItem}
         >
-          {deleteMode ? "Exit Delete Mode" : "Delete Mode"}
+          Delete
         </Button>
-        <Button onClick={ () => console.log(columns)} >check columns</Button>
+        <Button onClick={ () => console.log(selectedItems)} >check columns</Button>
       </Box>
     </Container>
   );
