@@ -16,14 +16,12 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
   const selectedItems = useSelector((state) => state.knowledgeTree.selectedItems);
   const messages = useSelector((state) => state.knowledgeTree.messages);
   const [newTopic, setNewTopic] = useState("");
-  const [refreshUI, setRefreshUI] = useState(false); // Add refresh state
-  const [deleteMode, setDeleteMode] = useState(false); // Add delete mode state
-  const [selectedItem, setSelectedItem] = useState(null); // Add selected item state
+  const [deleteMode, setDeleteMode] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
 
   useEffect(() => {
     dispatch(setColumns([{ items: knowledgeTree }]));
   }, [knowledgeTree, dispatch]);
-
   const handleItemClick = (item, columnIndex) => {
     if (deleteMode) {
       // Delete mode is active
@@ -52,25 +50,41 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
   };
 
   const deleteItem = async (item, columnIndex) => {
-    const confirmation = window.confirm("Are you sure you want to delete this item?");
-    if (confirmation) {
-      const newColumns = columns.slice(0, columnIndex);
-      dispatch(setColumns(newColumns));
 
-      if (item.id === selectedItem) {
-        setSelectedItem(null);
-      }
-
-      const treePath = selectedItems.slice(0, columnIndex);
-      await deleteDocument(treePath, item.id);
-
-      // Fetch updated knowledge tree data
-      const currentUser = auth.currentUser;
-      if (!currentUser) return;
-      const knowledgeTreeRef = collection(db, `users/${currentUser.uid}/KnowledgeTree`);
-      const knowledgeTreeData = await fetchKnowledgeTreeData(knowledgeTreeRef);
-      dispatch(fetchKnowledgeTree(knowledgeTreeData));
+    // Copy the current column's items
+    let newItems = [...columns[columnIndex].items];
+    
+    // Find the item in the items array
+    const itemIndex = newItems.findIndex(i => i.id === item.id);
+    
+    // Remove the item from the array
+    if(itemIndex > -1) {
+      newItems.splice(itemIndex, 1);
     }
+    
+    // Create a copy of the columns
+    let newColumns = [...columns];
+    
+    // Update the items for the current column
+    newColumns[columnIndex] = {...newColumns[columnIndex], items: newItems};
+    
+    // Dispatch the new columns to update the state
+    dispatch(setColumns(newColumns));
+    
+    // De-select the item if it was selected
+    if(item.id === selectedItem){
+      setSelectedItem(null);
+    }
+    
+    // Delete the document
+    const treePath = selectedItems.slice(0, columnIndex);
+    await deleteDocument(treePath, item.id);
+
+    const currentUser = auth.currentUser;
+    if (!currentUser) return;
+    const knowledgeTreeRef = collection(db, `users/${currentUser.uid}/KnowledgeTree`);
+    const knowledgeTreeData = await fetchKnowledgeTreeData(knowledgeTreeRef);
+    dispatch(fetchKnowledgeTree(knowledgeTreeData));
   };
 
   const handleAddTopic = async (docId, addToCurrent) => {
@@ -84,30 +98,27 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
     const knowledgeTreeRef = collection(db, `users/${currentUser.uid}/KnowledgeTree`);
     const knowledgeTreeData = await fetchKnowledgeTreeData(knowledgeTreeRef);
     dispatch(fetchKnowledgeTree(knowledgeTreeData));
+    setNewTopic("");
   };
 
   const renderColumns = (items, columnIndex) => {
     if (items.length === 0) {
       return null;
     }
-    console.log(columnIndex);
-    return (
+    const column = (
       <Column
         key={columnIndex}
         items={items}
-        onItemClick={(item) => handleItemClick(item, columnIndex)}
+        onItemClick={(item) => {
+         handleItemClick(item, columnIndex);
+        }}
         selectedItem={selectedItems[columnIndex]}
         branchingTopics={items.branchingTopics}
       />
     );
+    return column;
   };
 
-  useEffect(() => {
-    if (refreshUI) {
-      console.log("refreshing UI");
-      setRefreshUI(false);
-    }
-  }, [refreshUI]);
 
   const handleToggleDeleteMode = () => {
     setDeleteMode((prevDeleteMode) => !prevDeleteMode);
@@ -125,7 +136,7 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
         label="Add Topic"
         variant="outlined"
         value={newTopic}
-        onChange={(e) => setNewTopic(e.target.value)}
+        onChange={(e) => {setNewTopic(e.target.value);}}
       />
       <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
         <Button
@@ -148,7 +159,7 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
           Add To Next
         </Button>
 
-        <Button
+         <Button
           fullWidth
           variant="contained"
           sx={{
@@ -164,7 +175,7 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
           onClick={handleToggleDeleteMode}
         >
           {deleteMode ? "Exit Delete Mode" : "Delete Mode"}
-        </Button>
+        </Button> 
 
       </Box>
     </Container>

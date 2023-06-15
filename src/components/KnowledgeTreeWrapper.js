@@ -15,7 +15,7 @@ const KnowledgeTreeWrapper = () => {
     const fetchAndDispatchKnowledgeTreeData = async () => {
       const currentUser = auth.currentUser;
       if (!currentUser) return;
-    
+      
       const knowledgeTreeRef = collection(db, `users/${currentUser.uid}/KnowledgeTree`);
       const knowledgeTreeData = await fetchKnowledgeTreeData(knowledgeTreeRef);
       console.log(JSON.stringify(knowledgeTreeData));

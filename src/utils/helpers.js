@@ -3,7 +3,6 @@ import { db } from '../config/firebase';
 import {auth} from '../config/firebase';
 
 const fetchKnowledgeTreeData = async (ref) => {
-  const data = [];
   const docsSnapshot = await getDocs(ref);
 
   const dataPromises = docsSnapshot.docs.map(async (docSnapshot) => {
@@ -11,7 +10,6 @@ const fetchKnowledgeTreeData = async (ref) => {
       id: docSnapshot.id,
       ...docSnapshot.data(),
     };
-    console.log("eyyy");
     delete docData.messages;
 
     const branchingTopicsRef = collection(ref, docSnapshot.id, "branching-topics");
@@ -25,6 +23,8 @@ const fetchKnowledgeTreeData = async (ref) => {
 
   return results;
 };
+
+
 
 const addDocumentToTree = async (rootPath, treePath, newDocData) => {
   let currentRef = collection(db, ...rootPath);
