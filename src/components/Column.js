@@ -1,8 +1,13 @@
 import React from "react";
-import { Card, CardContent, Grid } from "@mui/material";
+import { Card, CardContent, Grid, Button } from "@mui/material";
 import Collection from "./Collection";
+import { addDocumentToTopic } from "../utils/helpers";
+import { useDispatch, useSelector } from "react-redux";
+import { callOpenAIAPI } from "./CallOpenAIAPI";
 
-const Column = ({ items, onItemClick, selectedItem }) => (
+
+const Column = ({ items, onItemClick, selectedItem }) => {
+  return (
     <Grid item>
       <Card>
         <CardContent>
@@ -11,12 +16,13 @@ const Column = ({ items, onItemClick, selectedItem }) => (
               key={index}
               item={item}
               onClick={() => onItemClick(item)}
-              isSelected={selectedItem === item}
+              isSelected={selectedItem === item.id}
             />
           ))}
         </CardContent>
       </Card>
     </Grid>
   );
+};
 
 export default Column;

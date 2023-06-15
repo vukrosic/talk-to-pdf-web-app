@@ -18,6 +18,7 @@ import Python from './components/languages/Python';
 import { Provider } from "react-redux";
 import KnowledgeTreeWrapper from "./components/KnowledgeTreeWrapper";
 import store from "./store";
+import TestingEnv from './components/TestingEnv';
 
 
 function Navigation({ user }) {
@@ -156,6 +157,7 @@ function App() {
           <Navigation user={user} />
           <Routes>
             <Route path="/" element={<KnowledgeTreeWrapper />} />
+            {/* <Route path="/" element={ <TestingEnv />} /> */}
             <Route path="/python" element={<Python />} />
             <Route path="/signin" element={user ? <Navigate to="/" /> : <SignIn />} />
             <Route path="/feedback" element={<Feedback />} />
