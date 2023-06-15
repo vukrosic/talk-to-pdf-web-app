@@ -17,7 +17,7 @@ const Collection = ({ item, onClick, isSelected }) => (
         }}
         onClick={onClick}
       >
-        {item.id}
+        {item}
       </Button>
     </Box>
   );

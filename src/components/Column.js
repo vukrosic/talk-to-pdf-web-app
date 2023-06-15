@@ -16,7 +16,7 @@ const Column = ({ items, onItemClick, selectedItem }) => {
               key={index}
               item={item}
               onClick={() => onItemClick(item)}
-              isSelected={selectedItem === item.id}
+              isSelected={selectedItem === item}
             />
           ))}
         </CardContent>

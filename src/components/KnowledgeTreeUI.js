@@ -18,34 +18,42 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
   const [selectedItem, setSelectedItem] = useState(null);
 
   useEffect(() => {
-    dispatch(setColumns([{ items: knowledgeTree }]));
+    dispatch(setColumns([(knowledgeTree.map(item => item.id))]));
   }, [knowledgeTree, dispatch]);
 
-  const handleItemClick = (item, columnIndex) => {
-    if (deleteMode) {
-      // Delete mode is active
-      deleteItem(item, columnIndex);
-    } else {
-      // Delete mode is inactive
-      const newSelectedItems = [...selectedItems.slice(0, columnIndex), item.id];
-      const newColumns = columns.slice(0, columnIndex + 1);
-
-      if (item.branchingTopics) {
-        newColumns.push({ items: item.branchingTopics });
-      }
-
-      dispatch(setSelectedItems(newSelectedItems));
-      dispatch(setColumns(newColumns));
-      if (item.messages) {
-        const messagesArray = Object.keys(item.messages).map((key) => ({
-          role: key,
-          content: item.messages[key],
-        }));
-        dispatch(setMessages(messagesArray));
+  const getBranchingTopicsAndMessages = (path) => {
+    let currentLevel = knowledgeTree;
+    const result = [];
+    for (let i = 0; i < 2; i++) {
+      console.log(i);
+      const topic = currentLevel.find((item) => item.id === path[i]);
+      console.log(topic);
+      if (topic) {
+        result.push(topic.id);
+        currentLevel = topic.branchingTopics;
+        // console.log("branchingTopics:" + JSON.stringify(topic.branchingTopics));
       } else {
-        dispatch(setMessages([]));
+        console.log("BREAKKKKKKKKKK");
+        break;
       }
+      console.log("LOL");
     }
+  
+    return result;
+  };
+
+  const handleItemClick = (item, columnIndex) => {
+    const newSelectedItems = [...selectedItems.slice(0, columnIndex), item];
+    const newColumns = columns.slice(0, columnIndex + 1);
+    // Assume the getBranchingTopicsAndMessages function is defined
+    const branchingTopics = getBranchingTopicsAndMessages(newSelectedItems);
+
+    if (branchingTopics) {
+      newColumns.push(branchingTopics);
+    }
+
+    dispatch(setSelectedItems(newSelectedItems));
+    dispatch(setColumns(newColumns));
   };
 
   const deleteItem = () => {
@@ -57,25 +65,9 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
     dispatch({
       type: 'ADD_TOPIC_TO_TREE',
       payload: {
-        path: ['Python', 'Data Types']
+        path: ['C#1', 'Algorithms']
       },
     });
-    // dispatch(
-    //   {
-    //     type: ADD_TOPIC_TO_TREE,
-    //     payload: {
-    //       id: 'My New Topic',
-    //       parent: 'Python'
-    //     }
-    //   }
-    // )
-
-    // if (addToCurrent) {
-    //   dispatch(addTopicToTree(selectedItems.slice(0, selectedItems.length - 1), docId));
-    // } else {
-    //   dispatch(addTopicToTree(selectedItems.slice(0, selectedItems.length), docId));
-    // }
-    // setNewTopic("");
   };
 
   const renderColumns = (items, columnIndex) => {
@@ -90,11 +82,10 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
           handleItemClick(item, columnIndex);
         }}
         selectedItem={selectedItems[columnIndex]}
-        branchingTopics={items.branchingTopics}
       />
     );
     return column;
-  };
+}
 
   // const handleToggleDeleteMode = () => {
   //   setDeleteMode((prevDeleteMode) => !prevDeleteMode);
@@ -104,7 +95,7 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
   return (
     <Container>
       <Grid container spacing={2} wrap="nowrap">
-        {columns.map((column, index) => renderColumns(column.items, index))}
+        {columns.map((column, index) => renderColumns(column, index))}
       </Grid>
       {messages.length > 0 && <ChatUI messages={messages} />}
       <TextField
@@ -154,6 +145,7 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
         >
           {deleteMode ? "Exit Delete Mode" : "Delete Mode"}
         </Button>
+        <Button onClick={ () => console.log(columns)} >check columns</Button>
       </Box>
     </Container>
   );

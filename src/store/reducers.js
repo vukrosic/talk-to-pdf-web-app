@@ -30,8 +30,6 @@ const knowledgeTreeReducer = (state = initialState, action) => {
     }
     case DELETE_TOPIC_FROM_TREE: {
       const deleteTopicFromTree = (knowledgeTree, path) => {
-        // console.log(path);
-        // console.log(knowledgeTree);
           if (path.length === 0) return [];
   
           if (path.length === 1) {
@@ -39,7 +37,6 @@ const knowledgeTreeReducer = (state = initialState, action) => {
           }
   
           return knowledgeTree.map(topic => {
-            console.log(topic);
               if (topic.id === path[0]) {
                   topic.branchingTopics = deleteTopicFromTree(topic.branchingTopics, path.slice(1));
               }
