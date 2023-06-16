@@ -6,6 +6,7 @@ export const SET_SELECTED_ITEMS = "SET_SELECTED_ITEMS";
 export const SET_MESSAGES = "SET_MESSAGES";
 export const ADD_TOPIC_TO_TREE = "ADD_TOPIC_TO_TREE";
 export const DELETE_TOPIC_FROM_TREE = "DELETE_TOPIC_FROM_TREE";
+export const UPDATE_KNOWLEDGE_TREE = "UPDATE_KNOWLEDGE_TREE";
 
 export const fetchKnowledgeTree = (knowledgeTreeData) => ({
   type: FETCH_KNOWLEDGE_TREE,
@@ -27,6 +28,10 @@ export const setMessages = (messages) => ({
   payload: messages,
 });
 
+export const updateKnowledgeTree = (knowledgeTree) => ({
+  type: UPDATE_KNOWLEDGE_TREE,
+  payload: knowledgeTree,
+});
 // export const addTopicToTree = (id, parent) => ({
 //   type: ADD_TOPIC_TO_TREE,
 //   payload: { id, parent },

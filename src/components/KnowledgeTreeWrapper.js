@@ -22,6 +22,15 @@ const KnowledgeTreeWrapper = () => {
                     branchingTopics: []
                   }
                 ]
+              },
+              {
+                id: "asdfasdf",
+                branchingTopics: [
+                  {
+                    id: "Djiktra1",
+                    branchingTopics: []
+                  }
+                ]
               }
             ]
           },

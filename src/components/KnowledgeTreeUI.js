@@ -6,6 +6,7 @@ import Column from "./Column";
 import ChatUI from "./ChatUI";
 import { fetchKnowledgeTreeData } from "../utils/helpers";
 import { ADD_TOPIC_TO_TREE } from "../store/actions";
+import { terminate } from "firebase/firestore";
 
 
 const KnowledgeTreeUI = ({ knowledgeTree }) => {
@@ -30,8 +31,8 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
       dispatch(setColumns([(knowledgeTree.map(item => item.id))]));
     }
 
-    console.log(selectedItems);
-    console.log(columns);
+    // console.log(selectedItems);
+    // console.log(columns);
   }, [knowledgeTree, dispatch]);
 
 
@@ -54,6 +55,50 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
     // Return the IDs of the branching topics of the last topic in the path
     return currentTopic.map((topic) => topic.id);
   }
+
+
+
+  function addBranchingTopic(addToCurrent) {
+    if (newTopic === "") {
+      alert("Please enter a topic name");
+      return;
+    }
+  
+    const count = addToCurrent ? selectedItems.length - 1 : selectedItems.length;
+    let currentTopic = selectedItems
+      .slice(0, count)
+      .reduce((acc, topicId) => acc.find((topic) => topic.id === topicId).branchingTopics, knowledgeTree);
+  
+    // Check if the new topic already exists in the current column
+    const isTopicUnique = currentTopic.every((topic) => topic.id !== newTopic);
+    if (!isTopicUnique) {
+      alert("Topic already exists in the column");
+      return;
+    }
+  
+    currentTopic.push({ id: newTopic, branchingTopics: [] });
+  
+    updateItemInColumns(addToCurrent ? 1 : 0);
+    return true;
+  }
+  
+  
+  function updateItemInColumns(subtract) {
+    const columnIndex = selectedItems.length - subtract;
+    const newColumns = columns.map((column, index) =>
+      index === columnIndex ? [...column, newTopic] : column
+    );
+    
+    dispatch(setSelectedItems(selectedItems.slice(0)));
+    dispatch(setColumns(newColumns));
+  }
+
+
+
+
+
+
+
   const removeItem = () => {
     const columnIndex = selectedItems.length - 1;
     const newSelectedItems = selectedItems.slice(0, -1);
@@ -90,7 +135,7 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
     dispatch({
       type: 'ADD_TOPIC_TO_TREE',
       payload: {
-        path: ['C#1', 'Algorithms']
+        path: ['Python', 'asdfsaf'],
       },
     });
   };
@@ -133,9 +178,9 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
           variant="contained"
           color="primary"
           sx={{ mt: 2, bgcolor: "#f5f5f5", color: "#0000a0", width: "200px", "&:hover": { bgcolor: "#007bff", color: "#ffffff" } }}
-          onClick={() => handleAddTopic(newTopic, true)}
+          onClick={() => addBranchingTopic(true)}
         >
-          Add To Current
+          Add Below
         </Button>
 
         <Button
@@ -143,7 +188,7 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
           variant="contained"
           color="primary"
           sx={{ mt: 2, bgcolor: "#f5f5f5", color: "#0000a0", width: "200px", "&:hover": { bgcolor: "#007bff", color: "#ffffff" } }}
-          onClick={() => handleAddTopic(newTopic, false)}
+          onClick={() => addBranchingTopic(false)}
         >
           Add To Next
         </Button>

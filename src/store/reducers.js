@@ -4,7 +4,8 @@ import {
   SET_SELECTED_ITEMS,
   SET_MESSAGES,
   ADD_TOPIC_TO_TREE,
-  DELETE_TOPIC_FROM_TREE
+  DELETE_TOPIC_FROM_TREE,
+  UPDATE_KNOWLEDGE_TREE
 } from "./actions";
 
 const initialState = {
@@ -24,9 +25,17 @@ const knowledgeTreeReducer = (state = initialState, action) => {
       return { ...state, selectedItems: action.payload };
     case SET_MESSAGES:
     return { ...state, messages: action.payload };
-     case ADD_TOPIC_TO_TREE: {
+    case ADD_TOPIC_TO_TREE: {
       const { id, parent } = action.payload;
+      console.log(action.payload);
+      console.log("parent: "  + parent);
       return { ...state, knowledgeTree: [...state.knowledgeTree, { id, parent }] }; //add new topic to end of array
+    }
+    case UPDATE_KNOWLEDGE_TREE: {
+      const { knowledgeTree } = action.payload;
+      console.log("knowledgeTree");
+      console.log(knowledgeTree);
+      return { ...state, knowledgeTree: knowledgeTree };
     }
     case DELETE_TOPIC_FROM_TREE: {
       const deleteTopicFromTree = (knowledgeTree, path) => {
