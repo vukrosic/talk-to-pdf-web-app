@@ -1,6 +1,6 @@
 import { setColumns } from "../store/actions";
 
-export const callOpenAIAPI = async (messages, model, addBranchingTopic, handleItemClick, selectedItems, addToCurrent) => {
+export const callOpenAIAPI = async (messages, model, addBranchingTopic, handleItemClick, selectedItems) => {
     const apiKey = "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";
     const url = "https://api.openai.com/v1/chat/completions";
   
@@ -47,7 +47,7 @@ export const callOpenAIAPI = async (messages, model, addBranchingTopic, handleIt
                 result += content;
                 wholeResponse += content;
                 if (result.includes('\n')) { // If the result string has '\n'
-                  addBranchingTopicAndRefresh(addBranchingTopic, result, handleItemClick, selectedItems, addToCurrent)
+                  addBranchingTopicAndRefresh(addBranchingTopic, result, handleItemClick, selectedItems)
             
                 result = ''; // Resetting the result
                 }
@@ -59,24 +59,21 @@ export const callOpenAIAPI = async (messages, model, addBranchingTopic, handleIt
       // Remove processed lines from partialResponse
       partialResponse = lines.pop();
     }
-    addBranchingTopicAndRefresh(addBranchingTopic, result, handleItemClick, selectedItems, addToCurrent)
+    addBranchingTopicAndRefresh(addBranchingTopic, result, handleItemClick, selectedItems)
 
     // return to previously selected item
-    if(!addToCurrent){
-      handleItemClick(selectedItemsTemp[selectedItemsTemp.length - 1], selectedItems.length - 1);
-    }
-    else{
-      handleItemClick(selectedItemsTemp[selectedItemsTemp.length - 2], selectedItems.length - 2);
-    }
+    handleItemClick(selectedItemsTemp[selectedItemsTemp.length - 1], selectedItems.length - 1);
     console.log("wholeResponse:\n " + wholeResponse);
   };
   
   
   function addBranchingTopicAndRefresh(addBranchingTopic, result, handleItemClick, selectedItems, addToCurrent){
-    result = result.replace(/^\d+\.\s*/, '');
-    addBranchingTopic(result, addToCurrent);
-    const lastSelectedItem = selectedItems[selectedItems.length - 2];
-    const columnIndex = selectedItems.length - 2;
+    result = result.replace(/^\d+\.\s*/, '').replace(/\n$/, '');
+    addBranchingTopic(result, false);
+    const lastSelectedItem = selectedItems[selectedItems.length - 1];
+    const columnIndex = selectedItems.length - 1;
+    console.log("lastSelectedItem: " + lastSelectedItem);
+    console.log("columnIndex: " + columnIndex);
     if(columnIndex >= 0 && lastSelectedItem !== undefined)
       handleItemClick(lastSelectedItem, columnIndex);
   }

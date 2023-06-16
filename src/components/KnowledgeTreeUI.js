@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setColumns, setSelectedItems, setMessages, addTopicToTree, deleteTopicFromTree } from "../store/actions";
-import { Grid, Container, Button, TextField, Box } from "@mui/material";
+import { Grid, Container, Button, TextField, Box, FormControl, InputLabel } from "@mui/material";
 import Column from "./Column";
 import ChatUI from "./ChatUI";
 import { fetchKnowledgeTreeData } from "../utils/helpers";
@@ -19,7 +19,7 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
   const [newTopic, setNewTopic] = useState("");
   const [deleteMode, setDeleteMode] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
-  
+  const [topicGenerationPrompt, setTopicGenerationPrompt] = useState(null);
 
   useEffect(() => {
 
@@ -36,6 +36,8 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
     // console.log(selectedItems);
     // console.log(columns);
   }, [knowledgeTree, dispatch]);
+
+
 
 
   function getBranchingTopics(path) {
@@ -123,9 +125,9 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
   
   
   const generateTopics = async (addToCurrent) => {
-    const model = "gpt-4-0613";
+    const model = "gpt-3.5-turbo-0613";
     const messages = [
-      { role: "user", content: "Here you have an array. Each element is a subtopic of the previous: " + JSON.stringify(selectedItems) + "Give me an enumerated list of 5 subtopics of the last element I can study from. All should be subtopics of the last topic in the array, not of each other. Put each subtopic in new line, starting with a number, for example '1.', and no other characters or subtopics in the same line." },
+      { role: "user", content: topicGenerationPrompt },
     ]
     callOpenAIAPI(messages, model, addBranchingTopic, handleItemClick, selectedItems, addToCurrent)
   }
@@ -134,11 +136,12 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
 
 
   const handleItemClick = (item, columnIndex) => {
-    console.log("item: " + item + " columnIndex: " + columnIndex);
+    // set topic generation prompt
+    
     const newSelectedItems = [...selectedItems.slice(0, columnIndex), item];
     const branchingTopics = getBranchingTopics(newSelectedItems);
     const newColumns = [...columns.slice(0, columnIndex + 1), branchingTopics];
-     
+    setTopicGenerationPrompt("Here you have an array. Each element is a subtopic of the previous: " + JSON.stringify(newSelectedItems) + " Give me an enumerated list of 5 subtopics of the last element I can study from. All should be subtopics of the last topic in the array, not of each other. Put each subtopic in new line, starting with a number, for example '1.', and no other characters or subtopics in the same line.");
     dispatch(setSelectedItems(newSelectedItems));
     dispatch(setColumns(newColumns));
 };
@@ -173,80 +176,93 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
         {columns.map((column, index) => renderColumns(column, index))}
       </Grid>
       {messages.length > 0 && <ChatUI messages={messages} />}
-      <TextField
-        fullWidth
-        label="Add Topic"
-        variant="outlined"
-        value={newTopic}
-        onChange={(e) => {
-          setNewTopic(e.target.value);
-        }}
-      />
-      <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
-  <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center">
-  <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
-    {/* <Button
-      fullWidth
-      variant="contained"
-      color="primary"
-      sx={{ mt: 2, bgcolor: "#4CAF50", color: "#fff", width: "200px", "&:hover": { bgcolor: "#66BB6A" } }}
-      onClick={() => addBranchingTopic(newTopic,true)}
-    >
-      Add Below
-    </Button> */}
 
-    <Button
-      fullWidth
-      variant="contained"
-      color="primary"
-      sx={{ mt: 1, bgcolor: "#FFC107", color: "#fff", width: "200px", "&:hover": { bgcolor: "#FFCA28" } }}
-      onClick={() => addBranchingTopic(newTopic, false)}
-    >
-      Add Subtopic
-    </Button>
+      <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
+        <TextField
+          fullWidth
+          label="Add Topic"
+          variant="outlined"
+          value={newTopic}
+          onChange={(e) => {
+            setNewTopic(e.target.value);
+          }}
+        />
+            
+        <Button
+          fullWidth
+          variant="contained"
+          color="primary"
+          sx={{ mt: 1, mb: 2, bgcolor: "#FFC107", color: "#fff", width: "200px", "&:hover": { bgcolor: "#FFCA28" } }}
+          onClick={() => addBranchingTopic(newTopic, false)}
+        >
+          Add Subtopic
+        </Button>
+
+        <FormControl fullWidth variant="outlined">
+          <InputLabel
+            htmlFor="generation-prompt-input"
+            style={{ position: 'absolute', top: '-10px', backgroundColor: '#FFF', padding: '0 5px' }}
+          >
+            Generation Prompt
+          </InputLabel>
+          <TextField
+            id="generation-prompt-input"
+            fullWidth
+            variant="outlined"
+            value={topicGenerationPrompt}
+            onChange={(e) => {
+              setTopicGenerationPrompt(e.target.value);
+            }}
+            style={{ marginTop: '20px' }}
+          />
+        </FormControl>
+
+
+        <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center">
+          <Button
+            fullWidth
+            variant="contained"
+            color="primary"
+            sx={{ mt: 1, mr: 1, bgcolor: "#00b3ff", color: "#fff", width: "200px", "&:hover": { bgcolor: "#2196F3" } }}
+            onClick={() => { generateTopics(false) }}
+            disabled={selectedItems.length <= 0}
+          >
+            Generate Subtopic
+          </Button>
+          <Button
+            fullWidth
+            variant="contained"
+            color="primary"
+            sx={{ mt: 1, ml: 1, bgcolor: "#f5f5f5", color: "#0000a0", width: "200px", "&:hover": { bgcolor: "#DC3545", color: "#fff" } }}
+            onClick={() => { setTopicGenerationPrompt("Here you have an array. Each element is a subtopic of the previous: " + JSON.stringify(selectedItems) + " Give me an enumerated list of 5 subtopics of the last element I can study from. All should be subtopics of the last topic in the array, not of each other. Put each subtopic in new line, starting with a number, for example '1.', and no other characters or subtopics in the same line.") }}
+            disabled={selectedItems.length <= 0}
+          >
+            Reset Prompt
+          </Button>
         </Box>
-        <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
-    {/* <Button
-      fullWidth
-      variant="contained"
-      color="primary"
-      sx={{ mt: 2, ml:2, bgcolor: "#007BFF", color: "#fff", width: "200px", "&:hover": { bgcolor: "#2196F3" } }}
-      onClick={() => generateTopics(true)}
-    >
-      Generate Below
-    </Button> */}
-    <Button
-      fullWidth
-      variant="contained"
-      color="primary"
-      sx={{ mt: 1, ml:2, bgcolor: "#00b3ff", color: "#fff", width: "200px", "&:hover": { bgcolor: "#2196F3" } }}
-      onClick={() => {generateTopics(false)}}
-    >
-      Generate Subtopic
-    </Button>
-    </Box>
-  </Box>
-  
-  <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center">
-    <Button
-      fullWidth
-      variant="contained"
-      sx={{
-        mt: 2,
-        bgcolor: deleteMode ? "#DC3545" : "#f5f5f5",
-        color: deleteMode ? "#fff" : "#0000a0",
-        width: "200px",
-        "&:hover": {
-          bgcolor: "#DC3545",
-          color: "#fff",
-        },
-      }}
-      onClick={removeItem}
-    >
-      Delete
-    </Button>
-  </Box>
-</Box>
+        
+
+        <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center">
+          <Button
+            fullWidth
+            variant="contained"
+            sx={{
+              mt: 2,
+              bgcolor: deleteMode ? "#DC3545" : "#f5f5f5",
+              color: deleteMode ? "#fff" : "#0000a0",
+              width: "200px",
+              "&:hover": {
+                bgcolor: "#DC3545",
+                color: "#fff",
+              },
+            }}
+            onClick={removeItem}
+          >
+            Delete
+          </Button>
+        </Box>
+      </Box>
+
     </Container>
   );
 };
