@@ -19,16 +19,21 @@ const knowledgeTreeReducer = (state = initialState, action) => {
   switch (action.type) {
     case FETCH_KNOWLEDGE_TREE:
       return { ...state, knowledgeTree: action.payload };
-    case SET_COLUMNS:
-      return { ...state, columns: action.payload };
+    case SET_COLUMNS: {
+      const newColumns = action.payload; // Retrieve the new columns from the action payload
+      const newState = { // Create a new state object
+        ...state, // Copy the existing properties from the state object
+        columns: newColumns // Update the columns property with the newColumns
+      };
+      return newState; // Return the updated state object
+
+    }
     case SET_SELECTED_ITEMS:
       return { ...state, selectedItems: action.payload };
     case SET_MESSAGES:
     return { ...state, messages: action.payload };
     case ADD_TOPIC_TO_TREE: {
       const { id, parent } = action.payload;
-      console.log(action.payload);
-      console.log("parent: "  + parent);
       return { ...state, knowledgeTree: [...state.knowledgeTree, { id, parent }] }; //add new topic to end of array
     }
     case UPDATE_KNOWLEDGE_TREE: {

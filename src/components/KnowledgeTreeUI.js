@@ -7,6 +7,8 @@ import ChatUI from "./ChatUI";
 import { fetchKnowledgeTreeData } from "../utils/helpers";
 import { ADD_TOPIC_TO_TREE } from "../store/actions";
 import { terminate } from "firebase/firestore";
+import { callOpenAIAPIFunctions } from "./CallOpenAIAPIFunctions";
+import { callOpenAIAPI } from "./CallOpenAIAPI";
 
 
 const KnowledgeTreeUI = ({ knowledgeTree }) => {
@@ -58,8 +60,8 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
 
 
 
-  function addBranchingTopic(addToCurrent) {
-    if (newTopic === "") {
+  function addBranchingTopic(addedTopic, addToCurrent) {
+    if (addedTopic === "") {
       alert("Please enter a topic name");
       return;
     }
@@ -68,33 +70,39 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
     let currentTopic = selectedItems
       .slice(0, count)
       .reduce((acc, topicId) => acc.find((topic) => topic.id === topicId).branchingTopics, knowledgeTree);
-  
     // Check if the new topic already exists in the current column
-    const isTopicUnique = currentTopic.every((topic) => topic.id !== newTopic);
-    if (!isTopicUnique) {
-      alert("Topic already exists in the column");
-      return;
-    }
+    const isTopicUnique = currentTopic.every((topic) => (topic.id !== addedTopic));
+    // if (!isTopicUnique) {
+    //   alert("Topic already exists in the column");
+    //   return;
+    // }
   
-    currentTopic.push({ id: newTopic, branchingTopics: [] });
+    currentTopic.push({ id: addedTopic, branchingTopics: [] });
   
-    updateItemInColumns(addToCurrent ? 1 : 0);
-    return true;
+    updateItemInColumns(addedTopic, addToCurrent ? 1 : 0);
+
   }
   
   
-  function updateItemInColumns(subtract) {
+  function updateItemInColumns(addedTopic, subtract) {
     const columnIndex = selectedItems.length - subtract;
-    const newColumns = columns.map((column, index) =>
-      index === columnIndex ? [...column, newTopic] : column
-    );
-    
+    const newColumns = columns.map((column, index) => {
+      if (index === columnIndex) {
+        return [...column, addedTopic];
+      } else {
+        return column;
+      }
+    });
+    // console.log(newColumns);
     dispatch(setSelectedItems(selectedItems.slice(0)));
     dispatch(setColumns(newColumns));
   }
 
 
+  const test = () => {
 
+  }
+  
 
 
 
@@ -114,9 +122,19 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
   };
   
   
+  const generateTopics = async (addToCurrent) => {
+    const model = "gpt-4-0613";
+    const messages = [
+      { role: "user", content: "Here you have an array. Each element is a subtopic of the previous: " + JSON.stringify(selectedItems) + "Give me an enumerated list of 5 subtopics of the last element I can study from. All should be subtopics of the last topic in the array, not of each other. Put each subtopic in new line, starting with a number, for example '1.', and no other characters or subtopics in the same line." },
+    ]
+    callOpenAIAPI(messages, model, addBranchingTopic, handleItemClick, selectedItems, addToCurrent)
+  }
+  
+
 
 
   const handleItemClick = (item, columnIndex) => {
+    console.log("item: " + item + " columnIndex: " + columnIndex);
     const newSelectedItems = [...selectedItems.slice(0, columnIndex), item];
     const branchingTopics = getBranchingTopics(newSelectedItems);
     const newColumns = [...columns.slice(0, columnIndex + 1), branchingTopics];
@@ -131,14 +149,6 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
     selectedItems.pop();
   }
 
-  const handleAddTopic = (docId, addToCurrent) => {
-    dispatch({
-      type: 'ADD_TOPIC_TO_TREE',
-      payload: {
-        path: ['Python', 'asdfsaf'],
-      },
-    });
-  };
 
   const renderColumns = (items, columnIndex) => {
     if (items.length === 0) {
@@ -173,45 +183,70 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
         }}
       />
       <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
-        <Button
-          fullWidth
-          variant="contained"
-          color="primary"
-          sx={{ mt: 2, bgcolor: "#f5f5f5", color: "#0000a0", width: "200px", "&:hover": { bgcolor: "#007bff", color: "#ffffff" } }}
-          onClick={() => addBranchingTopic(true)}
-        >
-          Add Below
-        </Button>
+  <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center">
+  <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
+    {/* <Button
+      fullWidth
+      variant="contained"
+      color="primary"
+      sx={{ mt: 2, bgcolor: "#4CAF50", color: "#fff", width: "200px", "&:hover": { bgcolor: "#66BB6A" } }}
+      onClick={() => addBranchingTopic(newTopic,true)}
+    >
+      Add Below
+    </Button> */}
 
-        <Button
-          fullWidth
-          variant="contained"
-          color="primary"
-          sx={{ mt: 2, bgcolor: "#f5f5f5", color: "#0000a0", width: "200px", "&:hover": { bgcolor: "#007bff", color: "#ffffff" } }}
-          onClick={() => addBranchingTopic(false)}
-        >
-          Add To Next
-        </Button>
-
-        <Button
-          fullWidth
-          variant="contained"
-          sx={{
-            mt: 2,
-            bgcolor: deleteMode ? "red" : "#f5f5f5",
-            color: deleteMode ? "white" : "#0000a0",
-            width: "200px",
-            "&:hover": {
-              bgcolor: "red",
-              color: "#f5f5f5",
-            },
-          }}
-          onClick={removeItem}
-        >
-          Delete
-        </Button>
-        <Button onClick={ () => console.log(selectedItems)} >check columns</Button>
-      </Box>
+    <Button
+      fullWidth
+      variant="contained"
+      color="primary"
+      sx={{ mt: 1, bgcolor: "#FFC107", color: "#fff", width: "200px", "&:hover": { bgcolor: "#FFCA28" } }}
+      onClick={() => addBranchingTopic(newTopic, false)}
+    >
+      Add Subtopic
+    </Button>
+        </Box>
+        <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
+    {/* <Button
+      fullWidth
+      variant="contained"
+      color="primary"
+      sx={{ mt: 2, ml:2, bgcolor: "#007BFF", color: "#fff", width: "200px", "&:hover": { bgcolor: "#2196F3" } }}
+      onClick={() => generateTopics(true)}
+    >
+      Generate Below
+    </Button> */}
+    <Button
+      fullWidth
+      variant="contained"
+      color="primary"
+      sx={{ mt: 1, ml:2, bgcolor: "#00b3ff", color: "#fff", width: "200px", "&:hover": { bgcolor: "#2196F3" } }}
+      onClick={() => {generateTopics(false)}}
+    >
+      Generate Subtopic
+    </Button>
+    </Box>
+  </Box>
+  
+  <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center">
+    <Button
+      fullWidth
+      variant="contained"
+      sx={{
+        mt: 2,
+        bgcolor: deleteMode ? "#DC3545" : "#f5f5f5",
+        color: deleteMode ? "#fff" : "#0000a0",
+        width: "200px",
+        "&:hover": {
+          bgcolor: "#DC3545",
+          color: "#fff",
+        },
+      }}
+      onClick={removeItem}
+    >
+      Delete
+    </Button>
+  </Box>
+</Box>
     </Container>
   );
 };
