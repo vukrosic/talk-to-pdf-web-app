@@ -1,6 +1,10 @@
 import { setColumns, setMessages } from "../store/actions";
 
-export const callOpenAIAPIToGenerateLesson = async (messages, model, dispatch) => {
+export const callOpenAIAPIToGenerateLesson = async (messages, model, saveMessagesByPath) => {
+    if(messages.length > 8){
+      alert("Currently we only support up to 8 messages. Please remove some messages and try again.");
+      return;
+    }
     const apiKey = "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";
     const url = "https://api.openai.com/v1/chat/completions";
   
@@ -23,6 +27,8 @@ export const callOpenAIAPIToGenerateLesson = async (messages, model, dispatch) =
     let decoder = new TextDecoder();
     let partialResponse = '';
     let result = '';
+    // add a message that you will later append to
+    saveMessagesByPath("assistant", "", false);
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
@@ -41,10 +47,7 @@ export const callOpenAIAPIToGenerateLesson = async (messages, model, dispatch) =
               const content = parsedData.choices[0]?.delta?.content;
               if (content) {
                 result += content;
-                // update redux state
-                dispatch(setMessages([...messages, {role: "assistant", content: result}]));
-
-
+                saveMessagesByPath("assistant", result, true);
               }
             }
           }

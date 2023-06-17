@@ -26,6 +26,8 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
   const [showForm, setShowForm] = useState(false);
   const [messagesStore, setMessagesStore] = useState({});
   const [currentMessages, setCurrentMessages] = useState([]);
+  const [userConvPrompt, setUserConvPrompt] = useState([]);
+  const [model, setModel] = useState("gpt-3.5-turbo-0613");
 
   useEffect(() => {
     if (selectedItems.length > 0) {
@@ -41,7 +43,11 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
   
 
   useEffect(() => {
-    saveMessagesByPath(selectedItems, "assistant", lessonGenerationPrompt)
+    const path = selectedItems.join(" > ");
+    if (!(path in messagesStore)){
+      saveMessagesByPath("assistant", lessonGenerationPrompt, false)
+    }
+    setCurrentMessages(getMessagesByPath(selectedItems));
   }, [selectedItems]);
 
   useEffect(() => {
@@ -108,8 +114,8 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
     dispatch(setColumns(newColumns));
   }
 
-  function saveMessagesByPath(path, role, content) {
-    path = path.join(" > ");
+  function saveMessagesByPath(role, content, overwriteLastMessage = false) {
+    const path = selectedItems.join(" > ");
     if (!(path in messagesStore)) {
       setMessagesStore((prevMessagesStore) => ({
         ...prevMessagesStore,
@@ -119,9 +125,48 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
         }]
       }));
     } else {
-      console.log("Key already exists:", path);
+      if (overwriteLastMessage) {
+        setMessagesStore((prevMessagesStore) => {
+          const newMessagesStore = { ...prevMessagesStore };
+          const messages = newMessagesStore[path];
+          const lastMessage = messages[messages.length - 1];
+          if (lastMessage.role === role) {
+            const updatedMessages = messages.slice(0, messages.length - 1);
+            updatedMessages.push({ role: role, content: content });
+            newMessagesStore[path] = updatedMessages;
+          } else {
+            messages.push({ role: role, content: content });
+          }
+          return newMessagesStore;
+        });
+      } else {
+        setMessagesStore((prevMessagesStore) => {
+          const newMessagesStore = {...prevMessagesStore};
+          newMessagesStore[path] = [
+            ...newMessagesStore[path],
+            { role: role, content: content },
+          ];
+          return newMessagesStore;
+        });
+      }
     }
   }
+
+
+  function removeLastMessageByPath() {
+    console.log("??????????????????????????????????????????")
+    const path = selectedItems.join(" > ");
+    if (messagesStore != undefined && (path in messagesStore)) {
+      setMessagesStore((prevMessagesStore) => {
+        const newMessagesStore = { ...prevMessagesStore };
+        const messages = newMessagesStore[path];
+        messages.pop(); // Remove the last message from the array
+        return newMessagesStore;
+      });
+    }
+  }
+  
+  
   
 
   const getMessagesByPath = (path) => {
@@ -138,7 +183,7 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
   const test = () => {
 
     // console.log(JSON.stringify(selectedItems));
-    // callOpenAIAPIToGenerateLesson(messagesPyPath, "gpt-3.5-turbo-0613", setMessages);
+    // callOpenAIAPIToGenerateLesson(messagesPyPath, model, setMessages);
     // console.log(messagesStore)
   }
 
@@ -213,8 +258,7 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
   };
   
   function generateLesson() {
-    const model = "gpt-3.5-turbo-0613";
-    callOpenAIAPIToGenerateLesson(messages, model, dispatch);
+    callOpenAIAPIToGenerateLesson(currentMessages, model, saveMessagesByPath);
   }
 
   const removeItem = () => {
@@ -233,13 +277,18 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
   
   
   const generateTopics = async (addToCurrent) => {
-    const model = "gpt-3.5-turbo-0613";
     const messages = [
       { role: "user", content: topicGenerationPrompt },
     ]
     callOpenAIAPI(messages, model, addBranchingTopic, handleItemClick, selectedItems, addToCurrent)
   }
   
+
+  const addUserMessageAndCallOpenAIAPI = async () => {
+    const newCurrentMessages = [...currentMessages, { role: "user", content: userConvPrompt }];
+    callOpenAIAPIToGenerateLesson(newCurrentMessages, model, saveMessagesByPath);
+    saveMessagesByPath("user", userConvPrompt, false);
+  }
 
 
 
@@ -390,7 +439,7 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
 
         <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center">
           
-          <Button
+          {/* <Button
             fullWidth
             variant="contained"
             sx={{
@@ -406,32 +455,12 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
             onClick={test}
           >
             Test
-          </Button>
+          </Button> */}
 
 
         </Box>
 
       </Box>
-      {/* <FormControl fullWidth variant="outlined">
-          <InputLabel
-            htmlFor="generation-prompt-input"
-            style={{ position: 'absolute', top: '-10px', backgroundColor: '#FFF', padding: '0 5px' }}
-          >
-            Generation Prompt
-          </InputLabel>
-          <TextField
-            id="generation-prompt-input"
-            fullWidth
-            multiline
-            variant="outlined"
-            value={lessonGenerationPrompt}
-            onChange={(e) => {
-              setLessonGenerationPrompt(e.target.value);
-            }}
-            style={{ marginTop: '20px' }}
-          />
-         
-        </FormControl> */}
         <Button
             fullWidth
             variant="contained"
@@ -450,6 +479,54 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
             Generate Lesson
           </Button>
           {currentMessages !== null && currentMessages.length > 0 && <ChatUI messages={currentMessages} />}
+
+          <FormControl fullWidth variant="outlined" sx={{ mt: 8}}>
+          <InputLabel
+            htmlFor="generation-prompt-input"
+            style={{ position: 'absolute', top: '-10px', backgroundColor: '#FFF', padding: '0 5px' }}
+          >
+            Talk / Ask about the lesson
+          </InputLabel>
+          <TextField
+            id="generation-prompt-input"
+            fullWidth
+            multiline
+            variant="outlined"
+            value={userConvPrompt}
+            onChange={(e) => {
+              setUserConvPrompt(e.target.value);
+            }}
+            style={{ marginTop: '20px' }}
+          />
+         <Button
+            fullWidth
+            variant="contained"
+            color="primary"
+            sx={{ mt: 2, mr: 1, bgcolor: "#FFC107", color: "#fff", width: "200px", "&:hover": { bgcolor: "#FFCA28" } }}
+            onClick={addUserMessageAndCallOpenAIAPI}
+          >
+            Submit
+          </Button>
+          <Button
+            fullWidth
+            variant="contained"
+            color="primary"
+            sx={{
+              mt: 2,
+              bgcolor: deleteMode ? "#DC3545" : "#f5f5f5",
+              color: deleteMode ? "#fff" : "#0000a0",
+              width: "200px",
+              "&:hover": {
+                bgcolor: "#DC3545",
+                color: "#fff",
+              },
+            }}
+            onClick={removeLastMessageByPath}
+            >
+            Remove Last Message
+          </Button>
+        </FormControl>
+
     </Container>
   );
 };
