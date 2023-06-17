@@ -38,8 +38,6 @@ const knowledgeTreeReducer = (state = initialState, action) => {
     }
     case UPDATE_KNOWLEDGE_TREE: {
       const { knowledgeTree } = action.payload;
-      console.log("knowledgeTree");
-      console.log(knowledgeTree);
       return { ...state, knowledgeTree: knowledgeTree };
     }
     case DELETE_TOPIC_FROM_TREE: {

@@ -221,29 +221,28 @@ const ChatUI = ({ messages }) => {
   // change {messages.map((message, index) => ( to filteredMessages
   const filteredMessages = messages.filter((message) => message.role !== 'system');
   const [newMessage, setNewMessage] = useState('');
-  console.log("11111111111111111111111111");
-  const handleInputChange = (event) => {
-    setNewMessage(event.target.value);
-  };
+  // const handleInputChange = (event) => {
+  //   setNewMessage(event.target.value);
+  // };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const role = 'user'; // Assuming the new message is from the user
-    const content = newMessage;
+  // const handleSubmit = (event) => {
+  //   event.preventDefault();
+  //   const role = 'user'; // Assuming the new message is from the user
+  //   const content = newMessage;
 
-    // Create a new message object
-    const newMessageObj = {
-      role,
-      content,
-    };
+  //   // Create a new message object
+  //   const newMessageObj = {
+  //     role,
+  //     content,
+  //   };
 
-    // Update the messages prop with the new message
-    const updatedMessages = [...messages, newMessageObj];
-    // Perform any additional logic on the updated messages if needed
+  //   // Update the messages prop with the new message
+  //   const updatedMessages = [...messages, newMessageObj];
+  //   // Perform any additional logic on the updated messages if needed
 
-    console.log('New message:', newMessageObj);
-    setNewMessage(''); // Clear the input field after submitting
-  };
+  //   console.log('New message:', newMessageObj);
+  //   setNewMessage(''); // Clear the input field after submitting
+  // };
 
   return (
     <div>

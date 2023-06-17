@@ -12,6 +12,141 @@ const KnowledgeTreeWrapper = () => {
         "id": "Computer Science",
         "branchingTopics": [
           {
+            "id": "Programming Languages",
+            "branchingTopics": [
+              {
+                "id": "Python",
+                "branchingTopics": []
+              },
+              {
+                "id": "Javascript",
+                "branchingTopics": []
+              },
+              {
+                "id": "Java",
+                "branchingTopics": []
+              },
+              {
+                "id": "C++",
+                "branchingTopics": []
+              },
+              {
+                "id": "C#",
+                "branchingTopics": []
+              },
+              {
+                "id": "Ruby",
+                "branchingTopics": []
+              },
+              {
+                "id": "Go",
+                "branchingTopics": []
+              },
+              {
+                "id": "Swift",
+                "branchingTopics": []
+              },
+              {
+                "id": "PHP",
+                "branchingTopics": []
+              },
+              {
+                "id": "Rust",
+                "branchingTopics": []
+              },
+              {
+                "id": "TypeScript",
+                "branchingTopics": []
+              },
+              {
+                "id": "Kotlin",
+                "branchingTopics": []
+              },
+              {
+                "id": "Perl",
+                "branchingTopics": []
+              },
+              {
+                "id": "Haskell",
+                "branchingTopics": []
+              },
+              {
+                "id": "Scala",
+                "branchingTopics": []
+              },
+              {
+                "id": "Lua",
+                "branchingTopics": []
+              },
+              {
+                "id": "R",
+                "branchingTopics": []
+              },
+              {
+                "id": "Shell",
+                "branchingTopics": []
+              },
+              {
+                "id": "Objective-C",
+                "branchingTopics": []
+              },
+              {
+                "id": "MATLAB",
+                "branchingTopics": []
+              },
+              {
+                "id": "Dart",
+                "branchingTopics": []
+              },
+              {
+                "id": "Groovy",
+                "branchingTopics": []
+              },
+              {
+                "id": "VB.NET",
+                "branchingTopics": []
+              },
+              {
+                "id": "Elixir",
+                "branchingTopics": []
+              },
+              {
+                "id": "Julia",
+                "branchingTopics": []
+              },
+              {
+                "id": "COBOL",
+                "branchingTopics": []
+              },
+              {
+                "id": "Fortran",
+                "branchingTopics": []
+              },
+              {
+                "id": "Prolog",
+                "branchingTopics": []
+              },
+              {
+                "id": "Lisp",
+                "branchingTopics": []
+              },
+              {
+                "id": "Ada",
+                "branchingTopics": []
+              },
+              {
+                "id": "Scheme",
+                "branchingTopics": []
+              }
+            ],
+            "messages": [
+              {
+                "role": "assistant",
+                "content": "Here you have an array. Each element is a subtopic of the previous: ['Computer Science','Algorithms and Data Structures'] Generate a comprehensive, detailed, university level lesson about ['Algorithms and Data Structures'], while taking the into consideration the parent topics. Use markdown, bullet points, exampels, lists, and other formatting to make the lesson easy to read and understand."
+              }
+            ]
+          },
+          {
             "id": "Algorithms and Data Structures",
             "branchingTopics": [],
             "messages": [
