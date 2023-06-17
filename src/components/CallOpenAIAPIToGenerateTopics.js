@@ -42,8 +42,6 @@ export const callOpenAIAPI = async (messages, model, addBranchingTopic, handleIt
             if (parsedData.choices && parsedData.choices.length > 0) {
               const content = parsedData.choices[0]?.delta?.content;
               if (content) {
-                console.log(content);
-                console.log("1111111111111111111111");
                 result += content;
                 wholeResponse += content;
                 if (result.includes('\n')) { // If the result string has '\n'
@@ -63,7 +61,6 @@ export const callOpenAIAPI = async (messages, model, addBranchingTopic, handleIt
 
     // return to previously selected item
     handleItemClick(selectedItemsTemp[selectedItemsTemp.length - 1], selectedItems.length - 1);
-    console.log("wholeResponse:\n " + wholeResponse);
   };
   
   
@@ -72,8 +69,6 @@ export const callOpenAIAPI = async (messages, model, addBranchingTopic, handleIt
     addBranchingTopic(result, false);
     const lastSelectedItem = selectedItems[selectedItems.length - 1];
     const columnIndex = selectedItems.length - 1;
-    console.log("lastSelectedItem: " + lastSelectedItem);
-    console.log("columnIndex: " + columnIndex);
     if(columnIndex >= 0 && lastSelectedItem !== undefined)
       handleItemClick(lastSelectedItem, columnIndex);
   }

@@ -221,7 +221,7 @@ const ChatUI = ({ messages }) => {
   // change {messages.map((message, index) => ( to filteredMessages
   const filteredMessages = messages.filter((message) => message.role !== 'system');
   const [newMessage, setNewMessage] = useState('');
-
+  console.log("11111111111111111111111111");
   const handleInputChange = (event) => {
     setNewMessage(event.target.value);
   };

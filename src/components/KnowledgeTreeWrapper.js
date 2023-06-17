@@ -13,27 +13,63 @@ const KnowledgeTreeWrapper = () => {
         "branchingTopics": [
           {
             "id": "Algorithms and Data Structures",
-            "branchingTopics": []
+            "branchingTopics": [],
+            "messages": [
+              {
+                "role": "assistant",
+                "content": "Here you have an array. Each element is a subtopic of the previous: ['Computer Science','Algorithms and Data Structures'] Generate a comprehensive, detailed, university level lesson about ['Algorithms and Data Structures'], while taking the into consideration the parent topics. Use markdown, bullet points, exampels, lists, and other formatting to make the lesson easy to read and understand."
+              }
+            ]
           },
           {
             "id": "Computer Networks",
-            "branchingTopics": []
+            "branchingTopics": [],
+            "messages": [
+              {
+                "role": "assistant",
+                "content": "Here you have an array. Each element is a subtopic of the previous: ['Computer Science','Computer Networks'] Generate a comprehensive, detailed, university level lesson about ['Computer Networks'], while taking the into consideration the parent topics. Use markdown, bullet points, exampels, lists, and other formatting to make the lesson easy to read and understand."
+              }
+            ]
           },
           {
             "id": "Machine Learning, Artificial Intelligence & Robotics",
-            "branchingTopics": []
+            "branchingTopics": [],
+            "messages": [
+              {
+                "role": "assistant",
+                "content": "Here you have an array. Each element is a subtopic of the previous: ['Computer Science','Machine Learning, Artificial Intelligence & Robotics'] Generate a comprehensive, detailed, university level lesson about ['Machine Learning, Artificial Intelligence & Robotics'], while taking the into consideration the parent topics. Use markdown, bullet points, exampels, lists, and other formatting to make the lesson easy to read and understand."
+              }
+            ]
           },
           {
             "id": "Data Science & Big Data",
-            "branchingTopics": []
+            "branchingTopics": [],
+            "messages": [
+              {
+                "role": "assistant",
+                "content": "Here you have an array. Each element is a subtopic of the previous: ['Computer Science','Data Science & Big Data'] Generate a comprehensive, detailed, university level lesson about ['Data Science & Big Data'], while taking the into consideration the parent topics. Use markdown, bullet points, exampels, lists, and other formatting to make the lesson easy to read and understand."
+              }
+            ]
           },
           {
             "id": "Cyber Security",
-            "branchingTopics": []
+            "branchingTopics": [],
+            "messages": [
+              {
+                "role": "assistant",
+                "content": "Here you have an array. Each element is a subtopic of the previous: ['Computer Science','Cyber Security'] Generate a comprehensive, detailed, university level lesson about ['Cyber Security'], while taking the into consideration the parent topics. Use markdown, bullet points, exampels, lists, and other formatting to make the lesson easy to read and understand."
+              }
+            ]
           },
           {
             "id": "Software Development & Programming",
-            "branchingTopics": []
+            "branchingTopics": [],
+            "messages": [
+              {
+                "role": "assistant",
+                "content": "Here you have an array. Each element is a subtopic of the previous: ['Computer Science','Software Development & Programming'] Generate a comprehensive, detailed, university level lesson about ['Software Development & Programming'], while taking the into consideration the parent topics. Use markdown, bullet points, exampels, lists, and other formatting to make the lesson easy to read and understand."
+              }
+            ]
           }
         ]
       },
@@ -444,7 +480,6 @@ const KnowledgeTreeWrapper = () => {
         ]
       }
     ];
-    
 
     dispatch(fetchKnowledgeTree(knowledgeTreeData));
   }, [dispatch]);
