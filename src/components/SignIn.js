@@ -2,7 +2,7 @@ import { auth } from '../config/firebase';
 import { createUserWithEmailAndPassword, signInWithPopup, signOut, GoogleAuthProvider } from 'firebase/auth';
 import { useState } from 'react';
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { collection, addDoc, setDoc, doc } from 'firebase/firestore';
+import { collection, addDoc, setDoc, doc, getDoc } from 'firebase/firestore';
 import { db } from '../config/firebase';
 
 const provider = new GoogleAuthProvider();
@@ -16,43 +16,57 @@ function Auth() {
     console.log(auth?.currentUser?.email);
 
     const signIn = async () => {
-        try{
+        try {
             const userCredentials = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredentials.user;
             const docRef = doc(collection(db, 'users'), user.uid);
     
-            await setDoc(docRef, {
-                uid: user.uid,
-                email: user.email,
-                displayName: user.displayName,
-                providerId: user.providerId,
-                photoURL: user.photoURL,
-                freeTrial: 15
-            });
-        }
-        catch(error){
+            const docSnapshot = await getDoc(docRef);
+            if (!docSnapshot.exists()) {
+                // Account is created for the first time
+                const userData = {
+                    uid: user.uid,
+                    email: user.email,
+                    displayName: user.displayName,
+                    providerId: user.providerId,
+                    photoURL: user.photoURL,
+                    freeTrial: 15,
+                    knowledgeTree: '[ { "id": "Computer Science", "branchingTopics": [ { "id": "Programming Languages", "branchingTopics": [ { "id": "Python", "branchingTopics": [] }, { "id": "Javascript", "branchingTopics": [] } ] } ] } ]',
+                    messagesStore: ""
+                };
+                await setDoc(docRef, userData);
+            }
+        } catch (error) {
             console.log(error);
         }
     }
 
     const signInWithGoogle = async () => {
         try {
-            const userCredentials = await signInWithPopup(auth, provider);
+            const userCredentials = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredentials.user;
             const docRef = doc(collection(db, 'users'), user.uid);
     
-            await setDoc(docRef, {
-                uid: user.uid,
-                email: user.email,
-                displayName: user.displayName,
-                providerId: user.providerId,
-                photoURL: user.photoURL,
-                freeTrial: 10
-            });
+            const docSnapshot = await getDoc(docRef);
+            if (!docSnapshot.exists()) {
+                // Account is created for the first time
+                const userData = {
+                    uid: user.uid,
+                    email: user.email,
+                    displayName: user.displayName,
+                    providerId: user.providerId,
+                    photoURL: user.photoURL,
+                    freeTrial: 15,
+                    knowledgeTree: '[ { "id": "Computer Science", "branchingTopics": [ { "id": "Programming Languages", "branchingTopics": [ { "id": "Python", "branchingTopics": [] }, { "id": "Javascript", "branchingTopics": [] } ] } ] } ]',
+                    messagesStore: ""
+                };
+                await setDoc(docRef, userData);
+            } 
         } catch (error) {
             console.log(error);
         }
     };
+
 
     const signOut_ = async () => {
         try{

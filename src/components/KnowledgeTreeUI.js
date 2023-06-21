@@ -11,6 +11,9 @@ import { callOpenAIAPIFunctions } from "./CallOpenAIAPIFunctions";
 import { callOpenAIAPI } from "./CallOpenAIAPIToGenerateTopics";
 import { callOpenAIAPIToGenerateLesson } from "./CallOpenAIAPIToGenerateLesson";
 import { getMergedStatus } from "antd/es/_util/statusUtils";
+import { GetUserTreeDataFromDatabase } from "./GetUserTreeDataFromDatabase";
+import { auth, db } from '../config/firebase';
+import { collection, addDoc, setDoc, doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 
 
 const KnowledgeTreeUI = ({ knowledgeTree }) => {
@@ -28,6 +31,52 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
   const [currentMessages, setCurrentMessages] = useState([]);
   const [userConvPrompt, setUserConvPrompt] = useState([]);
   const [model, setModel] = useState("gpt-3.5-turbo-0613");
+  const [knowledgeTreeState, setKnowledgeTreeState] = useState(knowledgeTree);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+
+  // save messagesStore to db
+ // Load messages from the database when the component mounts or currentUser changes
+ useEffect(() => {
+  const loadMessages = async (userId) => {
+    // Load messages from the database
+    const userRef = doc(db, `users/${userId}`);
+    const loadedMessagesStore = await userRef.messagesStore; // Load from database
+
+    // Update the state only if there are messages in the database
+    if (loadedMessagesStore) {
+      setMessagesStore(JSON.parse(loadedMessagesStore));
+    }
+
+    setIsInitialLoad(false); // Set initial load to false after loading messages
+  };
+
+  const currentUser = auth?.currentUser;
+  if (!currentUser) return;
+
+  loadMessages(currentUser.uid);
+}, [auth?.currentUser]);
+
+// Save messages to the database when messagesStore changes and it's not the initial load
+useEffect(() => {
+  if (!messagesStore || isInitialLoad) return;
+
+  const currentUser = auth?.currentUser;
+  if (!currentUser) return;
+
+  const userRef = doc(db, `users/${currentUser.uid}`);
+  const stringifiedMessagesStore = JSON.stringify(messagesStore);
+
+  getDoc(userRef).then((docSnapshot) => {
+    if (docSnapshot.exists() && docSnapshot.data()) {
+      const { knowledgeTree } = docSnapshot.data() ?? {}; // Add optional chaining and a default value
+      // Perform necessary operations with knowledgeTree
+
+      updateDoc(userRef, { messagesStore: stringifiedMessagesStore });
+    }
+  });
+}, [messagesStore, isInitialLoad]);
+
+
 
   useEffect(() => {
     if (selectedItems.length > 0) {
@@ -40,7 +89,23 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
   
     dispatch(setColumns(newColumns));
   }, [knowledgeTree, dispatch]);
-  
+
+
+  useEffect(() => {
+    const fetchKnowledgeTreeData = async () => {
+      const currentUser = auth?.currentUser;
+      if (!currentUser) return;
+
+      const userRef = doc(db, `users/${currentUser.uid}`);
+      const userDocSnapshot = await getDoc(userRef);
+      if(!userDocSnapshot.exists()) return;
+      const userData = userDocSnapshot.data();
+      if(userData?.messagesStore !== undefined && userData?.messagesStore !== "")
+        setMessagesStore(JSON.parse(userData.messagesStore));
+    };
+    fetchKnowledgeTreeData();
+  }, [db]);
+
 
   useEffect(() => {
     const path = selectedItems.join(" > ");
@@ -74,6 +139,16 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
     return currentTopic.map((topic) => topic.id);
   }
 
+  // save knowledge tree in database on update
+  useEffect(() => {
+    if (!knowledgeTreeState) return;
+    const currentUser = auth?.currentUser;
+    if (!currentUser) return;
+    const userRef = doc(db, `users/${currentUser.uid}`);
+    const stringifiedKnowledgeTree = JSON.stringify(knowledgeTreeState);
+    updateDoc(userRef, { knowledgeTree: stringifiedKnowledgeTree });
+  }, [knowledgeTreeState]);
+
 
 
   function addBranchingTopic(addedTopic, addToCurrent) {
@@ -82,21 +157,33 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
       return;
     }
   
+    // add it to database
+    const feedbackRef = doc(db, "feedback/generated-topics");
+    var newTopic = selectedItems.join(" > ") + " > " + addedTopic;
+
+    updateDoc(feedbackRef, {
+      Topics: arrayUnion(newTopic)
+    });
+
     const count = addToCurrent ? selectedItems.length - 1 : selectedItems.length;
+  
     let currentTopic = selectedItems
       .slice(0, count)
       .reduce((acc, topicId) => acc.find((topic) => topic.id === topicId).branchingTopics, knowledgeTree);
-    // Check if the new topic already exists in the current column
+  
     const isTopicUnique = currentTopic.every((topic) => (topic.id !== addedTopic));
     if (!isTopicUnique) {
       alert("Topic already exists in the column");
       return;
     }
   
-    currentTopic.push({ id: addedTopic, branchingTopics: [], messages: [{role:"assistant",content:"Here you have an array. Each element is a subtopic of the previous: " + JSON.stringify([...selectedItems, addedTopic]) + " Generate a comprehensive, detailed, university level lesson about [\"" + addedTopic + "\"], while taking the into consideration the parent topics. Use markdown, bullet points, exampels, lists, and other formatting to make the lesson easy to read and understand."}] });
+    setKnowledgeTreeState(prevKnowledgeTree => {
+      const newKnowledgeTree = JSON.parse(JSON.stringify(prevKnowledgeTree));
+      currentTopic.push({ id: addedTopic, branchingTopics: [], messages: [{ role: "assistant", content: "Here you have an array." }] });
+      return newKnowledgeTree;
+    });
   
     updateItemInColumns(addedTopic, addToCurrent ? 1 : 0);
-
   }
   
   
@@ -154,17 +241,19 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
 
 
   function removeLastMessageByPath() {
-    console.log("??????????????????????????????????????????")
     const path = selectedItems.join(" > ");
     if (messagesStore != undefined && (path in messagesStore)) {
       setMessagesStore((prevMessagesStore) => {
         const newMessagesStore = { ...prevMessagesStore };
         const messages = newMessagesStore[path];
-        messages.pop(); // Remove the last message from the array
+        if (messages.length > 1) {
+          messages.pop(); // Remove the last message from the array
+        }
         return newMessagesStore;
       });
     }
   }
+  
   
   
   
@@ -174,83 +263,17 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
     if (formattedPath in messagesStore) {
       return messagesStore[formattedPath];
     } else {
-      console.log("Key does not exist:", formattedPath);
+      //console.log("Key does not exist:", formattedPath);
       return null; // or any default value you prefer
     }
   }
   
 
   const test = () => {
-
-    // console.log(JSON.stringify(selectedItems));
-    // callOpenAIAPIToGenerateLesson(messagesPyPath, model, setMessages);
-    // console.log(messagesStore)
+      console.log(messagesStore);
+    
   }
 
-  // function getMessagesForPath(selectedItems) {
-  //   let currentPath = "";
-  //   let messages = {};
-  
-  //   // Iterate over the selected items and build the path for each item.
-  //   for (let i = 0; i < selectedItems.length; i++) {
-  //     const item = selectedItems[i];
-  //     currentPath += item;
-      
-  //     // Save messages for the current path if available.
-  //     if (messagesByPath[currentPath]) {
-  //       messages = { ...messages, ...messagesByPath[currentPath] };
-  //     }
-      
-  //     // Add a separator (">") if there are more items.
-  //     if (i < selectedItems.length - 1) {
-  //       currentPath += " > ";
-  //     }
-  //   }
-  
-  //   return messages;
-  // }
-  
-
-  // function getMessagesByPath(path) {
-  //     let currentItem = null;
-    
-  //     for (let i=0; i < knowledgeTree.length; i++){
-  //       if (knowledgeTree[i].id === path[0]){
-  //           currentItem = knowledgeTree[i];
-  //           break;
-  //       }
-  //     }
-    
-  //     if (currentItem === null) return null;
-    
-  //     for (let i = 1; i < path.length; i++) {
-  //       let found = false;
-  //       for (let j=0; j < currentItem.branchingTopics.length; j++){
-  //         if (currentItem.branchingTopics[j].id === path[i]){
-  //             currentItem = currentItem.branchingTopics[j];
-  //             found = true;
-  //             break;
-  //         }
-  //       }
-    
-  //       if (!found) return null; 
-  //     }
-    
-  //     if (!currentItem.hasOwnProperty('messages')) {
-  //       console.log(selectedItems);
-  //       currentItem.messages = [
-  //         {
-  //           "role": "assistant",
-  //           "content": "Here you have an array. Each element is a subtopic of the previous: " + JSON.stringify([...path]) + " Generate a comprehensive, detailed, university level lesson about [\"" + path[path.length - 1] + "\"], while taking the into consideration the parent topics. Use markdown, bullet points, exampels, lists, and other formatting to make the lesson easy to read and understand."
-  //         }
-  //       ];
-  //     }
-    
-  //     return currentItem.messages;
-  //   }
-  
-  
-  
   
 
   const toggleFormVisibility = () => {
@@ -258,7 +281,7 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
   };
   
   function generateLesson() {
-    callOpenAIAPIToGenerateLesson(currentMessages, model, saveMessagesByPath);
+    callOpenAIAPIToGenerateLesson(currentMessages, model, saveMessagesByPath, selectedItems);
   }
 
   const removeItem = () => {
@@ -301,7 +324,7 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
     const branchingTopics = getBranchingTopics(newSelectedItems);
     const newColumns = [...columns.slice(0, columnIndex + 1), branchingTopics];
     setTopicGenerationPrompt("Here you have an array. Each element is a subtopic of the previous: " + JSON.stringify(newSelectedItems) + " Give me an enumerated list of 5 subtopics of the last element I can study from. All should be subtopics of the last topic in the array, not of each other. Put each subtopic in new line, starting with a number, for example '1.', and no other characters or subtopics in the same line.");
-    setLessonGenerationPrompt("Here you have an array. Each element is a subtopic of the previous: " + JSON.stringify(newSelectedItems) + " Generate a comprehensive, detailed, university level lesson about " + JSON.stringify(newSelectedItems[newSelectedItems.length - 1]) + ", while taking the into consideration the parent topics. Use markdown, bullet points, exampels, lists, and other formatting to make the lesson easy to read and understand.")
+    setLessonGenerationPrompt("Here you have an array. Each element is a subtopic of the previous: " + JSON.stringify(newSelectedItems) + " Generate a comprehensive, detailed, university level lesson about " + JSON.stringify(newSelectedItems[newSelectedItems.length - 1]) + ", while taking the into consideration the parent topics. Use markdown, bullet points, exampels, lists, code snippets if applicable and other formatting to make the lesson easy to read and understand.")
     // dispatch(setMessages(getMessagesByPath(newSelectedItems))) ;
     dispatch(setSelectedItems(newSelectedItems));
     dispatch(setColumns(newColumns));
@@ -343,6 +366,7 @@ const KnowledgeTreeUI = ({ knowledgeTree }) => {
           label="Add Topic"
           variant="outlined"
           value={newTopic}
+          sx={{ mt: 4}}
           onChange={(e) => {
             setNewTopic(e.target.value);
           }}

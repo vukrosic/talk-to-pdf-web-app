@@ -1,0 +1,533 @@
+Curriculum:
+
+Javascript Fundamentals
+
+Control Structures and Loops in JavaScript
+
+2.1: Variables (var, let, const)
+2.2: Data types (numbers, strings, boolean)
+2.3: Basic operators (+, -, *, /, %, <, >, <=, >=, ==, ===, !=, !==)
+2.4: Strings (concatenation, template literals)
+2.5: String methods (length, indexOf, slice, toUpperCase, toLowerCase)
+
+
+Variables and Data Types in JavaScript
+
+3.1: Control structures (if, else if, else)
+3.2: Logical operators (&&, ||, !)
+3.3: Loops (for, while)
+3.4: Arrays (creation, push, pop, shift, unshift, join)
+3.5: Functions (declaration, parameters, return)
+
+
+
+
+Objects and Scoping in JavaScript
+
+4.1: Objects (creation, accessing properties, adding properties)
+4.2: Object methods (defining and calling methods)
+4.3: Scope (global, function)
+4.4: Block-level scoping (let and const)
+
+
+Advanced JavaScript Concepts
+
+5.1: Iteration methods (forEach, map, filter, reduce)
+5.2: Anonymous functions and arrow functions
+5.3: Closures
+5.4: Array Destructuring
+5.5: Object Destructuring
+
++++++++++++++++++++++++++++++++++
+
+# Lesson: Variables (var, let, const)
+
+In JavaScript, variables are used to store data. In this lesson, we'll learn about the three different ways to declare variables in JavaScript: `var`, `let`, and `const`.
+
+## Declaration keywords
+
+There are three keywords you can use when declaring variables: 
+
+- `var`: a traditional way of declaring variables in JavaScript, available since the beginning of the language
+- `let`: a newer way of declaring variables, introduced in ECMAScript 6 (ES6)
+- `const`: used to declare constant variables, also introduced in ECMAScript 6 (ES6)
+
+## var
+
+The keyword `var` has a function scope, meaning it is limited to the function where it was declared. Let's see an example:
+
+```javascript
+function exampleFunction() {
+  var a = 10;
+  console.log(a);
+}
+
+exampleFunction(); // Output: 10
+console.log(a); // Error: a is not defined
+```
+
+In the code snippet above, the variable `a` is only available within the scope of the `exampleFunction` function. Trying to access it outside of the function will result in an error.
+
+However, if the `var` variable is declared outside any function, it becomes a global variable and can be accessed from anywhere:
+
+```javascript
+var globalA = 20;
+
+function exampleFunction() {
+  console.log(globalA);
+}
+
+exampleFunction(); // Output: 20
+console.log(globalA); // Output: 20
+```
+
+## let
+
+The keyword `let` has block scope, meaning that it is limited to the block (like an `if` statement or a `for` loop) in which it was declared. 
+
+```javascript
+function exampleFunction() {
+  for (let i = 0; i < 3; i++) {
+    console.log(i);
+  }
+  console.log(i); // Error: i is not defined
+}
+
+exampleFunction(); 
+// Output:
+// 0
+// 1
+// 2
+```
+
+In the code snippet above, the variable `i` is only available within the scope of the `for` loop. The `let` variable also helps to avoid accidentally redeclaring variables, which can lead to hard-to-find bugs.
+
+## const
+
+The keyword `const` is also block-scoped, just like `let`. However, unlike `let`, a `const` variable must be assigned a value when it's declared, and it cannot be reassigned. Since they cannot be changed, `const` variables are useful for storing values that will remain constant throughout your program.
+
+```javascript
+const pi = 3.14159;
+pi = 3.14; // Error: Assignment to constant variable
+```
+
+Keep in mind that if you use `const` to declare an object or an array, the contents can be modified, but the variable itself still cannot be reassigned:
+
+```javascript
+const myArray = [1, 2, 3];
+myArray.push(4); // OK
+myArray = [1, 2, 3, 4]; // Error: Assignment to constant variable
+
+const myObject = {a: 1, b: 2};
+myObject.c = 3; // OK
+myObject = {a: 1, b: 2, c: 3}; // Error: Assignment to constant variable
+```
+
+## Conclusion
+
+In this lesson, we've learned about the three ways to declare variables in JavaScript: `var`, `let`, and `const`. Remember to choose the appropriate keyword for your needs, taking into account the scope and if the variable's value will change or remain constant throughout your script. As a general rule, it's a good practice to use `const` as much as possible, and use `let` when you need to change the variable's value later in your code. `var` is still valid, but it's best to avoid it and use `let` or `const` instead since they provide better scoping and help avoid bugs.
+
+
+
+
+
+
+
+
+
+
+
+2.
+
+
+
+
+
+
+# Lesson: Data Types in JavaScript
+
+## Introduction
+
+In JavaScript, data types are an important concept to understand as they define what type of value a variable can hold. There are three primary primitive data types in JavaScript: numbers, strings, and booleans. 
+
+## Numbers
+
+Numbers are a data type used to represent numerical values. They can be integers or floating-point numbers. Here are some important things to know about numbers in JavaScript:
+
+- Numbers can be positive, negative, or zero.
+- Numbers can be represented in either decimal (base 10), hexadecimal (base 16), octal (base 8) or binary (base 2) format.
+- There is no separate data type for integers in JavaScript. All numbers are stored as floating-point numbers.
+
+Here are some examples of how to work with numbers in JavaScript:
+
+```javascript
+let num1 = 5; // integer
+let num2 = 3.14; // floating-point number
+let num3 = 0xFF; // hexadecimal number
+let num4 = 0o10; // octal number
+let num5 = 0b1010; // binary number
+
+console.log(num1); // 5
+console.log(num2); // 3.14
+console.log(num3); // 255 (0xFF in decimal)
+console.log(num4); // 8 (0o10 in decimal)
+console.log(num5); // 10 (0b1010 in decimal)
+```
+
+## Strings
+
+Strings are a data type that represents text. They are enclosed in quotes - either single or double quotes. Here are some important things to know about strings in JavaScript:
+
+- Strings are immutable, meaning that once they are created, their contents cannot be changed.
+- Strings can be concatenated (joined) with the `+` operator.
+
+Here are some examples of how to work with strings in JavaScript:
+
+```javascript
+let str1 = 'hello'; // single quotes
+let str2 = "world"; // double quotes
+let str3 = `hello ${str2}`; // template literals using backticks
+
+console.log(str1 + ' ' + str2); // "hello world"
+console.log(str3); // "hello world"
+```
+
+## Booleans
+
+Booleans are a data type used to represent logical values. They can either be true or false. Here are some important things to know about booleans in JavaScript:
+
+- They are typically used as part of a condition in an `if` statement or a loop.
+- Booleans can be created by using comparison operators such as `==`, `>`, `<`, `!=`, `!`, etc.
+
+Here are some examples of how to work with booleans in JavaScript:
+
+```javascript
+let bool1 = true;
+let bool2 = false;
+let num1 = 5;
+let num2 = 10;
+
+console.log(num1 > num2); // false
+console.log(num1 != num2); // true
+console.log(bool1 && bool2); // false
+console.log(bool1 || bool2); // true
+``` 
+
+## Conclusion
+
+In this lesson, we covered the three primary primitive data types in JavaScript: numbers, strings, and booleans. Hopefully, this has given you an understanding of how to work with these data types in your JavaScript code.
+
+
+
+
+
+
+
+
+
+
+
+
+3.
+
+
+
+
+
+
+
+
+
+
+# Lesson on Basic Operators in JavaScript
+
+## Introduction
+
+In this lesson, we'll be covering basic operators in JavaScript. These operators are fundamental in programming and allow us to perform mathematical and comparison operations. The operators we will be covering are:
+
+- Addition (+)
+- Subtraction (-)
+- Multiplication (*)
+- Division (/)
+- Modulus/Remainder (%)
+- Less than (<)
+- Greater than (>)
+- Less than or equal to (<=)
+- Greater than or equal to (>=)
+- Equals (==)
+- Strict equals (===)
+- Not equal (!=)
+- Strict not equal (!==)
+
+
+## Arithmetic Operators
+
+- The **addition** operator (+) adds two values together.
+	```
+	let num1 = 5;
+	let num2 = 10;
+	let sum = num1 + num2; // 15
+	```
+- The **subtraction** operator (-) subtracts one value from another.
+	```
+	let num1 = 10;
+	let num2 = 5;
+	let difference = num1 - num2; // 5
+	```
+- The **multiplication** operator (*) multiplies two values.
+	```
+	let num1 = 5;
+	let num2 = 10;
+	let product = num1 * num2; // 50
+	```
+- The **division** operator (/) divides one value by another.
+	```
+	let num1 = 10;
+	let num2 = 5;
+	let quotient = num1 / num2; // 2
+	```
+- The **modulus** operator (%) gives the remainder of one value divided by another.
+	```
+	let num1 = 10;
+	let num2 = 3;
+	let remainder = num1 % num2; // 1
+	```
+
+## Comparison Operators
+
+- The **less than** operator (<) checks if one value is less than another.
+	```
+	let num1 = 5;
+	let num2 = 10;
+	let lessThan = num1 < num2; // true
+	```
+- The **greater than** operator (>) checks if one value is greater than another.
+	```
+	let num1 = 10;
+	let num2 = 5;
+	let greaterThan = num1 > num2; // true
+	```
+- The **less than or equal to** operator (<=) checks if one value is less than or equal to another.
+	```
+	let num1 = 5;
+	let num2 = 5;
+	let lessThanOrEqual = num1 <= num2; // true
+	```
+- The **greater than or equal to** operator (>=) checks if one value is greater than or equal to another.
+	```
+	let num1 = 10;
+	let num2 = 10;
+	let greaterThanOrEqual = num1 >= num2; // true
+	```
+
+## Equality Operators
+
+- The **equals** operator (==) checks if two values are equal, but does not check the data type.
+	```
+	let num1 = 5;
+	let num2 = "5";
+	let equals = num1 == num2; // true
+	```
+- The **strict equals** operator (===) checks if two values are equal, including the data type.
+	```
+	let num1 = 5;
+	let num2 = "5";
+	let strictEquals = num1 === num2; // false
+	```
+- The **not equal** operator (!=) checks if two values are not equal, but does not check the data type.
+	```
+	let num1 = 5;
+	let num2 = "5";
+	let notEqual = num1 != num2; // false
+	```
+- The **strict not equal** operator (!==) checks if two values are not equal, including the data type.
+	```
+	let num1 = 5;
+	let num2 = "5";
+	let strictNotEqual = num1 !== num2; // true
+	```
+
+## Conclusion
+
+Now that you have learned the basic operators in JavaScript, you can start using them to perform mathematical and comparison operations in your code. Remember to always test your code to ensure that it's functioning as expected. Happy coding!
+
+
+
+
+
+
+
+
+
+
+4.
+
+
+
+
+
+
+
+
+
+
+
+
+# Lesson: Strings (concatenation, template literals)
+
+## Learning Objective
+- Demonstrate how to use strings in JavaScript
+- Define and apply string concatenation
+- Define and apply template literals
+
+## Introduction to Strings
+In JavaScript, a string is a sequence of characters enclosed in single or double quotes. 
+
+```js
+let myName = 'John';
+let myAge = "30";
+```
+
+In the example above, `myName` is a string that contains the value "John" and `myAge` is a string that contains the value "30". 
+
+## Concatenation
+Concatenation is the process of combining two or more strings into a single string. It is done using the `+` operator. 
+
+```js
+let firstName = 'John';
+let lastName = 'Doe';
+let fullName = firstName + ' ' + lastName;
+console.log(fullName); // output: John Doe
+```
+
+In the example above, `fullName` is a string that contains the concatenated values of `firstName` and `lastName`.
+
+### Exercise
+- Declare two variables `firstName` and `lastName` and assign them your first and last names respectively.
+- Concatenate these two strings into a variable called `fullName` and print it to the console.
+- In a new line, concatenate `fullName` with the string "is awesome" and print it to the console.
+
+## Template literals
+A template literal is a string that allows embedded expressions. It is enclosed in backticks (` `) instead of single or double quotes. 
+
+```js
+let firstName = 'John';
+let lastName = 'Doe';
+let fullName = `${firstName} ${lastName}`;
+console.log(fullName); // output: John Doe
+```
+
+In the example above, the variables `firstName` and `lastName` are "embedded" into the `fullName` string using the `${}` syntax.
+
+Template literals also allow multi-line strings and expressions. 
+
+```js
+let firstName = 'John';
+let lastName = 'Doe';
+let age = 30;
+let bio = `
+  Name: ${firstName} ${lastName}
+  Age: ${age}
+  ${age > 18 ? 'You are an adult' : 'You are a minor'}
+`;
+console.log(bio); 
+/* output: 
+Name: John Doe
+Age: 30
+You are an adult
+*/
+```
+
+In the example above, the template literal is used to define a multi-line string containing the variables `firstName`, `lastName`, `age`, and the ternary expression that outputs if the `age` is greater than 18.
+
+### Exercise
+- Declare a variable `myName` and assign it your name.
+- Declare a variable `myAge` and assign it your age.
+- Declare a variable `myProfession` and assign it your profession.
+- Use a template literal to concatenate these variables into a string that reads, "My name is <myName>, I am <myAge> years old and I work as a <myProfession>."
+- Print the resulting string to the console.
+
+## Conclusion
+In this lesson, we covered the basics of strings in JavaScript and how to concatenate strings using the `+` operator and template literals using the `${}` syntax. Remember that strings are a fundamental data type in JavaScript, so mastering them is essential for understanding how JavaScript works.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+5.
+
+
+
+
+
+
+
+
+# String Methods
+In JavaScript, strings are objects and come with a variety of built-in methods that can be used to manipulate and access the data within them. In this lesson, we'll cover some of the most commonly used string methods:
+
+- `length`
+- `indexOf()`
+- `slice()`
+- `toUpperCase()`
+- `toLowerCase()`
+
+## The length Method
+
+The `length` property returns the number of characters in a string. The property is read-only and cannot be changed.
+
+```javascript
+const str = "Hello, world!";
+console.log(str.length); // Output: 13
+```
+
+## The indexOf Method
+
+The `indexOf()` method returns the index of the first occurrence of a specified value/string within a string. If the value is not found, it returns -1.
+
+```javascript
+const str = "The quick brown fox jumps over the lazy dog";
+console.log(str.indexOf("fox")); // Output: 16
+console.log(str.indexOf("cat")); // Output: -1
+```
+
+## The slice Method
+
+The `slice()` method returns a portion of a string starting from the specified index and ending at the specified index (not included). If only one index is specified, the method slices from that index to the end of the string.
+
+```javascript
+const str = "The quick brown fox jumps over the lazy dog";
+console.log(str.slice(16, 19)); // Output: fox
+console.log(str.slice(4)); // Output: quick brown fox jumps over the lazy dog
+console.log(str.slice(-4)); // Output: dog
+console.log(str.slice(-8, -5)); // Output: lazy
+```
+
+## The toUpperCase and toLowerCase Methods
+
+The `toUpperCase()` and `toLowerCase()` methods return a new string with all the characters in either upper or lower case, respectively.
+
+```javascript
+const str = "The quick brown fox jumps over the lazy dog";
+console.log(str.toUpperCase()); // Output: THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG
+console.log(str.toLowerCase()); // Output: the quick brown fox jumps over the lazy dog
+```
+
+## Recap
+
+- `length` returns the number of characters in a string.
+- `indexOf()` returns the index of the first occurrence of a specified value/string within a string.
+- `slice()` returns a portion of a string starting from the specified index and ending at the specified index (not included).
+- `toUpperCase()` and `toLowerCase()` return a new string with all the characters in either upper or lower case, respectively.

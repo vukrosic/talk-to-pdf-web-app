@@ -19,60 +19,62 @@ import { Provider } from "react-redux";
 import KnowledgeTreeWrapper from "./components/KnowledgeTreeWrapper";
 import store from "./store";
 import TestingEnv from './components/TestingEnv';
+import GetUserTreeDataFromDatabase from './components/GetUserTreeDataFromDatabase';
+import LessonUI from './components/courses/LessonUI';
 
 
 function Navigation({ user }) {
-  const readData = async () => {
-    try {
-      const docRef = doc(db, "users", user.uid);
-      const docSnap = await getDoc(docRef);
-      if(docSnap.exists()) { 
-        console.log("Document data:", docSnap.data().stripeId);
-        return docSnap.data().stripeId;
-      } else {
-        console.log("Document does not exist");
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const readData = async () => {
+  //   try {
+  //     const docRef = doc(db, "users", user.uid);
+  //     const docSnap = await getDoc(docRef);
+  //     if(docSnap.exists()) { 
+  //       console.log("Document data:", docSnap.data().stripeId);
+  //       return docSnap.data().stripeId;
+  //     } else {
+  //       console.log("Document does not exist");
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   
-  async function handleManageBilling() {
-    const baseUrl = `${window.location.protocol}//${window.location.host}`;
+  // async function handleManageBilling() {
+  //   const baseUrl = `${window.location.protocol}//${window.location.host}`;
 
-    const stripeID = await readData();
-    try {
-      const stripe = Stripe('sk_test_51MBmbKKEQZnOTK3DkJ9kd4xmMSBldLb2aPXhJzmKuIkiL9dGWCka6JezH1dRHDJS5sOKr0VlsW3pWVo8DX4emhT8002KxkxVKj');
+  //   const stripeID = await readData();
+  //   try {
+  //     const stripe = Stripe('sk_test_51MBmbKKEQZnOTK3DkJ9kd4xmMSBldLb2aPXhJzmKuIkiL9dGWCka6JezH1dRHDJS5sOKr0VlsW3pWVo8DX4emhT8002KxkxVKj');
   
-      // Create a customer portal session
-      const session = await stripe.billingPortal.sessions.create({
-        customer: stripeID,
-        return_url: baseUrl,
-      });
+  //     // Create a customer portal session
+  //     const session = await stripe.billingPortal.sessions.create({
+  //       customer: stripeID,
+  //       return_url: baseUrl,
+  //     });
   
-      // Redirect the user to the customer portal session
-      window.location = session.url;
-    } catch (err) {
-      console.error(err);
-      alert('Error creating customer portal session');
-    }
-  }
+  //     // Redirect the user to the customer portal session
+  //     window.location = session.url;
+  //   } catch (err) {
+  //     console.error(err);
+  //     alert('Error creating customer portal session');
+  //   }
+  // }
 
   // State for menu anchor element
-  const [anchorEl, setAnchorEl] = useState(null);
+  // const [anchorEl, setAnchorEl] = useState(null);
 
-  // Open the menu
-  const handleMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+  // // Open the menu
+  // const handleMenuOpen = (event) => {
+  //   setAnchorEl(event.currentTarget);
+  // };
 
-  // Close the menu
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
+  // // Close the menu
+  // const handleMenuClose = () => {
+  //   setAnchorEl(null);
+  // };
 
-  const userisPremium = usePremiumStatus(user);
+  // const userisPremium = usePremiumStatus(user);
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -80,22 +82,16 @@ function Navigation({ user }) {
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Personal Teacher GPT
           </Typography>
-        {/* Main Navigation Buttons */}
-          {/* <Button color="inherit" onClick={handleMenuOpen}>
-            Languages 🔽
-          </Button> */}
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleMenuClose}
-          >
-            <MenuItem component={Link} to="/python" onClick={handleMenuClose}>
-              Python
-            </MenuItem>
-          </Menu>
+
+            <Button color="inherit" component={Link} to="/"/>
+            <Button color="inherit" component={Link} to="/python"/>
+            <Button color="inherit" component={Link} to="/feedback"/>
+            <Button color="inherit" component={Link} to="/about"/>
+            <Button color="inherit" component={Link} to="/knowledgeTree"/>
+
           {user ? (
             <div>
-              {userisPremium ? (
+              {/* {userisPremium ? (
                 <div>
                 <Button color="inherit" onClick={handleManageBilling}>
                   Manage subscription 
@@ -117,13 +113,22 @@ function Navigation({ user }) {
                   Sign Out 
                 </Button>
               </div>
-              )}
+              )} */}
+              <Button color="inherit" onClick={signOut}>
+                  Sign Out 
+              </Button>
               
             </div>
           ) : (
-            <Button color="inherit" component={Link} to="/signin">
-              Sign In
-            </Button>
+            <div>
+              <Button color="inherit" component={Link} to="/"> Home </Button>
+              <Button color="inherit" component={Link} to="/about"> About </Button>
+              <Button color="inherit" component={Link} to="/feedback"> Feedback </Button>
+              <Button color="inherit" component={Link} to="/knowledgeTree"> Knowledge Tree </Button>
+              <Button color="inherit" component={Link} to="/signin">
+                Sign In
+              </Button>
+            </div>
           )}
         </Toolbar>
       </AppBar>
@@ -156,12 +161,13 @@ function App() {
         <Router>
           <Navigation user={user} />
           <Routes>
-            <Route path="/" element={<KnowledgeTreeWrapper />} />
+            <Route path="/" element={<LessonUI />} />
             {/* <Route path="/" element={ <TestingEnv />} /> */}
             <Route path="/python" element={<Python />} />
             <Route path="/signin" element={user ? <Navigate to="/" /> : <SignIn />} />
             <Route path="/feedback" element={<Feedback />} />
             <Route path="/about" element={<About />} />
+            <Route path="/knowledgeTree" element={<KnowledgeTreeWrapper />} />
           </Routes>
         </Router>
       )}

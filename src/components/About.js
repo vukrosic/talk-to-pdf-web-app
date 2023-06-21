@@ -26,12 +26,25 @@ const About = () => {
           About
         </Typography>
         <Box >
-          <Typography paragraph>
-            Our website offers a unique, chat-based learning experience focused
-            on programming. You can find various lessons, code
-            snippets, quizzes, and debugging exercises to improve your coding
-            skills.
-          </Typography>
+        <Typography
+        variant="body1"
+        gutterBottom
+        sx={{
+          bgcolor: "#fff",
+          width: "70%",
+          display: "flex",
+          justifyContent: "center",
+          borderRadius: "5px",
+          alignSelf: "center",
+          margin: "0 auto",
+          padding: "1rem",
+          border: "1px solid #333",
+          mt: 4,
+          mb: 4
+        }}
+      >
+          Learn with ChatGPT. Generate and explore topics, subtopics and lessons, and engage with ChatGPT in a conversation about the lesson you are learning.
+        </Typography>
           <br></br>
           <Typography variant="h5" component="h2">
             Contact Us

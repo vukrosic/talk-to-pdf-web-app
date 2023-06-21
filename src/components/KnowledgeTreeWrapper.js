@@ -1,627 +1,261 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { fetchKnowledgeTree } from "../store/actions";
 import KnowledgeTreeContainer from "./KnowledgeTreeContainer";
+import { auth, db } from '../config/firebase';
+import { collection, addDoc, setDoc, doc, getDoc, updateDoc } from 'firebase/firestore';
+import {
+  Grid,
+  Container,
+  Button,
+  TextField,
+  Box,
+  FormControl,
+  InputLabel,
+  Typography
+} from "@mui/material";
 
 const KnowledgeTreeWrapper = () => {
   const dispatch = useDispatch();
+  // const [knowledgeTree, setKnowledgeTree] = useState(null);
 
-  useEffect(() => {
-    const knowledgeTreeData = [
+
+ useEffect(() => {
+const knowledgeTreeData = [
       {
-        "id": "Computer Science",
-        "branchingTopics": [
-          {
-            "id": "Programming Languages",
-            "branchingTopics": [
-              {
-                "id": "Python",
-                "branchingTopics": []
-              },
-              {
-                "id": "Javascript",
-                "branchingTopics": []
-              },
-              {
-                "id": "Java",
-                "branchingTopics": []
-              },
-              {
-                "id": "C++",
-                "branchingTopics": []
-              },
-              {
-                "id": "C#",
-                "branchingTopics": []
-              },
-              {
-                "id": "Ruby",
-                "branchingTopics": []
-              },
-              {
-                "id": "Go",
-                "branchingTopics": []
-              },
-              {
-                "id": "Swift",
-                "branchingTopics": []
-              },
-              {
-                "id": "PHP",
-                "branchingTopics": []
-              },
-              {
-                "id": "Rust",
-                "branchingTopics": []
-              },
-              {
-                "id": "TypeScript",
-                "branchingTopics": []
-              },
-              {
-                "id": "Kotlin",
-                "branchingTopics": []
-              },
-              {
-                "id": "Perl",
-                "branchingTopics": []
-              },
-              {
-                "id": "Haskell",
-                "branchingTopics": []
-              },
-              {
-                "id": "Scala",
-                "branchingTopics": []
-              },
-              {
-                "id": "Lua",
-                "branchingTopics": []
-              },
-              {
-                "id": "R",
-                "branchingTopics": []
-              },
-              {
-                "id": "Shell",
-                "branchingTopics": []
-              },
-              {
-                "id": "Objective-C",
-                "branchingTopics": []
-              },
-              {
-                "id": "MATLAB",
-                "branchingTopics": []
-              },
-              {
-                "id": "Dart",
-                "branchingTopics": []
-              },
-              {
-                "id": "Groovy",
-                "branchingTopics": []
-              },
-              {
-                "id": "VB.NET",
-                "branchingTopics": []
-              },
-              {
-                "id": "Elixir",
-                "branchingTopics": []
-              },
-              {
-                "id": "Julia",
-                "branchingTopics": []
-              },
-              {
-                "id": "COBOL",
-                "branchingTopics": []
-              },
-              {
-                "id": "Fortran",
-                "branchingTopics": []
-              },
-              {
-                "id": "Prolog",
-                "branchingTopics": []
-              },
-              {
-                "id": "Lisp",
-                "branchingTopics": []
-              },
-              {
-                "id": "Ada",
-                "branchingTopics": []
-              },
-              {
-                "id": "Scheme",
-                "branchingTopics": []
-              }
-            ],
-            "messages": [
-              {
-                "role": "assistant",
-                "content": "Here you have an array. Each element is a subtopic of the previous: ['Computer Science','Algorithms and Data Structures'] Generate a comprehensive, detailed, university level lesson about ['Algorithms and Data Structures'], while taking the into consideration the parent topics. Use markdown, bullet points, exampels, lists, and other formatting to make the lesson easy to read and understand."
-              }
-            ]
-          },
-          {
-            "id": "Algorithms and Data Structures",
-            "branchingTopics": [],
-            "messages": [
-              {
-                "role": "assistant",
-                "content": "Here you have an array. Each element is a subtopic of the previous: ['Computer Science','Algorithms and Data Structures'] Generate a comprehensive, detailed, university level lesson about ['Algorithms and Data Structures'], while taking the into consideration the parent topics. Use markdown, bullet points, exampels, lists, and other formatting to make the lesson easy to read and understand."
-              }
-            ]
-          },
-          {
-            "id": "Computer Networks",
-            "branchingTopics": [],
-            "messages": [
-              {
-                "role": "assistant",
-                "content": "Here you have an array. Each element is a subtopic of the previous: ['Computer Science','Computer Networks'] Generate a comprehensive, detailed, university level lesson about ['Computer Networks'], while taking the into consideration the parent topics. Use markdown, bullet points, exampels, lists, and other formatting to make the lesson easy to read and understand."
-              }
-            ]
-          },
-          {
-            "id": "Machine Learning, Artificial Intelligence & Robotics",
-            "branchingTopics": [],
-            "messages": [
-              {
-                "role": "assistant",
-                "content": "Here you have an array. Each element is a subtopic of the previous: ['Computer Science','Machine Learning, Artificial Intelligence & Robotics'] Generate a comprehensive, detailed, university level lesson about ['Machine Learning, Artificial Intelligence & Robotics'], while taking the into consideration the parent topics. Use markdown, bullet points, exampels, lists, and other formatting to make the lesson easy to read and understand."
-              }
-            ]
-          },
-          {
-            "id": "Data Science & Big Data",
-            "branchingTopics": [],
-            "messages": [
-              {
-                "role": "assistant",
-                "content": "Here you have an array. Each element is a subtopic of the previous: ['Computer Science','Data Science & Big Data'] Generate a comprehensive, detailed, university level lesson about ['Data Science & Big Data'], while taking the into consideration the parent topics. Use markdown, bullet points, exampels, lists, and other formatting to make the lesson easy to read and understand."
-              }
-            ]
-          },
-          {
-            "id": "Cyber Security",
-            "branchingTopics": [],
-            "messages": [
-              {
-                "role": "assistant",
-                "content": "Here you have an array. Each element is a subtopic of the previous: ['Computer Science','Cyber Security'] Generate a comprehensive, detailed, university level lesson about ['Cyber Security'], while taking the into consideration the parent topics. Use markdown, bullet points, exampels, lists, and other formatting to make the lesson easy to read and understand."
-              }
-            ]
-          },
-          {
-            "id": "Software Development & Programming",
-            "branchingTopics": [],
-            "messages": [
-              {
-                "role": "assistant",
-                "content": "Here you have an array. Each element is a subtopic of the previous: ['Computer Science','Software Development & Programming'] Generate a comprehensive, detailed, university level lesson about ['Software Development & Programming'], while taking the into consideration the parent topics. Use markdown, bullet points, exampels, lists, and other formatting to make the lesson easy to read and understand."
-              }
-            ]
-          }
-        ]
+        "id": "Python",
+        "branchingTopics": []
       },
       {
-        "id": "Mathematics",
-        "branchingTopics": [
-          {
-            "id": "Calculus & Analysis",
-            "branchingTopics": []
-          },
-          {
-            "id": "Algebra",
-            "branchingTopics": []
-          },
-          {
-            "id": "Geometry & Topology",
-            "branchingTopics": []
-          },
-          {
-            "id": "Probability & Statistics",
-            "branchingTopics": []
-          },
-          {
-            "id": "Discrete Mathematics",
-            "branchingTopics": []
-          },
-          {
-            "id": "Mathematical Logic",
-            "branchingTopics": []
-          }
-        ]
+        "id": "Javascript",
+        "branchingTopics": []
       },
       {
-        "id": "Business and Management",
-        "branchingTopics": [
-          {
-            "id": "Marketing & Advertising",
-            "branchingTopics": []
-          },
-          {
-            "id": "Leadership & Management Skills",
-            "branchingTopics": []
-          },
-          {
-            "id": "Finance & Accounting",
-            "branchingTopics": []
-          },
-          {
-            "id": "Entrepreneurship",
-            "branchingTopics": []
-          },
-          {
-            "id": "Business Law",
-            "branchingTopics": []
-          },
-          {
-            "id": "Business Ethics",
-            "branchingTopics": []
-          }
-        ]
+        "id": "Java",
+        "branchingTopics": []
       },
       {
-        "id": "Physics",
-        "branchingTopics": [
-          {
-            "id": "Mechanics & Thermodynamics",
-            "branchingTopics": []
-          },
-          {
-            "id": "Electromagnetism & Optics",
-            "branchingTopics": []
-          },
-          {
-            "id": "Quantum Mechanics",
-            "branchingTopics": []
-          },
-          {
-            "id": "Solid State Physics",
-            "branchingTopics": []
-          },
-          {
-            "id": "Astrophysics",
-            "branchingTopics": []
-          },
-          {
-            "id": "Particle Physics",
-            "branchingTopics": []
-          }
-        ]
+        "id": "C++",
+        "branchingTopics": []
       },
       {
-        "id": "Chemistry",
-        "branchingTopics": [
-          {
-            "id": "Organic Chemistry",
-            "branchingTopics": []
-          },
-          {
-            "id": "Inorganic Chemistry",
-            "branchingTopics": []
-          },
-          {
-            "id": "Analytical Chemistry",
-            "branchingTopics": []
-          },
-          {
-            "id": "Physical Chemistry",
-            "branchingTopics": []
-          },
-          {
-            "id": "Environmental Chemistry",
-            "branchingTopics": []
-          },
-          {
-            "id": "Biochemistry",
-            "branchingTopics": []
-          }
-        ]
+        "id": "C#",
+        "branchingTopics": []
       },
       {
-        "id": "Biology",
-        "branchingTopics": [
-          {
-            "id": "Cell & Molecular Biology",
-            "branchingTopics": []
-          },
-          {
-            "id": "Genetics & Evolution",
-            "branchingTopics": []
-          },
-          {
-            "id": "Ecology",
-            "branchingTopics": []
-          },
-          {
-            "id": "Animal & Plant Biology",
-            "branchingTopics": []
-          },
-          {
-            "id": "Human Anatomy",
-            "branchingTopics": []
-          },
-          {
-            "id": "Microbiology",
-            "branchingTopics": []
-          }
-        ]
+        "id": "Ruby",
+        "branchingTopics": []
       },
       {
-        "id": "Medicine and Health sciences",
-        "branchingTopics": [
-          {
-            "id": "Anatomy & Physiology",
-            "branchingTopics": []
-          },
-          {
-            "id": "Microbiology & Immunology",
-            "branchingTopics": []
-          },
-          {
-            "id": "Clinical Medicine",
-            "branchingTopics": []
-          },
-          {
-            "id": "Pharmacology",
-            "branchingTopics": []
-          },
-          {
-            "id": "Psychiatry",
-            "branchingTopics": []
-          },
-          {
-            "id": "Medical Research",
-            "branchingTopics": []
-          }
-        ]
+        "id": "Go",
+        "branchingTopics": []
       },
       {
-        "id": "Psychology",
-        "branchingTopics": [
-          {
-            "id": "Developmental Psychology",
-            "branchingTopics": []
-          },
-          {
-            "id": "Clinical Psychology",
-            "branchingTopics": []
-          },
-          {
-            "id": "Cognitive Psychology",
-            "branchingTopics": []
-          },
-          {
-            "id": "Social Psychology",
-            "branchingTopics": []
-          },
-          {
-            "id": "Educational Psychology",
-            "branchingTopics": []
-          },
-          {
-            "id": "Industrial and Organizational Psychology",
-            "branchingTopics": []
-          }
-        ]
+        "id": "Swift",
+        "branchingTopics": []
       },
       {
-        "id": "History",
-        "branchingTopics": [
-          {
-            "id": "Ancient History",
-            "branchingTopics": []
-          },
-          {
-            "id": "Medieval History",
-            "branchingTopics": []
-          },
-          {
-            "id": "Modern History",
-            "branchingTopics": []
-          },
-          {
-            "id": "History of Specific Regions",
-            "branchingTopics": []
-          },
-          {
-            "id": "Social History",
-            "branchingTopics": []
-          },
-          {
-            "id": "Cultural History",
-            "branchingTopics": []
-          }
-        ]
+        "id": "PHP",
+        "branchingTopics": []
       },
       {
-        "id": "English & Literature",
-        "branchingTopics": [
-          {
-            "id": "American Literature",
-            "branchingTopics": []
-          },
-          {
-            "id": "British Literature",
-            "branchingTopics": []
-          },
-          {
-            "id": "Creative Writing",
-            "branchingTopics": []
-          },
-          {
-            "id": "Linguistics",
-            "branchingTopics": []
-          },
-          {
-            "id": "World Literature",
-            "branchingTopics": []
-          },
-          {
-            "id": "Literary Theory",
-            "branchingTopics": []
-          }
-        ]
+        "id": "Rust",
+        "branchingTopics": []
       },
       {
-        "id": "Economics",
-        "branchingTopics": [
-          {
-            "id": "Microeconomics",
-            "branchingTopics": []
-          },
-          {
-            "id": "Macroeconomics",
-            "branchingTopics": []
-          },
-          {
-            "id": "International Economics",
-            "branchingTopics": []
-          },
-          {
-            "id": "Development Economics",
-            "branchingTopics": []
-          },
-          {
-            "id": "Econometrics",
-            "branchingTopics": []
-          },
-          {
-            "id": "Behavioral Economics",
-            "branchingTopics": []
-          }
-        ]
+        "id": "TypeScript",
+        "branchingTopics": []
       },
       {
-        "id": "Sociology",
-        "branchingTopics": [
-          {
-            "id": "Social Theory",
-            "branchingTopics": []
-          },
-          {
-            "id": "Social Stratification and Inequality",
-            "branchingTopics": []
-          },
-          {
-            "id": "Sociology of Gender and Sexuality",
-            "branchingTopics": []
-          },
-          {
-            "id": "Crime and Justice",
-            "branchingTopics": []
-          },
-          {
-            "id": "Sociology of Health and Illness",
-            "branchingTopics": []
-          },
-          {
-            "id": "Race and Ethnicity",
-            "branchingTopics": []
-          }
-        ]
+        "id": "Kotlin",
+        "branchingTopics": []
       },
       {
-        "id": "Philosophy",
-        "branchingTopics": [
-          {
-            "id": "Ethics",
-            "branchingTopics": []
-          },
-          {
-            "id": "Epistemology",
-            "branchingTopics": []
-          },
-          {
-            "id": "Metaphysics",
-            "branchingTopics": []
-          },
-          {
-            "id": "Philosophy Of Religion",
-            "branchingTopics": []
-          },
-          {
-            "id": "Aesthetics",
-            "branchingTopics": []
-          },
-          {
-            "id": "Political Philosophy",
-            "branchingTopics": []
-          }
-        ]
+        "id": "Perl",
+        "branchingTopics": []
       },
       {
-        "id": "Geography",
-        "branchingTopics": [
-          {
-            "id": "Physical Geography",
-            "branchingTopics": []
-          },
-          {
-            "id": "Human Geography",
-            "branchingTopics": []
-          },
-          {
-            "id": "Geographic Information Systems (GIS)",
-            "branchingTopics": []
-          },
-          {
-            "id": "Environmental Geography",
-            "branchingTopics": []
-          },
-          {
-            "id": "Regional Geography",
-            "branchingTopics": []
-          },
-          {
-            "id": "Urban Geography",
-            "branchingTopics": []
-          }
-        ]
+        "id": "Haskell",
+        "branchingTopics": []
       },
       {
-        "id": "Environmental Science",
-        "branchingTopics": [
-          {
-            "id": "Climate Change and Global Warming",
-            "branchingTopics": []
-          },
-          {
-            "id": "Conservation and Biodiversity",
-            "branchingTopics": []
-          },
-          {
-            "id": "Environmental Policy",
-            "branchingTopics": []
-          },
-          {
-            "id": "Environmental Toxicology",
-            "branchingTopics": []
-          },
-          {
-            "id": "Waste Management",
-            "branchingTopics": []
-          },
-          {
-            "id": "Sustainable Development",
-            "branchingTopics": []
-          }
-        ]
+        "id": "Scala",
+        "branchingTopics": []
+      },
+      {
+        "id": "Lua",
+        "branchingTopics": []
+      },
+      {
+        "id": "R",
+        "branchingTopics": []
+      },
+      {
+        "id": "Shell",
+        "branchingTopics": []
+      },
+      {
+        "id": "Objective-C",
+        "branchingTopics": []
+      },
+      {
+        "id": "MATLAB",
+        "branchingTopics": []
+      },
+      {
+        "id": "Dart",
+        "branchingTopics": []
+      },
+      {
+        "id": "Groovy",
+        "branchingTopics": []
+      },
+      {
+        "id": "VB.NET",
+        "branchingTopics": []
+      },
+      {
+        "id": "Elixir",
+        "branchingTopics": []
+      },
+      {
+        "id": "Julia",
+        "branchingTopics": []
+      },
+      {
+        "id": "COBOL",
+        "branchingTopics": []
+      },
+      {
+        "id": "Fortran",
+        "branchingTopics": []
+      },
+      {
+        "id": "Prolog",
+        "branchingTopics": []
+      },
+      {
+        "id": "Lisp",
+        "branchingTopics": []
+      },
+      {
+        "id": "Ada",
+        "branchingTopics": []
+      },
+      {
+        "id": "Scheme",
+        "branchingTopics": []
       }
-    ];
+        ]
+
 
     dispatch(fetchKnowledgeTree(knowledgeTreeData));
   }, [dispatch]);
 
+  // useEffect(() => {
+  //   const fetchKnowledgeTreeFromDB = async () => {
+  //     const currentUser = auth?.currentUser;
+  //     if (!currentUser) return;
+
+  //     const userRef = doc(db, `users/${currentUser.uid}`);
+  //     const userDocSnapshot = await getDoc(userRef);
+  //     const userData = userDocSnapshot.data();
+  //     setKnowledgeTree(userData.knowledgeTree);
+  //   };
+  
+  //   fetchKnowledgeTreeFromDB();
+  // }, [dispatch]);
+
+  // useEffect(() => {
+  //   dispatch(fetchKnowledgeTree(JSON.parse(knowledgeTree)));
+  // }, [knowledgeTree]);
+  
+  // useEffect(() => {
+  //   const updateKnowledgeTreeInDB = async () => {
+  //     if (!knowledgeTree) return;
+  
+  //     const currentUser = auth?.currentUser;
+  //     if (!currentUser) return;
+  
+  //     const userRef = doc(db, `users/${currentUser.uid}`);
+  //     await updateDoc(userRef, { knowledgeTree: JSON.stringify(knowledgeTree) });
+  //   };
+  
+  //   updateKnowledgeTreeInDB();
+  // }, [db, knowledgeTree]);
+
+  // useEffect(() => {
+  //   // get knowledge tree from database only when db is instanciated
+  //   if (!db) return;
+  
+  //   const currentUser = auth.currentUser;
+  //   if (!currentUser) return;
+  
+  //   const userRef = doc(db, `users/${currentUser.uid}`);
+  //   getDoc(userRef).then((docSnapshot) => {
+  //     const data = docSnapshot.data();
+  //     // check if data exists and knowledgeTree is in the data
+  //     if (data && "knowledgeTree" in data) {
+  //       const { knowledgeTree } = data;
+  //       dispatch(fetchKnowledgeTree(JSON.parse(knowledgeTree)));
+  //       setKnowledgeTree(knowledgeTree);
+  //     }
+  //   });
+  // }, [db, dispatch]);
+
+  // useEffect(() => {
+  //   if (!db || !knowledgeTree) return;
+  
+  //   const currentUser = auth.currentUser;
+  //   if (!currentUser) return;
+  
+  //   const userRef = doc(db, `users/${currentUser.uid}`);
+  //   updateDoc(userRef, { knowledgeTree: knowledgeTree });
+  // }, [db, knowledgeTree]);
+
   return (
     <div>
-      <h1>KnowledgeTree</h1>
+       <Grid container spacing={3}>
+      <Grid item xs={12}>
+      
+      <Typography
+        variant="body1"
+        gutterBottom
+        sx={{
+          bgcolor: "#fff",
+          width: "70%",
+          display: "flex",
+          justifyContent: "center",
+          borderRadius: "5px",
+          alignSelf: "center",
+          margin: "0 auto",
+          padding: "1rem",
+          border: "1px solid #333",
+          mt: 4
+        }}
+      >
+          Learn with ChatGPT. Generate and explore topics, subtopics and lessons, and engage with ChatGPT in a conversation about the lesson you are learning.
+        </Typography>
+        <Typography
+        variant="body1"
+        gutterBottom
+        sx={{
+          bgcolor: "#fff",
+          width: "70%",
+          display: "flex",
+          justifyContent: "center",
+          borderRadius: "5px",
+          alignSelf: "center",
+          margin: "0 auto",
+          color: "red",
+          mt: 1,
+          mb: 5
+        }}
+      >
+          This tool is still in alpha, bugs are possible. Refresh the page if you encounter any issues. Currently, refreshing will remove all generated data.
+        </Typography>
+      </Grid>
+    </Grid>
       <KnowledgeTreeContainer />
     </div>
   );

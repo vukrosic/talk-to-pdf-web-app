@@ -1,6 +1,8 @@
 import { setColumns, setMessages } from "../store/actions";
+import { doc, updateDoc, arrayUnion } from "firebase/firestore";
+import { db } from "../config/firebase";
 
-export const callOpenAIAPIToGenerateLesson = async (messages, model, saveMessagesByPath) => {
+export const callOpenAIAPIToGenerateLesson = async (messages, model, saveMessagesByPath, selectedItems) => {
     if(messages.length > 8){
       alert("Currently we only support up to 8 messages. Please remove some messages and try again.");
       return;
@@ -57,6 +59,19 @@ export const callOpenAIAPIToGenerateLesson = async (messages, model, saveMessage
       // Remove processed lines from partialResponse
       partialResponse = lines.pop();
     }
+    // add it to database
+    const feedbackRef = doc(db, "feedback/generated-lessons");
+    var newLesson;
+    if (typeof selectedItems === 'undefined') {
+      newLesson = "Selected items undefined - " + " \n " + result;
+    } else {
+      newLesson = selectedItems.join(" > ") + " \n " + result;
+    }
+    
+
+    updateDoc(feedbackRef, {
+      Lessons: arrayUnion(newLesson)
+    });
     console.log(result);
 };
   
