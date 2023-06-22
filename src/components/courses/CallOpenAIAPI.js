@@ -1,4 +1,4 @@
-export const callOpenAIAPIFunctions = async (messages, model) => {
+export const callOpenAIAPI = async (messages, model, addNewMessage) => {
   const apiKey = "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";
   const url = "https://api.openai.com/v1/chat/completions";
 
@@ -26,7 +26,6 @@ export const callOpenAIAPIFunctions = async (messages, model) => {
   const decoder = new TextDecoder('utf-8');
   let partialResponse = '';
   let result = '';
-
   while (true) {
     const { done, value } = await reader.read();
     if (done) break;
@@ -47,7 +46,8 @@ export const callOpenAIAPIFunctions = async (messages, model) => {
           if (parsedData.choices && parsedData.choices.length > 0) {
             const content = parsedData.choices[0]?.delta?.content;
             if (content) {
-              console.log(content); // Debugging log
+              result += content;
+              // addNewMessage('assistant', result, false);
               // result += content;
               // console.log("Result:", result); // Debugging log
               // dispatch(setColumns([[result]]));
@@ -57,6 +57,7 @@ export const callOpenAIAPIFunctions = async (messages, model) => {
       }
     }
   }
+  console.log(result);
   // console.log("Final Result:", result);
   // if (result) {
   //   console.log("Final Result:", result);
@@ -64,4 +65,5 @@ export const callOpenAIAPIFunctions = async (messages, model) => {
   // } else {
   //   throw new Error('No result found in API response');
   // }
+  return result;
 };

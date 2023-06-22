@@ -35,7 +35,7 @@ const ChatUI = ({ messages }) => {
       <Container>
         <MessageContainer>
           <Grid container>
-            {messages.map((message, index) => (
+            {filteredMessages.map((message, index) => (
               <Grid key={index} item xs={12}>
                 <MessageCard messageRole={message.role}>
                   <CardHeader

@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Container, Grid, Typography, Button } from '@mui/material';
-import LessonViewer from './LessonViewer';
-import CodeEditor from './CodeEditor';
-import ChatWindow from './ChatWindow';
+import LessonViewer from '../LessonViewer';
+import CreatorChatWindow from './CreatorChatWindow';
+import LessonMarkdownEditor from './LessonMarkdownEditor';
 import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../../config/firebase';
-import SaveLessons from './SaveLessons';
+import { db } from '../../../config/firebase';
 
 const LessonUI = () => {
   const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
-  const [code, setCode] = useState('');
+  const [markdown, setMarkdown] = useState('');
   const [lessons, setLessons] = useState([]);
   const [tasks, setTasks] = useState([]);
 
@@ -33,6 +32,7 @@ const LessonUI = () => {
       if (lessons && tasks) {
         setLessons(lessons);
         setTasks(tasks);
+        setMarkdown(lessons[currentLessonIndex]);
       }
     }
   };
@@ -41,7 +41,7 @@ const LessonUI = () => {
   const isFirstLesson = currentLessonIndex === 0;
 
   return (
-    <Grid container spacing={2}>
+    <Grid container spacing={0}>
       <Grid item xs={4}>
         <Typography
           variant="body1"
@@ -56,7 +56,7 @@ const LessonUI = () => {
             boxShadow: 1
           }}
         >
-          <LessonViewer lesson={lessons[currentLessonIndex]} task={tasks[currentLessonIndex]} />
+          <LessonViewer lesson={markdown} task={tasks[currentLessonIndex]} />
           <Button disabled={isFirstLesson} onClick={handlePreviousLesson}>
             Previous Lesson
           </Button>
@@ -74,12 +74,11 @@ const LessonUI = () => {
             bgcolor: '#fff',
             width: '100%',
             height: 'calc(100vh - 80px)',
-            p: 2,
             borderRadius: '5px',
             boxShadow: 1
           }}
         >
-          <CodeEditor code={code} setCode={setCode} />
+          <LessonMarkdownEditor markdown={markdown} setMarkdown={setMarkdown} />
         </Typography>
       </Grid>
       <Grid item xs={4}>
@@ -96,7 +95,7 @@ const LessonUI = () => {
             boxShadow: 1
           }}
         >
-          <ChatWindow lesson={lessons[currentLessonIndex]} task={tasks[currentLessonIndex]} />
+          <CreatorChatWindow lesson={lessons[currentLessonIndex]} task={tasks[currentLessonIndex]} />
         </Typography>
       </Grid>
     </Grid>

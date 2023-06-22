@@ -8,7 +8,7 @@ import { solarizedlight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import SaveLessons from './SaveLessons';
 import ChatWindow from './ChatWindow';
 
-const LessonContent = ({ lesson, task }) => {
+const LessonViewer = ({ lesson, task }) => {
 
   return (
     <div className="lesson-content">
@@ -50,6 +50,6 @@ const LessonContent = ({ lesson, task }) => {
   );
 };
 
-export default LessonContent;
+export default LessonViewer;
 
 

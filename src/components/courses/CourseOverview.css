@@ -1,0 +1,138 @@
+.Container {
+    padding: 20px 0;
+  
+    @media (min-width: 960px) {
+      padding: 50px 0;
+    }
+  }
+  
+  .Content {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 auto;
+  }
+  
+  .LeftColumn {
+    flex: 1;
+  }
+  
+  .RightColumn {
+    flex: 0 0 300px;
+    position: sticky;
+    top: 80px;
+  }
+  
+  .Title {
+    font-size: 28px;
+    margin-bottom: 10px;
+  }
+  
+  .Subtitle {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .Creator {
+    font-size: 16px;
+    color: #4d4d4d;
+    margin-bottom: 20px;
+  }
+  
+  .WhatYouWillLearnTitle,
+  .CourseContentTitle,
+  .RequirementsTitle,
+  .DescriptionTitle {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+  
+  .ListItem {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+  
+  .ListItem::before {
+    content: "\2713";
+    color: #81c784;
+    margin-right: 10px;
+  }
+  
+  .Card {
+    margin-bottom: 20px;
+  }
+  
+  .CardTitle {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+  
+  .CardContent {
+    font-size: 16px;
+  }
+  
+  .Price {
+    font-size: 32px;
+    margin-bottom: 10px;
+    color: #1e88e5;
+  }
+  
+  .BuyButton {
+    display: block;
+    width: 100%;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 18px;
+    font-weight: 500;
+    color: #ffffff;
+    background-color: #1e88e5;
+    box-shadow: 0px 4px 10px rgba(30, 136, 229, 0.3);
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .BuyButton:hover,
+  .BuyButton:focus {
+    opacity: 0.9;
+    box-shadow: 0px 4px 15px rgba(30, 136, 229, 0.5);
+  }
+  
+  @media (min-width: 960px) {
+    .Title {
+      font-size: 48px;
+    }
+  
+    .Subtitle {
+      font-size: 32px;
+    }
+  
+    .Creator {
+      font-size: 24px;
+    }
+  
+    .WhatYouWillLearnTitle,
+    .CourseContentTitle,
+    .RequirementsTitle,
+    .DescriptionTitle {
+      font-size: 28px;
+    }
+  
+    .ListItem {
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+  
+    .CardTitle {
+      font-size: 28px;
+    }
+  
+    .CardContent {
+      font-size: 20px;
+    }
+  
+    .Price {
+      font-size: 48px;
+    }
+  }

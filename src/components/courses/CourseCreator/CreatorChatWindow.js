@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Container, Grid, Typography, TextField, Button, CircularProgress } from '@mui/material';
-import ChatUI from '../ChatUI';
+import ChatUI from '../../ChatUI';
 import { doc, updateDoc, getDoc } from 'firebase/firestore';
-import { callOpenAIAPI } from './CallOpenAIAPI';
-import { db } from '../../config/firebase';
+import { callOpenAIAPI } from '../CallOpenAIAPI';
+import { db } from '../../../config/firebase';
 
 const ChatWindow = ({ lesson, task }) => {
   const [messages, setMessages] = useState([]);
@@ -16,8 +16,7 @@ const ChatWindow = ({ lesson, task }) => {
       // Update messages when lesson and task are defined
       setMessages([
         { role: 'system', content: lesson + " IMPORTANT: do not solve the task for user, but just give him hints." },
-        { role: 'assistant', content: task},
-        { role: 'assistant', content: "I am ChatGPT. Ask me any questions about the lesson or the task."}
+        { role: 'assistant', content: "I am here to help you. Ask me any questions about the lesson or the task."}
       ]);
     }
   }, [lesson, task]);

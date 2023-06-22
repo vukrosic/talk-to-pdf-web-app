@@ -43,25 +43,18 @@ function Auth() {
 
     const signInWithGoogle = async () => {
         try {
-            const userCredentials = await createUserWithEmailAndPassword(auth, email, password);
+            const userCredentials = await signInWithPopup(auth, provider);
             const user = userCredentials.user;
             const docRef = doc(collection(db, 'users'), user.uid);
     
-            const docSnapshot = await getDoc(docRef);
-            if (!docSnapshot.exists()) {
-                // Account is created for the first time
-                const userData = {
-                    uid: user.uid,
-                    email: user.email,
-                    displayName: user.displayName,
-                    providerId: user.providerId,
-                    photoURL: user.photoURL,
-                    freeTrial: 15,
-                    knowledgeTree: '[ { "id": "Computer Science", "branchingTopics": [ { "id": "Programming Languages", "branchingTopics": [ { "id": "Python", "branchingTopics": [] }, { "id": "Javascript", "branchingTopics": [] } ] } ] } ]',
-                    messagesStore: ""
-                };
-                await setDoc(docRef, userData);
-            } 
+            await setDoc(docRef, {
+                uid: user.uid,
+                email: user.email,
+                displayName: user.displayName,
+                providerId: user.providerId,
+                photoURL: user.photoURL,
+                freeTrial: 10
+            });
         } catch (error) {
             console.log(error);
         }

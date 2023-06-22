@@ -21,7 +21,11 @@ import store from "./store";
 import TestingEnv from './components/TestingEnv';
 import GetUserTreeDataFromDatabase from './components/GetUserTreeDataFromDatabase';
 import LessonUI from './components/courses/LessonUI';
-
+import CourseCreator from './components/courses/CourseCreator/CourseEditor'
+import MyCourses from './components/courses/MyCourses';
+import CourseOverview from './components/courses/CourseOverview';
+import BrowseCoursesPage from './components/courses/BrowseCoursesPage';
+import AddCrouse from './components/courses/CourseCreator/AddCourse';
 
 function Navigation({ user }) {
   // const readData = async () => {
@@ -80,10 +84,14 @@ function Navigation({ user }) {
       <AppBar position="static">
         <Toolbar>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Personal Teacher GPT
+            ./SkoolGPT
           </Typography>
-
             <Button color="inherit" component={Link} to="/"/>
+            <Button color="inherit" component={Link} to="/add-course"/>
+            <Button color="inherit" component={Link} to="/browse-courses"/>
+            <Button color="inherit" component={Link} to="/create"/>
+            <Button color="inherit" component={Link} to="/mycourses"/>
+            <Button color="inherit" component={Link} to="/course-overview"/>
             <Button color="inherit" component={Link} to="/python"/>
             <Button color="inherit" component={Link} to="/feedback"/>
             <Button color="inherit" component={Link} to="/about"/>
@@ -114,6 +122,15 @@ function Navigation({ user }) {
                 </Button>
               </div>
               )} */}
+              <Button color="inherit" component={Link} to="/"> Home </Button>
+              <Button color="inherit" component={Link} to="/add-course"> Add Course </Button>
+              <Button color="inherit" component={Link} to="/browse-courses">Browse Courses</Button>
+              <Button color="inherit" component={Link} to="/create"> Create </Button>
+              <Button color="inherit" component={Link} to="/mycourses">My Courses</Button>
+              <Button color="inherit" component={Link} to="/course-overview">Course Overview</Button>
+              <Button color="inherit" component={Link} to="/about"> About </Button>
+              <Button color="inherit" component={Link} to="/feedback"> Feedback </Button>
+              <Button color="inherit" component={Link} to="/knowledgeTree"> Knowledge Tree </Button>
               <Button color="inherit" onClick={signOut}>
                   Sign Out 
               </Button>
@@ -122,6 +139,11 @@ function Navigation({ user }) {
           ) : (
             <div>
               <Button color="inherit" component={Link} to="/"> Home </Button>
+              <Button color="inherit" component={Link} to="/add-course"> Add Course </Button>
+              <Button color="inherit" component={Link} to="/browse-courses">Browse Courses</Button>
+              <Button color="inherit" component={Link} to="/create"> Create </Button>
+              <Button color="inherit" component={Link} to="/mycourses">My Courses</Button>
+              <Button color="inherit" component={Link} to="/course-overview">Course Overview</Button>
               <Button color="inherit" component={Link} to="/about"> About </Button>
               <Button color="inherit" component={Link} to="/feedback"> Feedback </Button>
               <Button color="inherit" component={Link} to="/knowledgeTree"> Knowledge Tree </Button>
@@ -162,6 +184,11 @@ function App() {
           <Navigation user={user} />
           <Routes>
             <Route path="/" element={<LessonUI />} />
+            <Route path="/add-course" element={<AddCrouse />} />
+            <Route path="/browse-courses" element={<BrowseCoursesPage />} />
+            <Route path="/create" element={<CourseCreator />} />
+            <Route path="/mycourses" element={<MyCourses />} />
+            <Route path="/course-overview" element={<CourseOverview />} />
             {/* <Route path="/" element={ <TestingEnv />} /> */}
             <Route path="/python" element={<Python />} />
             <Route path="/signin" element={user ? <Navigate to="/" /> : <SignIn />} />
