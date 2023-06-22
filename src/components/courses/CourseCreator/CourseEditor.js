@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Container, Grid, Typography, Button } from '@mui/material';
+import { Grid, Typography, Button } from '@mui/material';
 import LessonViewer from '../LessonViewer';
 import CreatorChatWindow from './CreatorChatWindow';
 import LessonMarkdownEditor from './LessonMarkdownEditor';

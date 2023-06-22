@@ -1,45 +1,46 @@
 import { Container, Grid, Card, CardContent, Typography } from "@mui/material";
 import "./CourseOverview.css";
+import { doc, updateDoc, getDoc } from "firebase/firestore";
+import { db, auth } from "../../config/firebase";
+import { useEffect, useState } from "react";
 
-const CourseOverview = () => {
-  const course = {
-    title: "Fundamentals of JavaScript",
-    subtitle: "Learn the basics of JavaScript from scratch",
-    creator: "John Doe",
-    price: 50.00,
-    whatYouWillLearn: [
-      "Basics of Javascript programming",
-      "Variables, operators, and data types",
-      "Functions, conditional statements, and loops",
-      "DOM manipulation and event handling",
-      "Arrays, objects, and JSON",
-    ],
-    courseContent: [
-      {
-        title: "Introduction to JavaScript",
-        content: "Introduction to JavaScript programming and basics",
-      },
-      {
-        title: "Variables and Data Types",
-        content: "Learn about variables and data types in JavaScript",
-      },
-      {
-        title: "Functions and Loops",
-        content: "Basic and advanced functions and for/while loops",
-      },
-      {
-        title: "DOM Manipulation",
-        content: "Introduction to Document Object Model (DOM) manipulation and event handling",
-      },
-      {
-        title: "Arrays and Objects",
-        content: "Arrays, objects, and JSON data in JavaScript programming",
-      },
-    ],
-    requirements: "No prior programming experience needed. A computer with an internet connection is required.",
-    description: "This course is designed for beginners who want to learn the basics of JavaScript programming. You will learn about variables, data types, functions, conditional statements, loops, DOM manipulation, arrays, objects, and JSON data. This course includes hands-on exercises and quizzes to help reinforce your learning.",
-  };
+const CourseOverview = ({ course }) => {
+    const [enrolled, setEnrolled] = useState(false);
+  
+    // Check if the user is enrolled when the component mounts
+    useEffect(() => {
+      const checkEnrollment = async () => {
+        try {
+          const userRef = doc(db, `users/${auth?.currentUser?.uid}`);
+          const userDocSnapshot = await getDoc(userRef);
+          const userData = userDocSnapshot.data();
+          const enrolledCoursesData = userData.enrolledCourses;
+          setEnrolled(enrolledCoursesData.includes(course.id));
+        } catch (error) {
+          console.error("Error checking enrollment:", error);
+        }
+      };
+  
+      checkEnrollment();
+    }, [course.id]);
 
+    const enrollUser = async () => {
+        try {
+          const userRef = doc(db, `users/${auth?.currentUser?.uid}`);
+          const userDocSnapshot = await getDoc(userRef);
+          const userData = userDocSnapshot.data();
+          const enrolledCoursesData = userData.enrolledCourses;
+          const updatedEnrolledCourses = [...enrolledCoursesData, course.id];
+      
+          await updateDoc(userRef, {
+            enrolledCourses: updatedEnrolledCourses,
+          });
+      
+          console.log("User enrolled in the course successfully!");
+        } catch (error) {
+          console.error("Error enrolling user:", error);
+        }
+      };
   return (
     <Container maxWidth="lg" className="Container">
       <Grid container spacing={2} className="Content">
@@ -64,14 +65,14 @@ const CourseOverview = () => {
           <Typography variant="h6" component="h3" className="CourseContentTitle">
             Course Content:
           </Typography>
-          {course.courseContent.map((item, i) => (
+          {course.lessons.map((lesson, i) => (
             <Card key={i} className="Card">
               <CardContent>
                 <Typography variant="h6" component="h4" className="CardTitle">
-                  {item.title}
+                  {course.lessonTitles[i]}
                 </Typography>
                 <Typography variant="body1" component="p" className="CardContent">
-                  {item.content}
+                  {lesson}
                 </Typography>
               </CardContent>
             </Card>
@@ -93,12 +94,18 @@ const CourseOverview = () => {
           <Card>
             <CardContent>
               <Typography variant="h5" component="h2" className="Price">
-                {"$" + course.price}
+                {course.free ? "Free" : "$" + course.price}
               </Typography>
               <Typography variant="subtitle1" component="p">
-                <button className="BuyButton">
-                  Buy Now
-                </button>
+                {enrolled ? (
+                  <button className="EnterButton" onClick={console.log("123123")}>
+                    Enter Course
+                  </button>
+                ) : (
+                  <button className="EnrollButton" onClick={enrollUser}>
+                    Enroll Now
+                  </button>
+                )}
               </Typography>
             </CardContent>
           </Card>
@@ -106,6 +113,6 @@ const CourseOverview = () => {
       </Grid>
     </Container>
   );
-}
+};
 
 export default CourseOverview;

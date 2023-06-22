@@ -5,22 +5,21 @@ import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import { callOpenAIAPI } from './CallOpenAIAPI';
 import { db } from '../../config/firebase';
 
-const ChatWindow = ({ lesson, task }) => {
+const ChatWindow = ({ lesson }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [addedNewMessage, setAddedNewMessage] = useState(false);
   const [isWaitingResponse, setIsWaitingResponse] = useState(false);
 
   useEffect(() => {
-    if (lesson && task) {
-      // Update messages when lesson and task are defined
+    if (lesson) {
+      // Update messages when lesson is defined
       setMessages([
-        { role: 'system', content: lesson + " IMPORTANT: do not solve the task for user, but just give him hints." },
-        { role: 'assistant', content: task},
-        { role: 'assistant', content: "I am ChatGPT. Ask me any questions about the lesson or the task."}
+        { role: 'assistant', content: lesson + " IMPORTANT: do not solve the task for user, but just give him hints." },
+        { role: 'assistant', content: "I am ChatGPT. Ask me any questions about the lesson."}
       ]);
     }
-  }, [lesson, task]);
+  }, [lesson]);
 
   const saveFeedback = async (role, content) => {
     const userRef = doc(db, 'feedback', 'lesson-editor-chat:chat');
@@ -84,8 +83,8 @@ const ChatWindow = ({ lesson, task }) => {
     fetchResponse();
   }, [addedNewMessage]);
 
-  // Render null if lesson or task is undefined
-  if (!lesson || !task) {
+  // Render null if lesson is undefined
+  if (!lesson) {
     return null;
   }
 

@@ -25,8 +25,6 @@ const MyCourses = () => {
       const userDocSnapshot = await getDoc(userRef);
       const userData = userDocSnapshot.data();
       const enrolledCoursesData = userData.enrolledCourses || [];
-    console.log(enrolledCoursesData);
-    console.log(createdCourses);
       setCourses([createdCourses, enrolledCoursesData]);
     };
 
