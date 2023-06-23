@@ -11,7 +11,7 @@ import { callOpenAIAPIFunctions } from "./CallOpenAIAPIFunctions";
 import { callOpenAIAPI } from "./CallOpenAIAPIToGenerateTopics";
 import { callOpenAIAPIToGenerateLesson } from "./CallOpenAIAPIToGenerateLesson";
 import { getMergedStatus } from "antd/es/_util/statusUtils";
-import { GetUserTreeDataFromDatabase } from "./GetUserTreeDataFromDatabase";
+// import { GetUserTreeDataFromDatabase } from "./GetUserTreeDataFromDatabase";
 import { auth, db } from '../config/firebase';
 import { collection, addDoc, setDoc, doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 

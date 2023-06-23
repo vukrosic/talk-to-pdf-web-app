@@ -19,7 +19,6 @@ import { Provider } from "react-redux";
 import KnowledgeTreeWrapper from "./components/KnowledgeTreeWrapper";
 import store from "./store";
 import TestingEnv from './components/TestingEnv';
-import GetUserTreeDataFromDatabase from './components/GetUserTreeDataFromDatabase';
 import LessonUI from './components/courses/LessonUI';
 import CourseCreator from './components/courses/CourseCreator/CourseCreator'
 import MyCourses from './components/courses/MyCourses';
@@ -40,7 +39,6 @@ function Navigation({ user }) {
             <Button color="inherit" component={Link} to="/"/>
             <Button color="inherit" component={Link} to="/course-viewer"/>
             <Button color="inherit" component={Link} to="/course-creator"/>
-            <Button color="inherit" component={Link} to="/add-course"/>
             <Button color="inherit" component={Link} to="/browse-courses"/>
             <Button color="inherit" component={Link} to="/mycourses"/>
             <Button color="inherit" component={Link} to="/python"/>
@@ -56,7 +54,6 @@ function Navigation({ user }) {
               <Button color="inherit" component={Link} to="/mycourses">My Courses</Button>
               <Button color="inherit" component={Link} to="/about"> About </Button>
               <Button color="inherit" component={Link} to="/feedback"> Feedback </Button>
-              <Button color="inherit" component={Link} to="/add-course"> Add Course </Button>
               <Button color="inherit" component={Link} to="/knowledgeTree"> Knowledge Tree </Button>
               <Button color="inherit" onClick={signOut}>
                   Sign Out 
@@ -71,7 +68,6 @@ function Navigation({ user }) {
               <Button color="inherit" component={Link} to="/mycourses">My Courses</Button>
               <Button color="inherit" component={Link} to="/about"> About </Button>
               <Button color="inherit" component={Link} to="/feedback"> Feedback </Button>
-              <Button color="inherit" component={Link} to="/add-course"> Add Course </Button>
               <Button color="inherit" component={Link} to="/knowledgeTree"> Knowledge Tree </Button>
               <Button color="inherit" component={Link} to="/signin">
                 Sign In
@@ -119,7 +115,6 @@ function App() {
             <Route path="/signin" element={user ? <Navigate to="/" /> : <SignIn />} />
             <Route path="/feedback" element={<Feedback />} />
             <Route path="/about" element={<About />} />
-            <Route path="/add-course" element={<AddCrouse />} />
             <Route path="/knowledgeTree" element={<KnowledgeTreeWrapper />} />
           </Routes>
         </Router>

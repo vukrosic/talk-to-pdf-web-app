@@ -5,7 +5,6 @@ import { Typography, Box, Divider } from '@mui/material';
 import Markdown from 'markdown-to-jsx';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { solarizedlight } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import SaveLessons from './SaveLessons';
 import ChatWindow from './ChatWindow';
 
 const LessonViewer = ({ lesson, task }) => {

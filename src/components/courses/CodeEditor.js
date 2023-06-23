@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Container, Grid, Typography, TextareaAutosize, Button } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import ChatWindow from './ChatWindow';
-import TerminalOutput from './TerminalOutput';
+// import TerminalOutput from './TerminalOutput';
 
 const darkTheme = createTheme({
   palette: {
@@ -69,7 +69,7 @@ const CodeEditor = ({ code, setCode }) => {
             <Button onClick={runCode} variant="contained" color="primary">Run</Button>
           </Grid>
           <Grid item xs={12}>
-            <TerminalOutput output={output} />
+            {/* <TerminalOutput output={output} /> */}
           </Grid>
         </Grid>
       </Container>

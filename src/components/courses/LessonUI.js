@@ -5,7 +5,7 @@ import CodeEditor from './CodeEditor';
 import ChatWindow from './ChatWindow';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../config/firebase';
-import SaveLessons from './SaveLessons';
+
 
 const LessonUI = () => {
   const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
