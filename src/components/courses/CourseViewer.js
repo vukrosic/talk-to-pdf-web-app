@@ -9,6 +9,7 @@ import { db } from '../../config/firebase';
 
 const CourseViewer = () => {
   const [courseData, setCourseData] = useState(null);
+  const [currentStep, setCurrentStep] = useState(0); // Add currentStep state
   const { id } = useParams();
   useEffect(() => {
     const fetchCourseData = async () => {
@@ -29,45 +30,35 @@ const CourseViewer = () => {
     };
 
     fetchCourseData();
-    console.log(courseData);
+
   }, [id]); // Fetch course data when the id parameter changes
 
-  // useEffect(() => {
-  //   const fetchCourseData = async () => {
-  //     try {
-  //       // Fetch course data from Firestore database
-  //       const courseDoc = doc(db, "courses", courseId);
-  //       const courseSnapshot = await getDoc(courseDoc);
+  // log currentStep when it changes using useEffect
+  useEffect(() => {
+    console.log(currentStep);
+  }, [currentStep]);
 
-  //       if (courseSnapshot.exists()) {
-  //         const data = courseSnapshot.data();
-  //         setCourseData(data);
-  //       } else {
-  //         console.log("No such course document!");
-  //       }
-  //     } catch (error) {
-  //       console.log("Error fetching course data:", error);
-  //     }
-  //   };
-
-  //   fetchCourseData();
-  // }, []);
 
   return (
     <Grid container spacing={1}>
-    
       <Grid item xs={12} lg={6}>
         {courseData && (
-          <CourseStepperViewer courseContent={courseData.lessons} />
+          <CourseStepperViewer
+            courseContent={courseData.lessons}
+            setCurrentStep={setCurrentStep}
+          />
         )}
       </Grid>
       <Grid item xs={12} lg={6}>
         {courseData && (
-          <ChatWindow lesson={" "} />
+          <ChatWindow
+            lesson={courseData.lessons[currentStep]} // Pass the lesson for the current step as a prop
+          />
         )}
       </Grid>
     </Grid>
   );
 };
+
 
 export default CourseViewer;

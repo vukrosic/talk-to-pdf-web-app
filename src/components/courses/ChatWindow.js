@@ -15,21 +15,24 @@ const ChatWindow = ({ lesson }) => {
     if (lesson) {
       // Update messages when lesson is defined
       setMessages([
-        { role: 'assistant', content: lesson + " IMPORTANT: do not solve the task for user, but just give him hints." },
-        { role: 'assistant', content: "I am ChatGPT. Ask me any questions about the lesson."}
+        { role: 'assistant', content: "You are a helpful assistant and you will help me learn the following: " + lesson + ". Help me by answering any questions I have." }
       ]);
     }
   }, [lesson]);
 
   const saveFeedback = async (role, content) => {
-    const userRef = doc(db, 'feedback', 'lesson-editor-chat:chat');
+    const userRef = doc(db, 'feedback', 'lesson-chat:chat');
   
     // Retrieve the current messages array from the Firestore document
     const docSnap = await getDoc(userRef);
     const currentMessages = docSnap.exists() ? docSnap.data().messages : [];
   
-    // Create the new message string with role and content
-    const newMessage = `${role}: ${content}`;
+    // Create the new message object with role, content, and lesson
+    const newMessage = {
+      role: role,
+      content: content,
+      lesson: lesson, // Include the lesson in the message object
+    };
   
     // Concatenate the new message with the current messages array
     const newMessages = [...currentMessages, newMessage];
@@ -37,7 +40,6 @@ const ChatWindow = ({ lesson }) => {
     // Update the Firestore document with the updated messages array
     await updateDoc(userRef, { messages: newMessages });
   };
-  
       
 
 

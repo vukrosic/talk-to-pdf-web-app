@@ -30,9 +30,7 @@ function Auth() {
                     displayName: user.displayName,
                     providerId: user.providerId,
                     photoURL: user.photoURL,
-                    freeTrial: 15,
-                    knowledgeTree: '[ { "id": "Computer Science", "branchingTopics": [ { "id": "Programming Languages", "branchingTopics": [ { "id": "Python", "branchingTopics": [] }, { "id": "Javascript", "branchingTopics": [] } ] } ] } ]',
-                    messagesStore: ""
+                    enrolledCourses: []
                 };
                 await setDoc(docRef, userData);
             }
@@ -53,7 +51,7 @@ function Auth() {
                 displayName: user.displayName,
                 providerId: user.providerId,
                 photoURL: user.photoURL,
-                freeTrial: 10
+                enrolledCourses: []
             });
         } catch (error) {
             console.log(error);

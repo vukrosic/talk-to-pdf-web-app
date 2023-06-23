@@ -20,6 +20,7 @@ const AddCourse = () => {
     enrollmentCount: 0,
     thumbnail: "",
     lessons: [""],
+    lessonTitles: [""], // Add the lessonTitles array here
     subtitle: "",
     whatYouWillLearn: [""],
     requirements: "",
@@ -39,23 +40,8 @@ const AddCourse = () => {
     setCourse({ ...course, [field]: updatedArray });
   };
 
-  const handleNestedChange = (event, index, subField, field) => {
-    const { value } = event.target;
-    let updatedArray = [...course[field]];
-    updatedArray[index][subField] = value;
-    setCourse({ ...course, [field]: updatedArray });
-  };
-
-  const handleLessonTitleChange = (event, index) => {
-    handleArrayChange(event, index, "lessonTitles");
-  };
-
   const handleLessonChange = (event, index) => {
     handleArrayChange(event, index, "lessons");
-  };
-
-  const handleTaskChange = (event, index) => {
-    handleArrayChange(event, index, "tasks");
   };
 
   const addLesson = () => {
@@ -77,20 +63,6 @@ const AddCourse = () => {
     setCourse({ ...course, free: event.target.checked });
   };
 
-  const handleWhatYouWillLearnChange = (event, index) => {
-    handleArrayChange(event, index, "whatYouWillLearn");
-  };
-
-  const addWhatYouWillLearn = () => {
-    let updatedWhatYouWillLearn = [...course.whatYouWillLearn, ""];
-    setCourse({ ...course, whatYouWillLearn: updatedWhatYouWillLearn });
-  };
-
-  const removeWhatYouWillLearn = (index) => {
-    let updatedWhatYouWillLearn = [...course.whatYouWillLearn];
-    updatedWhatYouWillLearn.splice(index, 1);
-    setCourse({ ...course, whatYouWillLearn: updatedWhatYouWillLearn });
-  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -181,98 +153,6 @@ const AddCourse = () => {
                   onChange={handleInputChange}
                 />
               </Grid>
-              {/* <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  
-                  name="enrollmentCount"
-                  label="Enrollment Count"
-                  type="number"
-                  variant="outlined"
-                  value={course.enrollmentCount}
-                  onChange={handleInputChange}
-                /> 
-              </Grid> */}
-              <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  
-                  name="thumbnail"
-                  label="Thumbnail URL"
-                  variant="outlined"
-                  value={course.thumbnail}
-                  onChange={handleInputChange}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  
-                  name="subtitle"
-                  label="Course Subtitle"
-                  variant="outlined"
-                  value={course.subtitle}
-                  onChange={handleInputChange}
-                />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  
-                  name="requirements"
-                  label="Course Requirements"
-                  variant="outlined"
-                  value={course.requirements}
-                  onChange={handleInputChange}
-                />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  
-                  name="description"
-                  label="Course Description"
-                  variant="outlined"
-                  value={course.description}
-                  onChange={handleInputChange}
-                />
-              </Grid>
-              {course.whatYouWillLearn.map((item, index) => (
-              <Grid item xs={12} key={index}>
-                <Grid container alignItems="center" spacing={2}>
-                  <Grid item xs={10}>
-                    <TextField
-                      fullWidth
-                      
-                      label={`What You Will Learn - Item ${index + 1}`}
-                      variant="outlined"
-                      value={item}
-                      onChange={(event) =>
-                        handleWhatYouWillLearnChange(event, index)
-                      }
-                    />
-                  </Grid>
-                  <Grid item xs={2}>
-                    <Button
-                      variant="contained"
-                      color="secondary"
-                      onClick={() => removeWhatYouWillLearn(index)}
-                    >
-                      Remove
-                    </Button>
-                  </Grid>
-                </Grid>
-              </Grid>
-            ))}
-            <Grid item xs={12}>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={addWhatYouWillLearn}
-              >
-                Add "What You Will Learn"
-              </Button>
-            </Grid>
               <Grid item xs={12}>
                 <FormControlLabel
                   control={
@@ -285,9 +165,6 @@ const AddCourse = () => {
                   label="Free"
                 />
               </Grid>
-             
-              
-            
             </Grid>
             <Button
               type="submit"

@@ -17,15 +17,17 @@ import { solarizedlight } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../config/firebase";
 
-const CourseStepperViewer = ({courseContent: lessons}) => {
+const CourseStepperViewer = ({courseContent: lessons, currentStep, setCurrentStep}) => {
   const [activeStep, setActiveStep] = useState(0);
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    setCurrentStep((prevCurrentStep) => prevCurrentStep + 1);
   };
 
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    setCurrentStep((prevCurrentStep) => prevCurrentStep - 1);
   };
 
   // Check if courseData is still loading

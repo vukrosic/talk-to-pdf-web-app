@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
-import { Container, Grid, Paper, Typography, Button, Card, CardContent, CardMedia, TextField } from "@mui/material";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "../../config/firebase";
+import { Container, Grid, Typography, Button, Card, CardContent, TextField } from "@mui/material";
+import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+import { db, auth } from "../../config/firebase";
 import CourseOverview from "./CourseOverview";
 import { Link } from "react-router-dom";
 
 const BrowseCoursesPage = () => {
   const [courses, setCourses] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [enrolled, setEnrolled] = useState([]);
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -22,11 +23,33 @@ const BrowseCoursesPage = () => {
     fetchCourses();
   }, []);
 
+  useEffect(() => {
+    const checkEnrollment = async () => {
+      try {
+        const userRef = doc(db, `users/${auth?.currentUser?.uid}`);
+        const userDocSnapshot = await getDoc(userRef);
+        const userData = userDocSnapshot.data();
+        const enrolledCoursesData = userData.enrolledCourses;
+        setEnrolled(enrolledCoursesData || []);
+      } catch (error) {
+        console.error("Error checking enrollment:", error);
+      }
+    };
+
+    if (auth.currentUser) {
+      checkEnrollment();
+    }
+  }, []);
+
   const filteredCourses = courses.filter(
     (course) =>
       course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       course.creator.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const enrollUser = () => {
+    // Implement the logic to enroll the current user to the course
+  };
 
   return (
     <Container maxWidth="lg" className="Container">
@@ -42,13 +65,6 @@ const BrowseCoursesPage = () => {
         {filteredCourses.map((course) => (
           <Grid item key={course.id} xs={12} sm={6} md={4} lg={3}>
             <Card sx={{ height: "100%" }}>
-              <CardMedia
-                component="img"
-                height="140"
-                image={course.thumbnail}
-                alt={course.title}
-                sx={{ objectFit: "cover" }}
-              />
               <CardContent>
                 <Typography
                   gutterBottom
@@ -63,13 +79,19 @@ const BrowseCoursesPage = () => {
                   component="p"
                   className="CardSubtitle"
                 >
-                  {course.creator} | {course.enrollmentCount} enrolled
+                  {course.free ? "Free" : "Premium"}
                 </Typography>
-                <Link to={`/courses/${course.id}`}>
-                  <Button variant="contained" fullWidth>
+                {enrolled.includes(course.id) ? (
+                  <Link to={`/courses/${course.id}/lessons`} className="EnterButton">
+                    Enter Course
+                  </Link>
+                ) : (
+                  <Link to={`/courses/${course.id}`}>
+                  <Button className="EnterButton" onClick={enrollUser}>
                     Enroll Now
                   </Button>
-                </Link>
+                  </Link>
+                )}
               </CardContent>
             </Card>
           </Grid>

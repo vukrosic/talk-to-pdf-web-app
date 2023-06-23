@@ -12,10 +12,10 @@ const CourseCreator = () => {
   }, [courseContent]);
   return (
     <Grid container spacing={0.5}>
-      <Grid item xs={12} lg={6}>
+      {/* <Grid item xs={12} lg={6}>
         <CourseMarkdownViewer courseContent={courseContent}/>
-      </Grid>
-      <Grid item xs={12} lg={6}>
+      </Grid> */}
+      <Grid item xs={12} lg={12}>
         <AddCourse lesson={courseContent} setLesson={setCourseContent} />
       </Grid>
       
