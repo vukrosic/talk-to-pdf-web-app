@@ -79,11 +79,14 @@
   }
   
   .EnterButton, .EnrollButton {
-    display: block;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 100%;
     padding: 10px 15px;
     border-radius: 5px;
     font-size: 18px;
+    text-transform: uppercase;
     font-weight: 500;
     color: #ffffff;
     background-color: #1e88e5;
@@ -91,6 +94,7 @@
     border: none;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
+    text-decoration: none;
   }
   
   .EnterButton:hover,
@@ -99,6 +103,7 @@
   .EnrollButton:focus {
     opacity: 0.9;
     box-shadow: 0px 4px 15px rgba(30, 136, 229, 0.5);
+    text-decoration: none;
   }
   
   @media (min-width: 960px) {

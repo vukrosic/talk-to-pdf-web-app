@@ -1,46 +1,48 @@
-import { Container, Grid, Card, CardContent, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Container, Grid, Card, CardContent, Typography, Button } from "@mui/material";
 import "./CourseOverview.css";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { db, auth } from "../../config/firebase";
-import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 const CourseOverview = ({ course }) => {
-    const [enrolled, setEnrolled] = useState(false);
-  
-    // Check if the user is enrolled when the component mounts
-    useEffect(() => {
-      const checkEnrollment = async () => {
-        try {
-          const userRef = doc(db, `users/${auth?.currentUser?.uid}`);
-          const userDocSnapshot = await getDoc(userRef);
-          const userData = userDocSnapshot.data();
-          const enrolledCoursesData = userData.enrolledCourses;
-          setEnrolled(enrolledCoursesData.includes(course.id));
-        } catch (error) {
-          console.error("Error checking enrollment:", error);
-        }
-      };
-  
-      checkEnrollment();
-    }, [course.id]);
+  const [enrolled, setEnrolled] = useState(false);
 
-    const enrollUser = async () => {
-        try {
-          const userRef = doc(db, `users/${auth?.currentUser?.uid}`);
-          const userDocSnapshot = await getDoc(userRef);
-          const userData = userDocSnapshot.data();
-          const enrolledCoursesData = userData.enrolledCourses;
-          const updatedEnrolledCourses = [...enrolledCoursesData, course.id];
-      
-          await updateDoc(userRef, {
-            enrolledCourses: updatedEnrolledCourses,
-          });
-      
-          console.log("User enrolled in the course successfully!");
-        } catch (error) {
-          console.error("Error enrolling user:", error);
-        }
-      };
+  // Check if the user is enrolled when the component mounts
+  useEffect(() => {
+    const checkEnrollment = async () => {
+      try {
+        const userRef = doc(db, `users/${auth?.currentUser?.uid}`);
+        const userDocSnapshot = await getDoc(userRef);
+        const userData = userDocSnapshot.data();
+        const enrolledCoursesData = userData.enrolledCourses;
+        setEnrolled(enrolledCoursesData.includes(course.id));
+      } catch (error) {
+        console.error("Error checking enrollment:", error);
+      }
+    };
+
+    checkEnrollment();
+  }, [course.id]);
+
+  const enrollUser = async () => {
+    try {
+      const userRef = doc(db, `users/${auth?.currentUser?.uid}`);
+      const userDocSnapshot = await getDoc(userRef);
+      const userData = userDocSnapshot.data();
+      const enrolledCoursesData = userData.enrolledCourses;
+      const updatedEnrolledCourses = [...enrolledCoursesData, course.id];
+
+      await updateDoc(userRef, {
+        enrolledCourses: updatedEnrolledCourses,
+      });
+
+      console.log("User enrolled in the course successfully!");
+    } catch (error) {
+      console.error("Error enrolling user:", error);
+    }
+  };
+
   return (
     <Container maxWidth="lg" className="Container">
       <Grid container spacing={2} className="Content">
@@ -98,13 +100,13 @@ const CourseOverview = ({ course }) => {
               </Typography>
               <Typography variant="subtitle1" component="p">
                 {enrolled ? (
-                  <button className="EnterButton" onClick={console.log("123123")}>
+                  <Link to={`/courses/${course.id}/lessons`} className="EnterButton">
                     Enter Course
-                  </button>
+                  </Link>
                 ) : (
-                  <button className="EnrollButton" onClick={enrollUser}>
+                  <Button className="EnterButton" onClick={enrollUser}>
                     Enroll Now
-                  </button>
+                  </Button>
                 )}
               </Typography>
             </CardContent>
