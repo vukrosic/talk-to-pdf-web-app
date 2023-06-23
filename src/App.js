@@ -12,6 +12,7 @@ import MyCourses from './components/courses/MyCourses';
 import BrowseCoursesPage from './components/courses/BrowseCoursesPage';
 import CourseDetailesPage from './components/courses/CourseDetailsPage';
 import CourseStepperViewer from './components/courses/CourseStepperViewer';
+import CourseViewer from './components/courses/CourseViewer';
 
 function Navigation({ user }) {
   return (
@@ -86,7 +87,7 @@ function App() {
             <Route path="/" element={<BrowseCoursesPage />} />
             <Route path="/course-creator" element={<CourseCreator />} />
             <Route path="/courses/:id" element={<CourseDetailesPage />} />
-            <Route exact path="/courses/:id/lessons" element={<CourseStepperViewer />} />
+            <Route exact path="/courses/:id/lessons" element={<CourseViewer />} />
             <Route path="/mycourses" element={<MyCourses />} />
             <Route path="/signin" element={user ? <Navigate to="/" /> : <SignIn />} />
             <Route path="/feedback" element={<Feedback />} />

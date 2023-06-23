@@ -17,31 +17,8 @@ import { solarizedlight } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../config/firebase";
 
-const CourseStepperViewer = () => {
+const CourseStepperViewer = ({courseContent: lessons}) => {
   const [activeStep, setActiveStep] = useState(0);
-  const [courseData, setCourseData] = useState(null); // State to store course data
-  const { id } = useParams();
-
-  useEffect(() => {
-    const fetchCourseData = async () => {
-      try {
-        // Fetch course data from Firestore database
-        const courseDoc = doc(db, "courses", id);
-        const courseSnapshot = await getDoc(courseDoc);
-
-        if (courseSnapshot.exists()) {
-          const data = courseSnapshot.data();
-          setCourseData(data);
-        } else {
-          console.log("No such course document!");
-        }
-      } catch (error) {
-        console.log("Error fetching course data:", error);
-      }
-    };
-
-    fetchCourseData();
-  }, [id]); // Fetch course data when the id parameter changes
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -52,16 +29,17 @@ const CourseStepperViewer = () => {
   };
 
   // Check if courseData is still loading
-  if (!courseData) {
+  if (!lessons) {
     return <div>Loading...</div>;
   }
+  console.log("lessons");
+  console.log(JSON.stringify(lessons));
 
-  const courseContent = courseData.lessons; // Assuming the course data has a 'content' property
 
   return (
     <Container maxWidth="lg" py={8}>
       <Stepper activeStep={activeStep} alternativeLabel>
-        {courseContent.map((_lesson, index) => (
+        {lessons.map((_lesson, index) => (
           <Step key={index}>
             <StepLabel></StepLabel>
           </Step>
@@ -76,7 +54,7 @@ const CourseStepperViewer = () => {
         }}
       >
         <Card variant="outlined" sx={{ width: "70%", p: 4 }}>
-          <LessonViewer lesson={courseContent[activeStep]} />
+          <LessonViewer lesson={lessons[activeStep]} />
         </Card>
       </Box>
 
@@ -95,7 +73,7 @@ const CourseStepperViewer = () => {
           color="primary"
           size="large"
           onClick={handleNext}
-          disabled={activeStep === courseContent.length - 1}
+          disabled={activeStep === lessons.length - 1}
         >
           Next
         </Button>
