@@ -19,8 +19,7 @@ const AddCourse = () => {
     creator: "",
     enrollmentCount: 0,
     thumbnail: "",
-    lessons: [""],
-    lessonTitles: [""], // Add the lessonTitles array here
+    lessons: "",
     subtitle: "",
     whatYouWillLearn: [""],
     requirements: "",
@@ -33,42 +32,24 @@ const AddCourse = () => {
     setCourse({ ...course, [name]: value });
   };
 
-  const handleArrayChange = (event, index, field) => {
+  const handleArrayChange = (event) => {
     const { value } = event.target;
-    let updatedArray = [...course[field]];
-    updatedArray[index] = value;
-    setCourse({ ...course, [field]: updatedArray });
+    setCourse({ ...course, lessons: value });
   };
-
-  const handleLessonChange = (event, index) => {
-    handleArrayChange(event, index, "lessons");
-  };
-
-  const addLesson = () => {
-    let updatedLessons = [...course.lessons, ""];
-    let updatedLessonTitles = [...course.lessonTitles, ""];
-    setCourse({ ...course, lessons: updatedLessons, lessonTitles: updatedLessonTitles });
-  };
-
-  const removeLesson = (index) => {
-    let updatedLessons = [...course.lessons];
-    updatedLessons.splice(index, 1);
-    let updatedLessonTitles = [...course.lessonTitles];
-    updatedLessonTitles.splice(index, 1);
-    setCourse({ ...course, lessons: updatedLessons, lessonTitles: updatedLessonTitles });
-  };
-
 
   const handleFreeCheckBoxChange = (event) => {
     setCourse({ ...course, free: event.target.checked });
   };
 
-
   const handleSubmit = async (event) => {
     event.preventDefault();
+    
+    // Split the lessons string into separate lessons based on double new line
+    const lessonsArray = course.lessons.split("\n\n");
 
     const docRef = await addDoc(collection(db, "courses"), {
       ...course,
+      lessons: lessonsArray,
       enrollmentCount: parseInt(course.enrollmentCount, 10),
     });
 
@@ -79,7 +60,7 @@ const AddCourse = () => {
       creator: "",
       enrollmentCount: 0,
       thumbnail: "",
-      lessons: [""],
+      lessons: "",
       subtitle: "",
       whatYouWillLearn: [""],
       requirements: "",
@@ -96,9 +77,6 @@ const AddCourse = () => {
         </Typography>
         <Paper variant="outlined" elevation={3} sx={{ p: 4 }}>
           <Box component="form" onSubmit={handleSubmit}>
-          <Typography variant="h8" component="h8" align="left" mb={4}>
-          Title, lessons and creator fields are required.
-        </Typography>
             <Grid container spacing={4}>
               <Grid item xs={12}>
                 <TextField
@@ -111,46 +89,17 @@ const AddCourse = () => {
                   onChange={handleInputChange}
                 />
               </Grid>
-              {course.lessons.map((lesson, index) => (
-                <Grid item xs={12} key={index}>
-                  <Grid container alignItems="center" spacing={2}>
-                    <Grid item xs={10}>
-                      <TextField
-                        fullWidth
-                        required
-                        label={`Lesson ${index + 1}`}
-                        variant="outlined"
-                        value={lesson}
-                        onChange={(event) => handleLessonChange(event, index)}
-                        inputProps={{ maxLength: 280 }}
-                      />
-                    </Grid>
-                    <Grid item xs={2}>
-                      <Button
-                        variant="contained"
-                        color="secondary"
-                        onClick={() => removeLesson(index)}
-                      >
-                        Remove
-                      </Button>
-                    </Grid>
-                  </Grid>
-                </Grid>
-              ))}
-              <Grid item xs={12}>
-                <Button variant="contained" color="secondary" onClick={addLesson}>
-                  Add Lesson
-                </Button>
-              </Grid>
               <Grid item xs={12}>
                 <TextField
                   fullWidth
+                  multiline
+                  rows={6}
                   required
-                  name="creator"
-                  label="Creator"
+                  name="lessons"
+                  label="Lessons (separated by double new line)"
                   variant="outlined"
-                  value={course.creator}
-                  onChange={handleInputChange}
+                  value={course.lessons}
+                  onChange={handleArrayChange}
                 />
               </Grid>
               <Grid item xs={12}>

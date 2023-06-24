@@ -30,7 +30,8 @@ function Auth() {
                     displayName: user.displayName,
                     providerId: user.providerId,
                     photoURL: user.photoURL,
-                    enrolledCourses: []
+                    enrolledCourses: [],
+                    finishedCourses: []
                 };
                 await setDoc(docRef, userData);
             }
@@ -51,7 +52,8 @@ function Auth() {
                 displayName: user.displayName,
                 providerId: user.providerId,
                 photoURL: user.photoURL,
-                enrolledCourses: []
+                enrolledCourses: [],
+                finishedCourses: []
             });
         } catch (error) {
             console.log(error);

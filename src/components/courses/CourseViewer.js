@@ -46,6 +46,7 @@ const CourseViewer = () => {
           <CourseStepperViewer
             courseContent={courseData.lessons}
             setCurrentStep={setCurrentStep}
+            courseId={id}
           />
         )}
       </Grid>
