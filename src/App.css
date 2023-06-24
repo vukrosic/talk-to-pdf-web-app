@@ -81,4 +81,41 @@
   background-color: #f5f5f5;
 }
 
+/* chat-ui.css */
 
+/* Primary color */
+.primary {
+  color: #FF0000;
+}
+
+/* Secondary colors */
+.secondary-1 {
+  color: #FF3333;
+}
+
+.secondary-2 {
+  color: #FF6666;
+}
+
+/* Accent colors */
+.accent-1 {
+  color: #FF9999;
+}
+
+.accent-2 {
+  color: #FFCCCC;
+}
+
+/* Button styles */
+.button {
+  border-radius: 4px;
+  border: none;
+  padding: 10px 16px;
+}
+
+/* Card styles */
+.card {
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 16px;
+}

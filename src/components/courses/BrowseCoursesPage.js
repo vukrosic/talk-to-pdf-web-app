@@ -81,17 +81,9 @@ const BrowseCoursesPage = () => {
                 >
                   {course.free ? "Free" : "Premium"}
                 </Typography>
-                {enrolled.includes(course.id) ? (
                   <Link to={`/courses/${course.id}/lessons`} className="EnterButton">
                     Enter Course
                   </Link>
-                ) : (
-                  <Link to={`/courses/${course.id}`}>
-                  <Button className="EnterButton" onClick={enrollUser}>
-                    Enroll Now
-                  </Button>
-                  </Link>
-                )}
               </CardContent>
             </Card>
           </Grid>
