@@ -4,6 +4,8 @@ import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../config/firebase";
 import CourseOverview from "./CourseOverview";
 import { Link } from "react-router-dom";
+import React from "react";
+import '../cssDecor/cssBrowseCoursesPage.css';
 
 const BrowseCoursesPage = () => {
   const [courses, setCourses] = useState([]);
@@ -40,7 +42,7 @@ const BrowseCoursesPage = () => {
           />
         </Grid>
         {filteredCourses.map((course) => (
-          <Grid item key={course.id} xs={12} sm={6} md={4} lg={3}>
+          <Grid item key={course.id} xs={2} sm={6} md={4} lg={3}>
             <Card sx={{ height: "100%" }}>
               <CardMedia
                 component="img"
