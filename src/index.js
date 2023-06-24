@@ -6,13 +6,17 @@ import reportWebVitals from './reportWebVitals';
 import { Provider } from "react-redux";
 import "bootstrap/dist/css/bootstrap.min.css";
 import store from "./store/index.js"; // Import your Redux store
+import { ThemeProvider } from '@mui/material/styles';
+import { theme } from './components/theme'; // Import your custom theme
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
+  <ThemeProvider theme={theme}>
     <Provider store={store}>
       <App />
     </Provider>
+    </ThemeProvider>
   </React.StrictMode>
 );
 

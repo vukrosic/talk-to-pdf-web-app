@@ -21,9 +21,9 @@ const CourseOverview = ({ course }) => {
         console.error("Error checking enrollment:", error);
       }
     };
-
+  
     checkEnrollment();
-  }, [course.id]);
+  }, [course.id, enrolled]); // Modified dependency array
 
   const enrollUser = async () => {
     try {
@@ -36,7 +36,7 @@ const CourseOverview = ({ course }) => {
       await updateDoc(userRef, {
         enrolledCourses: updatedEnrolledCourses,
       });
-
+      setEnrolled(true);
       console.log("User enrolled in the course successfully!");
     } catch (error) {
       console.error("Error enrolling user:", error);
@@ -96,7 +96,7 @@ const CourseOverview = ({ course }) => {
           <Card>
             <CardContent>
               <Typography variant="h5" component="h2" className="Price">
-                {course.free ? "Free" : "$" + course.price}
+                {course.free ? "Free" : "Premium"}
               </Typography>
               <Typography variant="subtitle1" component="p">
                 {enrolled ? (
@@ -105,7 +105,7 @@ const CourseOverview = ({ course }) => {
                   </Link>
                 ) : (
                   <Button className="EnterButton" onClick={enrollUser}>
-                    Enroll Now
+                    {enrolled ? "Enter Course" : "Enroll Now"}
                   </Button>
                 )}
               </Typography>

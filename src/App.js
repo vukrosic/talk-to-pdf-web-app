@@ -45,7 +45,6 @@ function Navigation({ user }) {
             <div>
               <Button color="inherit" component={Link} to="/"> Browse </Button>
               <Button color="inherit" component={Link} to="/course-creator"> Course Creator </Button>
-              <Button color="inherit" component={Link} to="/mycourses">My Courses</Button>
               <Button color="inherit" component={Link} to="/about"> About </Button>
               <Button color="inherit" component={Link} to="/feedback"> Feedback </Button>
               <Button color="inherit" component={Link} to="/signin">
