@@ -13,6 +13,10 @@ import BrowseCoursesPage from './components/courses/BrowseCoursesPage';
 import CourseDetailesPage from './components/courses/CourseDetailsPage';
 import CourseStepperViewer from './components/courses/CourseStepperViewer';
 import CourseViewer from './components/courses/CourseViewer';
+import PrivacyPolicy from './components/PrivacyPolicy';
+import CourseManager from './components/courses/CourseCreator/CourseManager';
+import CourseSyllabus from './components/courses/NewVersion/CourseSyllabus';
+import LessonPageContainer from './components/courses/lesson-components/LessonPageContainer';
 
 function Navigation({ user }) {
   return (
@@ -22,17 +26,13 @@ function Navigation({ user }) {
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             ./GPTeach
           </Typography>
-            <Button color="inherit" component={Link} to="/"/>
-            <Button color="inherit" component={Link} to="/course-creator"/>
-            <Button color="inherit" component={Link} to="/browse-courses"/>
-            <Button color="inherit" component={Link} to="/mycourses"/>
-            <Button color="inherit" component={Link} to="/feedback"/>
-            <Button color="inherit" component={Link} to="/about"/>
-
           {user ? (
             <div>
               <Button color="inherit" component={Link} to="/"> Browse </Button>
+              <Button color="inherit" component={Link} to="/course-syllabus"> Course Syllabus </Button>
               <Button color="inherit" component={Link} to="/course-creator"> Course Creator </Button>
+              <Button color="inherit" component={Link} to="/lesson-container"> Lesson Container </Button>
+              {/* <Button color="inherit" component={Link} to="/course-manager"> Course Manager </Button> */}
               <Button color="inherit" component={Link} to="/mycourses">My Courses</Button>
               <Button color="inherit" component={Link} to="/about"> About </Button>
               <Button color="inherit" component={Link} to="/feedback"> Feedback </Button>
@@ -44,7 +44,9 @@ function Navigation({ user }) {
           ) : (
             <div>
               <Button color="inherit" component={Link} to="/"> Browse </Button>
+              <Button color="inherit" component={Link} to="/course-syllabus"> Course Syllabus </Button>
               <Button color="inherit" component={Link} to="/course-creator"> Course Creator </Button>
+              <Button color="inherit" component={Link} to="/lesson-container"> Lesson Container </Button>
               <Button color="inherit" component={Link} to="/about"> About </Button>
               <Button color="inherit" component={Link} to="/feedback"> Feedback </Button>
               <Button color="inherit" component={Link} to="/signin">
@@ -84,13 +86,17 @@ function App() {
           <Navigation user={user} />
           <Routes>
             <Route path="/" element={<BrowseCoursesPage />} />
+            <Route path="/course-syllabus" element={<CourseSyllabus />} />
             <Route path="/course-creator" element={<CourseCreator />} />
+            <Route path="/lesson-container" element={<LessonPageContainer />} />
+            {/* <Route path="/course-manager" element={<CourseManager />} /> */}
             <Route path="/courses/:id" element={<CourseDetailesPage />} />
             <Route exact path="/courses/:id/lessons" element={<CourseViewer />} />
             <Route path="/mycourses" element={<MyCourses />} />
             <Route path="/signin" element={user ? <Navigate to="/" /> : <SignIn />} />
             <Route path="/feedback" element={<Feedback />} />
             <Route path="/about" element={<About />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           </Routes>
         </Router>
       )}

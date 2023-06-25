@@ -1,0 +1,96 @@
+.Container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.Content {
+  background-color: #f2f2f2;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  margin-top: 2rem;
+}
+
+.TitleContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.Title {
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.Description {
+  text-align: center;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.TopicAccordion {
+  margin-bottom: 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  box-shadow: none;
+  background-color: #ffffff;
+}
+
+.AccordionSummary {
+  background-color: #fafafa;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.AccordionIcon {
+  margin-right: 0.5rem;
+  font-size: 1.5rem;
+}
+
+.AccordionTitle {
+  font-weight: bold;
+}
+
+.AccordionDetails {
+  padding: 0.5rem 1rem;
+}
+
+.LessonCard {
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.08);
+  padding: 1rem;
+}
+
+.LessonContainer {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.LessonTitleContainer {
+  display: flex;
+  align-items: center;
+}
+
+.LessonIcon {
+  margin-right: 1rem;
+  font-size: 1.2rem;
+}
+
+.LessonTitle {
+  margin-right: 0.5rem;
+}
+
+.XPContainer {
+  padding: 2px 8px;
+  background-color: #fca311;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 4px;
+  margin-left: 20px;
+}

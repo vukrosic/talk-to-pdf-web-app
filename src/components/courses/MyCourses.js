@@ -3,7 +3,7 @@ import { db } from '../../config/firebase';
 import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 import { Container, Grid, Card, CardContent, Typography } from "@mui/material";
 
-const AllCourses = () => {
+const MyCourses = () => {
   const [courses, setCourses] = useState([]);
 
   useEffect(() => {
@@ -42,4 +42,4 @@ const AllCourses = () => {
   );
 };
 
-export default AllCourses;
+export default MyCourses;

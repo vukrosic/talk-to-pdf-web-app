@@ -96,7 +96,7 @@ const AddCourse = () => {
                   rows={6}
                   required
                   name="lessons"
-                  label="Lessons (separated by double new line)"
+                  label="Lessons (separate each lesson but 1 empty line)"
                   variant="outlined"
                   value={course.lessons}
                   onChange={handleArrayChange}

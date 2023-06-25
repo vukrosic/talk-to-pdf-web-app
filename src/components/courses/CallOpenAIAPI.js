@@ -1,5 +1,5 @@
 export const callOpenAIAPI = async (messages, model, addNewMessage) => {
-  const apiKey = "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";
+  const apiKey = "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";
   const url = "https://api.openai.com/v1/chat/completions";
 
   const data = {

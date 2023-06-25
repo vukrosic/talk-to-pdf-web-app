@@ -15,7 +15,8 @@ const ChatWindow = ({ lesson }) => {
     if (lesson) {
       // Update messages when lesson is defined
       setMessages([
-        { role: 'assistant', content: "You are a helpful assistant and you will help me learn the following: " + lesson + " Help me by answering any questions I have." }
+        { role: 'system', content: "You are a helpful assistant and you will help me learn the following: " + lesson + " Help me by answering any questions I have." },
+        { role: 'assistant', content: "I am here to help you. Ask me anything about this lesson." }
       ]);
     }
   }, [lesson]);
