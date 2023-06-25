@@ -7,7 +7,8 @@ import {
   FormControl,
   InputLabel,
   Select,
-  MenuItem
+  MenuItem,
+  IconButton
 } from "@mui/material";
 import ReactQuill from "react-quill";
 import { useState } from "react";
@@ -16,6 +17,7 @@ import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import InfoIcon from "@mui/icons-material/Info";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import ErrorIcon from "@mui/icons-material/Error";
+import DeleteIcon from "@mui/icons-material/Delete";
 import DOMPurify from "dompurify";
 
 const LessonText = ({ content }) => {
@@ -89,6 +91,17 @@ const LessonText = ({ content }) => {
     ]);
   };
 
+  const saveTypography = (index, value) => {
+    const updatedCallouts = [...callouts];
+    updatedCallouts[index].text = value;
+    setCallouts(updatedCallouts);
+  };
+
+  const deleteCallout = (id) => {
+    const updatedCallouts = callouts.filter(callout => callout.id !== id);
+    setCallouts(updatedCallouts);
+  }
+
   return (
     <Container
       maxWidth="md"
@@ -96,14 +109,14 @@ const LessonText = ({ content }) => {
         display: "flex",
         flexDirection: "column",
         alignItems: "flex-start",
-        width: "60%"
+        width: "100%"
       }}
     >
       <Box
         display="flex"
         alignItems="flex-start"
         justifyContent="space-between"
-        width={isEditMode ? "100%" : "60%"}
+        width={isEditMode ? "100%" : "100%"}
       >
         {!isEditMode && (
           <Typography
@@ -119,41 +132,72 @@ const LessonText = ({ content }) => {
         )}
       </Box>
 
-      {isEditMode && (
-        <Box marginBottom={1} width="100%">
-          <Button onClick={addText} variant="contained">
-            Add Text
-          </Button>
-        </Box>
-      )}
+      
 
-      {callouts.map((callout) => (
+      {callouts.map((callout, index) => (
         <Box
           key={callout.id}
           margin={2}
           padding={1}
-          width={isEditMode ? "100%" : "60%"}
+          width={isEditMode ? "100%" : "89%"}
+          sx={{
+            position: "relative"
+          }}
         >
           {!callout.isText && (
-            <Alert severity={callout.severity} icon={callout.icon}>
-              {callout.message}
-            </Alert>
+            <>
+              <Alert severity={callout.severity} icon={callout.icon}>
+                {callout.message}
+              </Alert>
+              {isEditMode && (
+                <IconButton
+                  onClick={() => deleteCallout(callout.id)}
+                  sx={{
+                    position: "absolute",
+                    top: "0.5rem",
+                    right: "0.5rem",
+                  }}
+                >
+                  <DeleteIcon fontSize="small" />
+                </IconButton>
+              )}
+            </>
           )}
           {callout.isText && (
-            <ReactQuill
-              theme="snow"
-              defaultValue={callout.text}
-              onChange={(value) => {
-                callout.text = value;
-              }}
-            />
+            <>
+              {isEditMode ? (
+                <ReactQuill
+                  theme="snow"
+                  value={callout.text}
+                  onChange={(value) => saveTypography(index, value)}
+                />
+              ) : (
+                <Typography
+                  variant="body1"
+                  style={{ textAlign: "left", marginBottom: "1em" }}
+                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(callout.text) }}
+                />
+              )}
+              {isEditMode && (
+                <IconButton
+                  onClick={() => deleteCallout(callout.id)}
+                  sx={{
+                    position: "absolute",
+                    top: "0.5rem",
+                    right: "0.5rem",
+                  }}
+                >
+                  <DeleteIcon fontSize="small" />
+                </IconButton>
+              )}
+            </>
           )}
         </Box>
       ))}
 
       {isEditMode && (
-        <FormControl sx={{ minWidth: 120 }}>
-          <InputLabel>Severity</InputLabel>
+        <FormControl sx={{ minWidth: 120, mt: 5 }}>
+          <InputLabel>Add Callout</InputLabel>
           <Select
             value={selectedSeverity}
             onChange={handleSeverityChange}
@@ -167,26 +211,44 @@ const LessonText = ({ content }) => {
         </FormControl>
       )}
 
-      {isEditMode && (
-        <Button onClick={addCallout} variant="contained">
-          Add Callout
-        </Button>
-      )}
+      <Box mt={isEditMode ? 2 : 0}>
+        {!isEditMode && (
+          <Button onClick={() => setIsEditMode(true)} variant="text" color="primary">
+            Edit
+          </Button>
+        )}
+        {isEditMode && (
+          <>
 
-      {!isEditMode && (
-        <Button onClick={() => setIsEditMode(true)} variant="contained">
-          Edit
-        </Button>
-      )}
-      {isEditMode && (
-        <Button
-          onClick={() => setIsEditMode(false)}
-          variant="contained"
-          style={{ marginTop: "1em" }}
-        >
-          Done Editing
-        </Button>
-      )}
+          <Box marginBottom={1} width="100%">
+            <Button onClick={addText} variant="text" color="primary" style={{ marginLeft: "1.65em" }}>
+              Add Text
+            </Button>
+            <Button onClick={addCallout} variant="text" color="primary" style={{ marginLeft: "1em" }}>
+              Add Callout
+            </Button>
+          </Box>
+
+            <Button
+              onClick={() => setIsEditMode(false)}
+              variant="icon"
+              color="primary"
+              style={{ marginLeft: "1em" }}
+            >
+              Done Editing
+            </Button>
+            <Button
+              onClick={() => setCallouts([])}
+              variant="contained"
+              color="error"
+              style={{ marginLeft: "1em" }}
+            >
+              Clear Content
+            </Button>
+          </>
+        )}
+      </Box>
+      
     </Container>
   );
 };
