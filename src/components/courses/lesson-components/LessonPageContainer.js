@@ -7,12 +7,22 @@ import LessonText from "./LessonText";
 import LessonFillInTheBlank from "./LessonFillInTheBlank";
 import LessonCompleted from "./LessonCompleted";
 import StreakCompleted from "./StreakCompleted";
-import "./LessonPageContainer.css";
+
+const styles = {
+  LessonPageContainer: {
+    display: "flex",
+    flexDirection: "column",
+    minHeight: "90vh",
+  },
+  content: {
+    flexGrow: 1,
+  },
+};
 
 const LessonPageContainer = ({ onNextLesson }) => {
   // Define the lesson data as a constant
   const lesson = {
-    type: "text",
+    type: "question",
     title: "Introduction to Human Anatomy",
     question: "Which of the following is not a component of the integumentary system?",
     option1: "Skin",
@@ -25,29 +35,23 @@ const LessonPageContainer = ({ onNextLesson }) => {
   const renderLessonComponent = () => {
     switch (lesson.type) {
       case "question":
-        return (
-          <LessonQuestion
-            question={lesson.question}
-            option1={lesson.option1}
-            option2={lesson.option2}
-          />
-        );
-        case "text":
-            return <LessonText content={lesson.content} />;
-        case "filintheblanks":
-            return <LessonFillInTheBlank />;
-        case "completed":
-            return <LessonCompleted />;
-        case "streak":
-            return <StreakCompleted />;
-        default:
+        return <LessonQuestion />;
+      case "text":
+        return <LessonText content={lesson.content} />;
+      case "filintheblanks":
+        return <LessonFillInTheBlank />;
+      case "completed":
+        return <LessonCompleted />;
+      case "streak":
+        return <StreakCompleted />;
+      default:
         return null;
     }
   };
 
   return (
-    <div className="LessonPageContainer">
-      <div className="content">
+    <div style={styles.LessonPageContainer}>
+      <div style={styles.content}>
         <Header lessonTitle={lesson.title} />
         {renderLessonComponent()}
       </div>

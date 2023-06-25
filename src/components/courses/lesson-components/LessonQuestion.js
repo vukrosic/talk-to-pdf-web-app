@@ -1,51 +1,121 @@
 import React from "react";
-import { Container, Typography, Button, Radio } from "@mui/material";
+import {
+  Container,
+  Typography,
+  Button,
+  TextField,
+  Box,
+  IconButton,
+  Grid,
+} from "@mui/material";
+import { Add, Delete } from "@mui/icons-material";
 
-const LessonQuestion = ({ question, option1, option2 }) => {
+const LessonQuestion = () => {
   const [selectedOption, setSelectedOption] = React.useState("");
+  const [isEditMode, setIsEditMode] = React.useState(false);
+  const [choices, setChoices] = React.useState(["Blue", "Red"]);
+
+  const question = "What's your favourite color?";
 
   const handleChange = (event) => {
     setSelectedOption(event.target.value);
   };
 
+  const handleAddChoice = () => {
+    const isSelected = choices.includes(selectedOption);
+    setChoices([...choices, " "]);
+    if (!isSelected) {
+      setSelectedOption("");
+    }
+  };
+  const handleChoiceChange = (value, index) => {
+    const newChoices = [...choices];
+    newChoices[index] = value;
+    setChoices(newChoices);
+  };
+
+  const handleDeleteChoice = (index) => {
+    const newChoices = choices.filter((_, i) => i !== index);
+    setChoices(newChoices);
+  };
+
+  const handleEditMode = () => {
+    setSelectedOption("");
+    setIsEditMode((prevState) => !prevState);
+  };
+
   return (
-    <Container 
-    >
+    <Container>
       <Typography variant="body1" style={{ textAlign: "left", marginBottom: "1em" }}>
         {question}
       </Typography>
 
-      <Button 
-        variant="outlined"
-        style={{ 
-            width: "100%", 
-            marginBottom: "1em",
-            color: selectedOption === option1 ? '#4C6BAE' : '#000',
-            borderColor: selectedOption === option1 ? '#4C6BAE' : '#000',
-            backgroundColor: 'white',
-            boxShadow: '0px 2px 1px -1px #4C6BAE',
-            textAlign: "left",
-        }}
-        startIcon={<Radio checked={selectedOption === option1} color="primary" onChange={handleChange} value={option1} />}
-      >
-        {option1}
-      </Button>
+      {choices.map((choice, index) => (
+        <Grid container spacing={1} alignItems="center" key={index}>
+          <Grid item xs={isEditMode ? 11 : 12}>
+            {isEditMode ? (
+              <TextField
+                fullWidth
+                value={choice}
+                variant="outlined"
+                style={{
+                  marginBottom: "1em",
+                  backgroundColor: selectedOption === choice ? "#1a90ff" : "white",
+                  color: selectedOption === choice ? "#fff" : "#000",
+                }}
+                onChange={(event) => handleChoiceChange(event.target.value, index)}
+                InputProps={{
+                  style: {
+                    textAlign: "left",
+                  },
+                }}
+              />
+            ) : (
+              <Button
+                fullWidth
+                variant="outlined"
+                style={{
+                  marginBottom: "1em",
+                  backgroundColor: selectedOption === choice ? "#1a90ff" : "white",
+                  color: selectedOption === choice ? "#fff" : "#000",
+                  textAlign: "left",
+                  paddingTop: "1em",
+                  paddingBottom: "1em",
+                }}
+                onClick={() => setSelectedOption(choice)}
+              >
+                {choice}
+              </Button>
+            )}
+          </Grid>
+          {isEditMode && (
+            <Grid item xs={1}>
+              <IconButton
+                onClick={() => handleDeleteChoice(index)}
+                color="inherit"
+                aria-label="delete choice"
+              >
+                <Delete />
+              </IconButton>
+            </Grid>
+          )}
+        </Grid>
+      ))}
 
-      <Button 
-        variant="outlined"
-        style={{ 
-            width: "100%", 
-            marginBottom: "1em",
-            color: selectedOption === option2 ? '#4C6BAE' : '#000',
-            borderColor: selectedOption === option2 ? '#4C6BAE' : '#000',
-            backgroundColor: 'white',
-            boxShadow: '0px 2px 1px -1px #4C6BAE',
-            textAlign: "left",
-        }}
-        startIcon={<Radio checked={selectedOption === option2} color="primary" onChange={handleChange} value={option2} />}
-      >
-        {option2}
-      </Button>
+      {isEditMode && (
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <IconButton onClick={handleAddChoice} color="primary" aria-label="add">
+            <Add />
+          </IconButton>
+        </Box>
+      )}
+
+      <Box sx={{ display: "flex", justifyContent: "flex-end", marginTop: "1em" }}>
+        <Button onClick={handleEditMode} variant="text" color="primary">
+          {isEditMode ? "Done" : "Edit"}
+        </Button>
+      </Box>
+
     </Container>
   );
 };

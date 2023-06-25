@@ -1,4 +1,5 @@
 import React from "react";
+import { useState } from "react";
 import {
   Container,
   Typography,
@@ -18,6 +19,11 @@ import "./CourseSyllabus.css";
 
 const CourseSyllabus = () => {
   const course = courseData;
+  const [editMode, setEditMode] = useState(false);
+
+  const handleEditMode = () => {
+    setEditMode(!editMode);
+  };
 
   return (
     <Container maxWidth="lg" className="Container">
@@ -35,6 +41,9 @@ const CourseSyllabus = () => {
               {course.description}
             </Typography>
           </div>
+          <button onClick={handleEditMode} className="EditButton">
+            {editMode ? "Exit Edit Mode" : "Enter Edit Mode"}
+          </button>
           {course.lessons.reduce((acc, lesson) => {
             const topicIndex = acc.findIndex(
               (topic) => topic.title === lesson.topic
