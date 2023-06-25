@@ -8,7 +8,7 @@
 .Content {
   background-color: #f2f2f2;
   padding: 2rem;
-  border-radius: 0.5rem;
+  border-radius: 0.3rem;
   margin-top: 2rem;
 }
 
@@ -22,7 +22,7 @@
 .Title {
   text-align: center;
   font-weight: bold;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.3rem;
 }
 
 .Description {
@@ -32,7 +32,7 @@
 
 .TopicAccordion {
   margin-bottom: 1rem;
-  border-radius: 0.5rem;
+  border-radius: 0.3rem;
   border: none;
   box-shadow: none;
   background-color: #ffffff;
@@ -41,13 +41,13 @@
 .AccordionSummary {
   background-color: #fafafa;
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-  border-radius: 0.5rem;
-  padding: 0.5rem 1rem;
+  border-radius: 0.3rem;
+  padding: 0.3rem 1rem;
   cursor: pointer;
 }
 
 .AccordionIcon {
-  margin-right: 0.5rem;
+  margin-right: 0.3rem;
   font-size: 1.5rem;
 }
 
@@ -56,12 +56,12 @@
 }
 
 .AccordionDetails {
-  padding: 0.5rem 1rem;
+  padding: 0.3rem 1rem;
 }
 
 .LessonCard {
   background-color: #ffffff;
-  border-radius: 0.5rem;
+  border-radius: 0.3rem;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.08);
   padding: 1rem;
 }
@@ -83,7 +83,7 @@
 }
 
 .LessonTitle {
-  margin-right: 0.5rem;
+  margin-right: 0.3rem;
 }
 
 .XPContainer {
@@ -94,3 +94,4 @@
   border-radius: 4px;
   margin-left: 20px;
 }
+

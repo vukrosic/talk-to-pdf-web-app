@@ -9,20 +9,176 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  Button,
+  TextField,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import PlayCircleFilledIcon from "@mui/icons-material/PlayCircleFilled";
 import LockIcon from "@mui/icons-material/Lock";
 import HistoryEduIcon from "@mui/icons-material/HistoryEdu";
-import courseData from "./CourseData";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 import "./CourseSyllabus.css";
 
+const courses = {
+  introduction: {
+    title: "Introduction to Web Development",
+    description:
+      "Learn the fundamentals of web development and build your first website.",
+    lessons: {
+      HTML: [
+        {
+          title: "Lesson 1",
+          completed: false,
+          xp: 10,
+        },
+        {
+          title: "Lesson 2",
+          completed: false,
+          xp: 10,
+        },
+      ],
+      CSS: [
+        {
+          title: "Lesson 1",
+          completed: false,
+          xp: 10,
+        },
+      ],
+      JavaScript: [
+        {
+          title: "Lesson 1",
+          completed: false,
+          xp: 10,
+        },
+        {
+          title: "Lesson 2",
+          completed: false,
+          xp: 10,
+        },
+        {
+          title: "Lesson 3",
+          completed: false,
+          xp: 10,
+        },
+      ],
+    },
+  },
+};
+
 const CourseSyllabus = () => {
-  const course = courseData;
+  const [course, setCourse] = useState(courses.introduction);
   const [editMode, setEditMode] = useState(false);
 
   const handleEditMode = () => {
     setEditMode(!editMode);
+  };
+
+  const handleAddTopic = () => {
+    setCourse((prevState) => {
+      const newTopic = `New Topic ${Object.keys(prevState.lessons).length + 1}`;
+      const newDefaultLesson = {
+        title: "Default Lesson",
+        completed: false,
+        xp: 10,
+      };
+      const newLessons = {
+        ...prevState.lessons,
+        [newTopic]: [newDefaultLesson],
+      };
+      return {
+        ...prevState,
+        lessons: newLessons,
+      };
+    });
+  };
+
+  const handleDeleteTopic = (topicIndex) => {
+    setCourse((prevState) => {
+      const updatedTopics = Object.keys(prevState.lessons).filter(
+        (_, index) => index !== topicIndex
+      );
+      const updatedLessons = updatedTopics.reduce((acc, topic) => {
+        acc[topic] = prevState.lessons[topic];
+        return acc;
+      }, {});
+      return {
+        ...prevState,
+        lessons: updatedLessons,
+      };
+    });
+  };
+
+  const handleUpdateTopic = (topicIndex, newTopicName) => {
+    setCourse((prevState) => {
+      const updatedTopics = Object.keys(prevState.lessons).map((topic, index) =>
+        index === topicIndex ? newTopicName : topic
+      );
+      const updatedLessons = updatedTopics.reduce((acc, topic) => {
+        acc[topic] = prevState.lessons[topic];
+        return acc;
+      }, {});
+      return {
+        ...prevState,
+        lessons: updatedLessons,
+      };
+    });
+  };
+
+  const handleUpdateLesson = (topicIndex, lessonIndex, newLessonTitle, newLessonXP) => {
+    setCourse((prevState) => {
+      const topic = Object.keys(prevState.lessons)[topicIndex];
+      const updatedLessons = [...prevState.lessons[topic]];
+      updatedLessons.splice(lessonIndex, 1, {
+        ...prevState.lessons[topic][lessonIndex],
+        title: newLessonTitle,
+        xp: newLessonXP,
+      });
+      return {
+        ...prevState,
+        lessons: {
+          ...prevState.lessons,
+          [topic]: updatedLessons,
+        },
+      };
+    });
+  };
+  
+
+  const handleAddLesson = (topicIndex, newLessonXP) => {
+    setCourse((prevState) => {
+      const topic = Object.keys(prevState.lessons)[topicIndex];
+      const updatedLessons = [...prevState.lessons[topic]];
+      const newLesson = {
+        title: `Lesson ${updatedLessons.length + 1}`,
+        completed: false,
+        xp: newLessonXP,
+      };
+      updatedLessons.push(newLesson);
+      return {
+        ...prevState,
+        lessons: {
+          ...prevState.lessons,
+          [topic]: updatedLessons,
+        },
+      };
+    });
+  };
+  
+
+  const handleDeleteLesson = (topicIndex, lessonIndex) => {
+    setCourse((prevState) => {
+      const topic = Object.keys(prevState.lessons)[topicIndex];
+      const updatedLessons = [...prevState.lessons[topic]];
+      updatedLessons.splice(lessonIndex, 1);
+      return {
+        ...prevState,
+        lessons: {
+          ...prevState.lessons,
+          [topic]: updatedLessons,
+        },
+      };
+    });
   };
 
   return (
@@ -41,38 +197,36 @@ const CourseSyllabus = () => {
               {course.description}
             </Typography>
           </div>
-          <button onClick={handleEditMode} className="EditButton">
-            {editMode ? "Exit Edit Mode" : "Enter Edit Mode"}
-          </button>
-          {course.lessons.reduce((acc, lesson) => {
-            const topicIndex = acc.findIndex(
-              (topic) => topic.title === lesson.topic
-            );
-            if (topicIndex === -1) {
-              acc.push({ title: lesson.topic, lessons: [lesson] });
-            } else {
-              acc[topicIndex].lessons.push(lesson);
-            }
-            return acc;
-          }, []).map((topic, index) => (
-            <Accordion key={index} className="TopicAccordion">
+          {Object.entries(course.lessons).map(([topic, lessons], topicIndex) => (
+            <Accordion key={topicIndex} className="TopicAccordion">
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 className="AccordionSummary"
-                aria-controls={`panel${index + 1}-content`}
-                id={`panel${index + 1}-header`}
+                aria-controls={`panel${topicIndex + 1}-content`}
+                id={`panel${topicIndex + 1}-header`}
               >
-                {index === 0 ? (
+                {topicIndex === 0 ? (
                   <PlayCircleFilledIcon className="TopicIcon" />
                 ) : (
                   <LockIcon className="TopicIcon" />
                 )}
-                <Typography variant="h6" className="AccordionTitle">
-                  {topic.title}
-                </Typography>
+                {editMode ? (
+                  <TextField
+                    defaultValue={topic}
+                    onBlur={(e) => handleUpdateTopic(topicIndex, e.target.value)}
+                    size="small"
+                    label="Topic"
+                    variant="outlined"
+                    className="EditTopicTextField"
+                  />
+                ) : (
+                  <Typography variant="h6" className="AccordionTitle">
+                    {topic}
+                  </Typography>
+                )}
               </AccordionSummary>
               <AccordionDetails className="AccordionDetails">
-                {topic.lessons.map((lesson, lessonIndex) => (
+                {lessons.map((lesson, lessonIndex) => (
                   <Card key={lessonIndex} className="LessonCard">
                     <CardContent>
                       <div className="LessonContainer">
@@ -80,18 +234,110 @@ const CourseSyllabus = () => {
                           <HistoryEduIcon className="LessonIcon" />
                         </div>
                         <div className="LessonTitleContainer">
-                          <Typography variant="h6" className="LessonTitle">
-                            {lesson.title}
-                          </Typography>
+                          {editMode ? (
+                            <TextField
+                              defaultValue={lesson.title}
+                              onBlur={(e) =>
+                                handleUpdateLesson(
+                                  topicIndex,
+                                  lessonIndex,
+                                  e.target.value
+                                )
+                              }
+                              size="small"
+                              label="Lesson Title"
+                              variant="outlined"
+                              className="EditLessonTextField"
+                            />
+                          ) : (
+                            <Typography variant="h6" className="LessonTitle">
+                              {lesson.title}
+                            </Typography>
+                          )}
                         </div>
-                        <div className="XPContainer">+10XP</div>
+                        {editMode ? (
+                        <div className="LessonXPContainer">
+                          <TextField
+                            defaultValue={lesson.xp}
+                            onBlur={(e) =>
+                              handleUpdateLesson(
+                                topicIndex,
+                                lessonIndex,
+                                lesson.title,
+                                parseInt(e.target.value)
+                              )
+                            }
+                            type="number"
+                            size="small"
+                            label="XP"
+                            variant="outlined"
+                            className="EditLessonXPTextField"
+                          />
+                        </div>
+                      ) : (
+                        <div className="XPContainer">{lesson.xp}XP</div>
+                      )}
+                        {editMode && (
+                          <Button
+                            variant="outlined"
+                            onClick={() => handleDeleteLesson(topicIndex, lessonIndex)}
+                            className="DeleteLessonButton"
+                            startIcon={<DeleteIcon />}
+                            size="small"
+                          >
+                            Delete
+                          </Button>
+                        )}
                       </div>
                     </CardContent>
                   </Card>
                 ))}
+                {editMode && (
+                  <Button
+                    variant="outlined"
+                    onClick={() => handleAddLesson(topicIndex)}
+                    className="AddLessonButton"
+                    startIcon={<AddIcon />}
+                    size="small"
+                  >
+                    Add Lesson
+                  </Button>
+                )}
               </AccordionDetails>
+              {editMode && (
+                <Button
+                  variant="outlined"
+                  onClick={() => handleDeleteTopic(topicIndex)}
+                  className="DeleteTopicButton"
+                  startIcon={<DeleteIcon />}
+                  size="small"
+                >
+                  Delete Topic
+                </Button>
+              )}
             </Accordion>
           ))}
+          {editMode && (
+            <Grid container spacing={2} justifyContent="flex-end">
+              <Button
+                variant="contained"
+                onClick={handleAddTopic}
+                className="AddTopicButton"
+              >
+                Add Topic
+              </Button>
+            </Grid>
+          )}
+          <Grid container spacing={2} justifyContent="flex-end" className="Content">
+            <Button
+              variant="contained"
+              onClick={handleEditMode}
+              className={`EditButton ${editMode ? "editMode" : ""}`}
+              style={{ backgroundColor: editMode ? "green" : "blue" }}
+            >
+              {editMode ? "Exit Edit Mode" : "Enter Edit Mode"}
+            </Button>
+          </Grid>
         </Grid>
       </Grid>
     </Container>

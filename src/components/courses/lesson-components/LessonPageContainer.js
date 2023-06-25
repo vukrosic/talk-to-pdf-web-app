@@ -22,7 +22,7 @@ const styles = {
 const LessonPageContainer = ({ onNextLesson }) => {
   // Define the lesson data as a constant
   const lesson = {
-    type: "question",
+    type: "text",
     title: "Introduction to Human Anatomy",
     question: "Which of the following is not a component of the integumentary system?",
     option1: "Skin",
