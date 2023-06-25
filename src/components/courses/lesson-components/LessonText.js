@@ -11,7 +11,7 @@ import {
   IconButton
 } from "@mui/material";
 import ReactQuill from "react-quill";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "react-quill/dist/quill.snow.css";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import InfoIcon from "@mui/icons-material/Info";
@@ -19,17 +19,20 @@ import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import ErrorIcon from "@mui/icons-material/Error";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DOMPurify from "dompurify";
+import LessonTextEditMode from "./LessonText/LessonTextEditMode";
 
-const LessonText = ({ content }) => {
+const LessonText = () => {
   const [isEditMode, setIsEditMode] = useState(false);
-  const [text, setText] = useState(content);
-  const [callouts, setCallouts] = useState([]);
+  const [content, setContent] = useState([]);
   const [selectedSeverity, setSelectedSeverity] = useState("warning");
   const [selectedIcon, setSelectedIcon] = useState(<WarningAmberIcon fontSize="inherit" />);
+  
 
-  const handleChange = (value) => {
-    setText(value);
-  };
+  // database - all content is in content
+
+  useEffect(() => {
+    console.log(content);
+  }, [content]);
 
   const addCallout = () => {
     let icon;
@@ -49,10 +52,10 @@ const LessonText = ({ content }) => {
       default:
         icon = <WarningAmberIcon fontSize="inherit" />;
     }
-    setCallouts([
-      ...callouts,
+    setContent([
+      ...content,
       {
-        id: callouts.length + 1,
+        id: content.length + 1,
         message: "This is an important note.",
         severity: selectedSeverity,
         icon: icon
@@ -81,10 +84,10 @@ const LessonText = ({ content }) => {
   };
 
   const addText = () => {
-    setCallouts([
-      ...callouts,
+    setContent([
+      ...content,
       {
-        id: callouts.length + 1,
+        id: content.length + 1,
         text: "New editable text field.",
         isText: true
       }
@@ -92,14 +95,14 @@ const LessonText = ({ content }) => {
   };
 
   const saveTypography = (index, value) => {
-    const updatedCallouts = [...callouts];
+    const updatedCallouts = [...content];
     updatedCallouts[index].text = value;
-    setCallouts(updatedCallouts);
+    setContent(updatedCallouts);
   };
 
   const deleteCallout = (id) => {
-    const updatedCallouts = callouts.filter(callout => callout.id !== id);
-    setCallouts(updatedCallouts);
+    const updatedCallouts = content.filter(callout => callout.id !== id);
+    setContent(updatedCallouts);
   }
 
   return (
@@ -112,29 +115,11 @@ const LessonText = ({ content }) => {
         width: "100%"
       }}
     >
-      <Box
-        display="flex"
-        alignItems="flex-start"
-        justifyContent="space-between"
-        width={isEditMode ? "100%" : "100%"}
-      >
-        {!isEditMode && (
-          <Typography
-            variant="body1"
-            style={{ textAlign: "left", marginBottom: "1em" }}
-            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(text) }}
-          />
-        )}
-        {isEditMode && (
-          <div style={{ width: "100%", marginBottom: "1em" }}>
-            <ReactQuill theme="snow" value={text} onChange={handleChange} />
-          </div>
-        )}
-      </Box>
+
 
       
 
-      {callouts.map((callout, index) => (
+      {content.map((callout, index) => (
         <Box
           key={callout.id}
           margin={2}
@@ -238,7 +223,7 @@ const LessonText = ({ content }) => {
               Done Editing
             </Button>
             <Button
-              onClick={() => setCallouts([])}
+              onClick={() => setContent([])}
               variant="contained"
               color="error"
               style={{ marginLeft: "1em" }}
@@ -248,9 +233,199 @@ const LessonText = ({ content }) => {
           </>
         )}
       </Box>
-      
+      {/* <LessonTextEditMode
+          addText={addText}
+          addCallout={addCallout}
+          deleteCallout={deleteCallout}
+          handleSeverityChange={handleSeverityChange}
+        /> */}
     </Container>
   );
 };
 
 export default LessonText;
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import React, { useState, useEffect } from 'react';
+// import DOMPurify from 'dompurify';
+// import {
+//   Container,
+//   Typography,
+//   Box,
+//   IconButton,
+//   Button,
+//   FormControl,
+//   InputLabel,
+//   Select,
+//   MenuItem,
+// } from '@mui/material';
+// import ReactQuill from 'react-quill';
+// import Alert from '@mui/material/Alert';
+// import CheckBoxIcon from '@mui/icons-material/CheckBox';
+// import InfoIcon from '@mui/icons-material/Info';
+// import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+// import ErrorIcon from '@mui/icons-material/Error';
+// import DeleteIcon from '@mui/icons-material/Delete';
+
+// import HeaderComponent from './LessonText/HeaderComponent';
+// import CalloutComponent from './LessonText/CalloutComponent';
+// import TextEditorComponent from './LessonText/TextEditorComponent';
+// import ButtonsComponent from './LessonText/ButtonsComponent';
+
+// const LessonText = () => {
+//   const [isEditMode, setIsEditMode] = useState(false);
+//   const [content, setContent] = useState([]);
+//   const [selectedSeverity, setSelectedSeverity] = useState('warning');
+//   const [selectedIcon, setSelectedIcon] = useState(
+//     <WarningAmberIcon fontSize="inherit" />
+//   );
+
+//   useEffect(() => {
+//     console.log(content);
+//   }, [content]);
+
+//   const addCallout = () => {
+//     let icon;
+//     switch (selectedSeverity) {
+//       case 'success':
+//         icon = <CheckBoxIcon fontSize="inherit" />;
+//         break;
+//       case 'info':
+//         icon = <InfoIcon fontSize="inherit" />;
+//         break;
+//       case 'warning':
+//         icon = <WarningAmberIcon fontSize="inherit" />;
+//         break;
+//       case 'error':
+//         icon = <ErrorIcon fontSize="inherit" />;
+//         break;
+//       default:
+//         icon = <WarningAmberIcon fontSize="inherit" />;
+//     }
+//     setContent([
+//       ...content,
+//       {
+//         id: content.length + 1,
+//         message: 'This is an important note.',
+//         severity: selectedSeverity,
+//         icon: icon,
+//       },
+//     ]);
+//   };
+
+//   const handleSeverityChange = (event) => {
+//     setSelectedSeverity(event.target.value);
+//     switch (event.target.value) {
+//       case 'success':
+//         setSelectedIcon(<CheckBoxIcon fontSize="inherit" />);
+//         break;
+//       case 'info':
+//         setSelectedIcon(<InfoIcon fontSize="inherit" />);
+//         break;
+//       case 'warning':
+//         setSelectedIcon(<WarningAmberIcon fontSize="inherit" />);
+//         break;
+//       case 'error':
+//         setSelectedIcon(<ErrorIcon fontSize="inherit" />);
+//         break;
+//       default:
+//         setSelectedIcon(<WarningAmberIcon fontSize="inherit" />);
+//     }
+//   };
+
+//   const addText = () => {
+//     setContent([
+//       ...content,
+//       {
+//         id: content.length + 1,
+//         text: 'New editable text field.',
+//         isText: true,
+//       },
+//     ]);
+//   };
+
+//   const saveTypography = (index, value) => {
+//     const updatedCallouts = [...content];
+//     updatedCallouts[index].text = value;
+//     setContent(updatedCallouts);
+//   };
+
+//   const deleteCallout = (id) => {
+//     const updatedCallouts = content.filter((callout) => callout.id !== id);
+//     setContent(updatedCallouts);
+//   };
+
+//   return (
+//     <Container
+//       maxWidth="md"
+//       style={{
+//         display: 'flex',
+//         flexDirection: 'column',
+//         alignItems: 'flex-start',
+//         width: '100%',
+//       }}
+//     >
+//       <HeaderComponent
+//         setSelectedSeverity={setSelectedSeverity}
+//         setIsEditMode={setIsEditMode}
+//         selectedSeverity={selectedSeverity}
+//         isEditMode={isEditMode}
+//         handleSeverityChange={handleSeverityChange}
+//       />
+
+//       {content.map((callout, index) => (
+//         <Box
+//           key={callout.id}
+//           margin={2}
+//           padding={1}
+//           width={isEditMode ? '100%' : '89%'}
+//           sx={{
+//             position: 'relative',
+//           }}
+//         >
+//           {!callout.isText && (
+//             <>
+//               <CalloutComponent
+//                 callout={callout}
+//                 deleteCallout={deleteCallout}
+//                 isEditMode={isEditMode}
+//               />
+//             </>
+//           )}
+//           {callout.isText && (
+//             <>
+//               <TextEditorComponent
+//                 callout={callout}
+//                 saveTypography={saveTypography}
+//                 index={index}
+//                 isEditMode={isEditMode}
+//                 deleteCallout={deleteCallout}
+//               />
+//             </>
+//           )}
+//         </Box>
+//       ))}
+
+//       <ButtonsComponent
+//         addCallout={addCallout}
+//         addText={addText}
+//         setIsEditMode={setIsEditMode}
+//         setContent={setContent}
+//         isEditMode={isEditMode}
+//       />
+//     </Container>
+//   );
+// };
+
+// export default LessonText;
