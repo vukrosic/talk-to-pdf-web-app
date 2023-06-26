@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box, Container, Typography, Grid, Paper } from "@mui/material";
 import { styled } from '@mui/material/styles';
 
-function StreakCompleted() {
+function StreakCompleted( ) {
     const npContainerStyles = {
         padding: '2px 8px',
         backgroundColor: '#fca311',
@@ -11,6 +11,7 @@ function StreakCompleted() {
         borderRadius: 4,
         marginLeft: 20,
       };
+    
 
   return (
     <Container>

@@ -1,4 +1,5 @@
 import React from "react";
+import { useState } from "react";
 import { Container, Typography, Button } from "@mui/material";
 import Header from "./HeaderAndFooter/Header";
 import Footer from "./HeaderAndFooter/Footer";
@@ -7,6 +8,10 @@ import LessonText from "./LessonText";
 import LessonFillInTheBlank from "./LessonFillInTheBlank";
 import LessonCompleted from "./LessonCompleted";
 import StreakCompleted from "./StreakCompleted";
+import InfoIcon from "@mui/icons-material/Info";
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import ErrorIcon from "@mui/icons-material/Error";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const styles = {
   LessonPageContainer: {
@@ -19,29 +24,55 @@ const styles = {
   },
 };
 
-const LessonPageContainer = ({ onNextLesson }) => {
-  // Define the lesson data as a constant
-  const lesson = {
-    type: "text",
-    title: "Introduction to Human Anatomy",
-    question: "Which of the following is not a component of the integumentary system?",
-    option1: "Skin",
-    option2: "Hair",
-    option3: "Nails",
-    option4: "Heart",
-    content: "The integumentary system is the largest organ system of the body. It is composed of the skin and its accessory structures including hair, nails, and glands. The integumentary system protects the body from the outside world, regulates body temperature, and helps to store water, fat, and vitamin D.",
-  };
+const LessonPageContainer = () => {
+  const [completed, setCompleted] = useState(false);
+  const [ question, setQuestion ] = useState("What's your favourite color?");
+  const [ choices, setChoices ] = useState(["Red", "Blue", "Green", "Yellow"]);
+  const [ textLessonContent, setTextLessonContent ] = useState([
+    {
+      id: 0,
+      text: "<bold>You can edit this text!</Bold>",
+      isTextField: false,
+      severity: "info",
+      icon: <InfoIcon fontSize="inherit" />
+    },
+    {
+      id: 1,
+      text: "This is some text that you can edit.",
+      isTextField: true
+    },
+    {
+      id: 2,
+      text: "Here is a warning message.",
+      isTextField: false,
+      severity: "warning",
+      icon: <WarningAmberIcon fontSize="inherit" />
+    },
+    {
+      id: 3,
+      text: "Another editable text field.",
+      isTextField: true
+    }
+  ]);
 
-  const renderLessonComponent = () => {
-    switch (lesson.type) {
+  const [lessonMap, setLessonMap] = useState([
+    { index: 0, type: "text", content: [] },
+    { index: 1, type: "question", question: question, choices: choices },
+    { index: 2, type: "filintheblanks", content: [] },
+    { index: 3, type: "completed", completed: completed },
+  ]);
+  const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
+
+  const renderLessonComponent = (lessonType) => {
+    switch (lessonType) {
       case "question":
         return <LessonQuestion />;
       case "text":
-        return <LessonText content={lesson.content} />;
+        return <LessonText textLessonContent={textLessonContent} />;
       case "filintheblanks":
         return <LessonFillInTheBlank />;
       case "completed":
-        return <LessonCompleted />;
+        return <LessonCompleted setCompleted={setCompleted} />;
       case "streak":
         return <StreakCompleted />;
       default:
@@ -49,13 +80,30 @@ const LessonPageContainer = ({ onNextLesson }) => {
     }
   };
 
+  const onNextLesson = () => {
+    setCurrentLessonIndex((prevIndex) =>
+      prevIndex < lessonMap.length - 1 ? prevIndex + 1 : prevIndex
+    );
+  };
+
+  const onPreviousLesson = () => {
+    setCurrentLessonIndex((prevIndex) =>
+      prevIndex > 0 ? prevIndex - 1 : prevIndex
+    );
+  };
+  
+
   return (
     <div style={styles.LessonPageContainer}>
       <div style={styles.content}>
-        <Header lessonTitle={lesson.title} />
-        {renderLessonComponent()}
+        <Header
+          lessonTitle={`Lesson ${lessonMap[currentLessonIndex].index + 1}: ${
+            lessonMap[currentLessonIndex].type
+          }`}
+        />
+        {renderLessonComponent(lessonMap[currentLessonIndex].type)}
       </div>
-      <Footer onNextLesson={onNextLesson} />
+      <Footer onNextLesson={onNextLesson} onPreviousLesson={onPreviousLesson} displayContinue={(currentLessonIndex === lessonMap.length - 1)} />
     </div>
   );
 };

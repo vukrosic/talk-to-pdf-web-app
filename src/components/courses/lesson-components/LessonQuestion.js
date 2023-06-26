@@ -10,13 +10,13 @@ import {
 } from "@mui/material";
 import { Add, Delete } from "@mui/icons-material";
 
-const LessonQuestion = () => {
+const LessonQuestion = (question, choices) => {
   const [selectedOption, setSelectedOption] = React.useState("");
   const [isEditMode, setIsEditMode] = React.useState(false);
-  const [choices, setChoices] = React.useState(["Blue", "Red"]);
 
-  const question = "What's your favourite color?";
-
+   const setChoices = (newChoices) => {
+    choices = newChoices;
+  };
   const handleChange = (event) => {
     setSelectedOption(event.target.value);
   };

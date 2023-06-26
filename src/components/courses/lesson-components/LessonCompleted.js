@@ -1,22 +1,28 @@
 import React from "react";
+import { useEffect } from "react";
 import { Box, Container, Typography, Grid } from "@mui/material";
 import { styled } from '@mui/material/styles';
 
-function LessonCompleted() {
-    const xpContainerStyles = {
-        padding: '2px 8px',
-        backgroundColor: '#fca311',
-        color: '#fff',
-        fontWeight: 600,
-        borderRadius: 4,
-        marginLeft: 20,
-      };
+function LessonCompleted( setCompleted ) {
+  
+  const xpContainerStyles = {
+    padding: '2px 8px',
+    backgroundColor: '#fca311',
+    color: '#fff',
+    fontWeight: 600,
+    borderRadius: 4,
+    marginLeft: 20,
+  };
 
-      const gemContainerStyles = {
-        padding: '2px 8px',
-        borderRadius: 4,
-        marginLeft: 20,
-      };
+  const gemContainerStyles = {
+    padding: '2px 8px',
+    borderRadius: 4,
+    marginLeft: 20,
+  };
+
+  useEffect(() => {
+    setCompleted(true);
+  }, []);
       
   return (
     <Container>

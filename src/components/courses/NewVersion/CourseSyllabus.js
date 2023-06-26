@@ -19,56 +19,61 @@ import HistoryEduIcon from "@mui/icons-material/HistoryEdu";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import "./CourseSyllabus.css";
+import { auth } from "../../../config/firebase";
+import { db } from "../../../config/firebase";
+import { collection, addDoc, getDocs, doc, setDoc } from "firebase/firestore";
+import { useEffect } from "react";
 
-const courses = {
-  introduction: {
-    title: "Introduction to Web Development",
-    description:
-      "Learn the fundamentals of web development and build your first website.",
-    lessons: {
-      HTML: [
-        {
-          title: "Lesson 1",
-          completed: false,
-          xp: 10,
-        },
-        {
-          title: "Lesson 2",
-          completed: false,
-          xp: 10,
-        },
-      ],
-      CSS: [
-        {
-          title: "Lesson 1",
-          completed: false,
-          xp: 10,
-        },
-      ],
-      JavaScript: [
-        {
-          title: "Lesson 1",
-          completed: false,
-          xp: 10,
-        },
-        {
-          title: "Lesson 2",
-          completed: false,
-          xp: 10,
-        },
-        {
-          title: "Lesson 3",
-          completed: false,
-          xp: 10,
-        },
-      ],
-    },
-  },
-};
+
+
 
 const CourseSyllabus = () => {
-  const [course, setCourse] = useState(courses.introduction);
+  const [course, setCourse] = useState();
   const [editMode, setEditMode] = useState(false);
+
+  // load course
+  useEffect(() => {
+    const loadCourse = async () => {
+      const currentUser = auth.currentUser;
+      if (!currentUser) return;
+  
+      const courseRef = collection(db, `users/${currentUser.uid}/created_courses`);
+      const courseSnapshot = await getDocs(courseRef);
+      if (!courseSnapshot.empty) {
+        const courseData = courseSnapshot.docs[0].data();
+        setCourse(courseData);
+        console.log(JSON.stringify(courseData));
+      }
+    };
+    loadCourse();
+  }, []);
+
+  // // save course
+  // useEffect(() => {
+  //   const saveCourse = async () => {
+  //     if(course === undefined) return;
+  //     const currentUser = auth?.currentUser;
+  //     if (!currentUser) return;
+
+  //     const courseRef = collection(db, `users/${currentUser.uid}/created_courses`);
+  //     await addDoc(courseRef, course);
+  //   };
+  //   saveCourse();
+  // }, [course]);
+
+  // update course
+  // useEffect(() => {
+  //   const saveCourse = async () => {
+  //     const currentUser = auth.currentUser;
+  //     if (!currentUser || !course) return;
+  //     console.log("course id: " + course.id)
+  //     const courseRef = doc(db, `users/${currentUser.uid}/created_courses/iLmFpwy6UaEcFeYGQTxY`);
+  //     await setDoc(courseRef, course);
+  //   };
+  
+  //   saveCourse();
+  // }, [course]);
+
 
   const handleEditMode = () => {
     setEditMode(!editMode);
@@ -111,9 +116,12 @@ const CourseSyllabus = () => {
 
   const handleUpdateTopic = (topicIndex, newTopicName) => {
     setCourse((prevState) => {
+      console.log(prevState);
+      
       const updatedTopics = Object.keys(prevState.lessons).map((topic, index) =>
         index === topicIndex ? newTopicName : topic
       );
+
       const updatedLessons = updatedTopics.reduce((acc, topic) => {
         acc[topic] = prevState.lessons[topic];
         return acc;
@@ -183,8 +191,10 @@ const CourseSyllabus = () => {
 
   return (
     <Container maxWidth="lg" className="Container">
+            {course && (
       <Grid container spacing={2} justifyContent="center" className="Content">
         <Grid item xs={12} md={8}>
+
           <div className="TitleContainer">
             <Typography variant="h4" component="h1" className="Title">
               {course.title}
@@ -338,8 +348,10 @@ const CourseSyllabus = () => {
               {editMode ? "Exit Edit Mode" : "Enter Edit Mode"}
             </Button>
           </Grid>
+
         </Grid>
       </Grid>
+            )}
     </Container>
   );
 };

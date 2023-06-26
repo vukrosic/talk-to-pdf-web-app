@@ -17,6 +17,7 @@ import PrivacyPolicy from './components/PrivacyPolicy';
 import CourseManager from './components/courses/CourseCreator/CourseManager';
 import CourseSyllabus from './components/courses/NewVersion/CourseSyllabus';
 import LessonPageContainer from './components/courses/lesson-components/LessonPageContainer';
+import CourseController from "./controllers/CourseController";
 
 function Navigation({ user }) {
   return (
@@ -86,7 +87,7 @@ function App() {
           <Navigation user={user} />
           <Routes>
             <Route path="/" element={<BrowseCoursesPage />} />
-            <Route path="/course-syllabus" element={<CourseSyllabus />} />
+            <Route path="/course-syllabus" element={<CourseController />} />
             <Route path="/course-creator" element={<CourseCreator />} />
             <Route path="/lesson-container" element={<LessonPageContainer />} />
             {/* <Route path="/course-manager" element={<CourseManager />} /> */}

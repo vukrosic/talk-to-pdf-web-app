@@ -20,11 +20,36 @@ import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import ErrorIcon from "@mui/icons-material/Error";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DOMPurify from "dompurify";
-import LessonTextEditMode from "./LessonText/LessonTextEditMode";
+const defaultContent = [
+  {
+    id: 0,
+    text: "Welcome to our lesson!",
+    isTextField: false,
+    severity: "info",
+    icon: <InfoIcon fontSize="inherit" />
+  },
+  {
+    id: 1,
+    text: "This is some text that you can edit.",
+    isTextField: true
+  },
+  {
+    id: 2,
+    text: "Here is a warning message.",
+    isTextField: false,
+    severity: "warning",
+    icon: <WarningAmberIcon fontSize="inherit" />
+  },
+  {
+    id: 3,
+    text: "Another editable text field.",
+    isTextField: true
+  }
+];
 
-const LessonText = () => {
+const LessonText = ( textLessonContent ) => {
   const [isEditMode, setIsEditMode] = useState(false);
-  const [content, setContent] = useState([]);
+  const [content, setContent] = useState(defaultContent);
   const [selectedSeverity, setSelectedSeverity] = useState("warning");
   const [selectedIcon, setSelectedIcon] = useState(<WarningAmberIcon fontSize="inherit" />);
   
@@ -32,7 +57,7 @@ const LessonText = () => {
   // database - all content is in content
 
   useEffect(() => {
-    console.log(content);
+    console.log(JSON.stringify(content));
   }, [content]);
 
   const addCallout = () => {
