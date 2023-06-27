@@ -116,16 +116,29 @@ const CourseSyllabus = () => {
 
   const handleUpdateTopic = (topicIndex, newTopicName) => {
     setCourse((prevState) => {
-      console.log(prevState);
+      console.log("KEYS:");
+      console.log(Object.keys(prevState.lessons));
       
-      const updatedTopics = Object.keys(prevState.lessons).map((topic, index) =>
+      
+      const updatedTopics1 = Object.keys(prevState.lessons).map((topic, index) =>
         index === topicIndex ? newTopicName : topic
       );
+      const updatedTopics = Object.keys(prevState.lessons).map((topic, index) =>
+        index === topicIndex ? {newTopic: newTopicName, oldTopic: topic} : {newTopic: topic, oldTopic: topic}
+      );
 
-      const updatedLessons = updatedTopics.reduce((acc, topic) => {
+      const updatedLessons1 = updatedTopics.reduce((acc, topic) => {
         acc[topic] = prevState.lessons[topic];
         return acc;
       }, {});
+
+      const updatedLessons = updatedTopics.reduce((acc, topicObj) => {
+        acc[topicObj.newTopic] = prevState.lessons[topicObj.oldTopic];
+        return acc;
+      }, {});
+
+      console.log("updatedLessons:");
+      console.log(updatedLessons);
       return {
         ...prevState,
         lessons: updatedLessons,

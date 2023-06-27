@@ -87,7 +87,7 @@ function App() {
           <Navigation user={user} />
           <Routes>
             <Route path="/" element={<BrowseCoursesPage />} />
-            <Route path="/course-syllabus" element={<CourseController />} />
+            <Route path="/course-syllabus" element={<CourseSyllabus />} />
             <Route path="/course-creator" element={<CourseCreator />} />
             <Route path="/lesson-container" element={<LessonPageContainer />} />
             {/* <Route path="/course-manager" element={<CourseManager />} /> */}

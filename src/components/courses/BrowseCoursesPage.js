@@ -5,7 +5,6 @@ import { db, auth } from "../../config/firebase";
 import CourseOverview from "./CourseOverview";
 import { Link } from "react-router-dom";
 import React from "react";
-import '../cssDecor/cssBrowseCoursesPage.css';
 
 const BrowseCoursesPage = () => {
   const [courses, setCourses] = useState([]);
