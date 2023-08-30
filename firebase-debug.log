@@ -1,0 +1,72 @@
+[debug] [2023-08-30T18:06:18.151Z] ----------------------------------------------------------------------
+[debug] [2023-08-30T18:06:18.168Z] Command:       E:\Program Files\nodejs\node.exe C:\Users\Jensen\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init functions
+[debug] [2023-08-30T18:06:18.169Z] CLI Version:   12.3.1
+[debug] [2023-08-30T18:06:18.170Z] Platform:      win32
+[debug] [2023-08-30T18:06:18.171Z] Node Version:  v16.15.1
+[debug] [2023-08-30T18:06:18.284Z] Time:          Wed Aug 30 2023 20:06:18 GMT+0200 (Central European Summer Time)
+[debug] [2023-08-30T18:06:18.285Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2023-08-30T18:06:18.332Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[debug] [2023-08-30T18:06:18.671Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2023-08-30T18:06:18.671Z] > authorizing via signed-in user (vukrosic1@gmail.com)
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  D:\Startup\TalkToPDF Reach JS\Teach-GPT
+
+Before we get started, keep in mind:
+
+  * You are initializing within an existing Firebase project directory
+
+[debug] [2023-08-30T18:06:19.222Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
+[debug] [2023-08-30T18:06:19.223Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[info] 
+=== Project Setup
+[info] 
+[info] First, let's associate this project directory with a Firebase project.
+[info] You can create multiple project aliases by running firebase use --add, 
+[info] but for now we'll just set up a default project.
+[info] 
+[debug] [2023-08-30T18:07:50.314Z] Using project from CLI flag: personal-teacher-gpt
+[debug] [2023-08-30T18:07:50.316Z] > refreshing access token with scopes: []
+[debug] [2023-08-30T18:07:50.318Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2023-08-30T18:07:50.318Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2023-08-30T18:07:50.521Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2023-08-30T18:07:50.521Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2023-08-30T18:07:50.625Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/personal-teacher-gpt [none]
+[debug] [2023-08-30T18:07:51.006Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/personal-teacher-gpt 200
+[debug] [2023-08-30T18:07:51.006Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/personal-teacher-gpt {"projectId":"personal-teacher-gpt","projectNumber":"266393942599","displayName":"Personal Teacher GPT","name":"projects/personal-teacher-gpt","resources":{"hostingSite":"personal-teacher-gpt","realtimeDatabaseInstance":"personal-teacher-gpt-default-rtdb"},"state":"ACTIVE","etag":"1_6cc205fc-54c8-40a5-9668-1e738332c4fc"}
+[info] i  Using project personal-teacher-gpt (Personal Teacher GPT) 
+[info] 
+=== Functions Setup
+[debug] [2023-08-30T18:07:51.037Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2023-08-30T18:07:51.038Z] > authorizing via signed-in user (vukrosic1@gmail.com)
+[debug] [2023-08-30T18:07:51.038Z] [iam] checking project personal-teacher-gpt for permissions ["firebase.projects.get"]
+[debug] [2023-08-30T18:07:51.038Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/personal-teacher-gpt:testIamPermissions [none]
+[debug] [2023-08-30T18:07:51.039Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/personal-teacher-gpt:testIamPermissions x-goog-quota-user=projects/personal-teacher-gpt
+[debug] [2023-08-30T18:07:51.039Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/personal-teacher-gpt:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2023-08-30T18:07:51.807Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/personal-teacher-gpt:testIamPermissions 200
+[debug] [2023-08-30T18:07:51.807Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/personal-teacher-gpt:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2023-08-30T18:07:51.808Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/personal-teacher-gpt/services/cloudfunctions.googleapis.com [none]
+[debug] [2023-08-30T18:07:51.808Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/personal-teacher-gpt/services/cloudfunctions.googleapis.com x-goog-quota-user=projects/personal-teacher-gpt
+[debug] [2023-08-30T18:07:51.809Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/personal-teacher-gpt/services/runtimeconfig.googleapis.com [none]
+[debug] [2023-08-30T18:07:51.810Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/personal-teacher-gpt/services/runtimeconfig.googleapis.com x-goog-quota-user=projects/personal-teacher-gpt
+[debug] [2023-08-30T18:07:52.760Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/personal-teacher-gpt/services/runtimeconfig.googleapis.com 200
+[debug] [2023-08-30T18:07:52.761Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/personal-teacher-gpt/services/runtimeconfig.googleapis.com [omitted]
+[debug] [2023-08-30T18:07:52.810Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/personal-teacher-gpt/services/cloudfunctions.googleapis.com 200
+[debug] [2023-08-30T18:07:52.810Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/personal-teacher-gpt/services/cloudfunctions.googleapis.com [omitted]
+[info] Let's create a new codebase for your functions.
+[info] A directory corresponding to the codebase will be created in your project
+[info] with sample code pre-configured.
+
+[info] See https://firebase.google.com/docs/functions/organize-functions for
+[info] more information on organizing your functions using codebases.
+
+[info] Functions can be deployed with firebase deploy.
+
