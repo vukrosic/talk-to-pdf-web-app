@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import CourseModel from "../models/CourseModel";
+import CourseModel from "../services/CourseModel";
 import CourseView from "../views/CourseView";
 
 const CourseController = () => {

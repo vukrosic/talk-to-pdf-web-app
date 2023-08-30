@@ -18,6 +18,7 @@ import CourseManager from './components/courses/CourseCreator/CourseManager';
 import CourseSyllabus from './components/courses/NewVersion/CourseSyllabus';
 import LessonPageContainer from './components/courses/lesson-components/LessonPageContainer';
 import CourseController from "./controllers/CourseController";
+import TalkToPDF from "./components/TalkToPDF"
 
 function Navigation({ user }) {
   return (
@@ -29,7 +30,7 @@ function Navigation({ user }) {
           </Typography>
           {user ? (
             <div>
-              <Button color="inherit" component={Link} to="/"> Browse </Button>
+              <Button color="inherit" component={Link} to="/"> Talk To PDF </Button>
               <Button color="inherit" component={Link} to="/course-syllabus"> Course Syllabus </Button>
               {/* <Button color="inherit" component={Link} to="/course-creator"> Course Creator </Button> */}
               <Button color="inherit" component={Link} to="/lesson-container"> Lesson Container </Button>
@@ -44,7 +45,7 @@ function Navigation({ user }) {
             </div>
           ) : (
             <div>
-              <Button color="inherit" component={Link} to="/"> Browse </Button>
+              <Button color="inherit" component={Link} to="/"> Talk To PDF </Button>
               <Button color="inherit" component={Link} to="/course-syllabus"> Course Syllabus </Button>
               {/* <Button color="inherit" component={Link} to="/course-creator"> Course Creator </Button> */}
               <Button color="inherit" component={Link} to="/lesson-container"> Lesson Container </Button>
@@ -86,7 +87,7 @@ function App() {
         <Router>
           <Navigation user={user} />
           <Routes>
-            <Route path="/" element={<BrowseCoursesPage />} />
+            <Route path="/" element={<TalkToPDF />} />
             <Route path="/course-syllabus" element={<CourseSyllabus />} />
             <Route path="/course-creator" element={<CourseCreator />} />
             <Route path="/lesson-container" element={<LessonPageContainer />} />
