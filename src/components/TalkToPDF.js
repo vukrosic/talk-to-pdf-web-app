@@ -25,6 +25,9 @@ function TalkToPDF() {
     }, [file]);
 
 
+    useEffect(() => {
+        console.log(userPastedText);
+    }, [userPastedText]);
 
     async function handleFileUpload(event) {
         const fileInput = event.target;
@@ -37,15 +40,19 @@ function TalkToPDF() {
     async function handleAnalyze() {
         try {
         
-            if (!file) {
-              console.error('No file selected');
-              return;
-            }
+            
         
             // Create a FormData object to send the file
             const formData = new FormData();
-            formData.append('file', file);
-            console.log("asdf" + file.text());
+
+            if (file) {
+                formData.append('file', file);
+            }
+
+            if (userPastedText) {
+                formData.append('userPastedText', userPastedText);
+                console.log("123123231231231312")
+            }
         
             // Make the HTTP POST request to your Google Cloud Function
             const response = await fetch('https://us-central1-personal-teacher-gpt.cloudfunctions.net/on_request_example', {
