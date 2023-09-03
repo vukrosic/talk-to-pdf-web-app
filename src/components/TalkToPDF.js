@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Button,
     Container,
@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import PDFParseService from '../services/PDFParseService'; // Import your PDFParseService
 import PineconeService from '../services/PineconeService'; // Import your PineconeService
+import { auth } from '../config/firebase';
 
 function TalkToPDF() {
     // State to store extracted text from PDFs and user-pasted text
@@ -17,61 +18,91 @@ function TalkToPDF() {
     const [userPastedText, setUserPastedText] = useState('');
     const [question, setQuestion] = useState('');
     const [answer, setAnswer] = useState('');
+    const [file, setFile] = useState(null);
 
-    const handleFileUpload = async (e) => {
-        const files = e.target.files;
-        if (files) {
-            const uploadedTexts = [];
+    useEffect(() => {
+        console.log(file);
+    }, [file]);
 
-            // Process and extract text from each uploaded PDF
-            for (const file of files) {
-                try {
-                    const textFromPDF = await PDFParseService.extractTextFromPDF(file);
-                    uploadedTexts.push(textFromPDF);
-                } catch (error) {
-                    console.error('Error extracting text from PDF:', error);
-                }
-            }
 
-            // Append the extracted PDF text to the existing text
-            setPdfTexts((prevTexts) => [...prevTexts, ...uploadedTexts]);
-        }
-    };
 
-    const handleAnalyze = async () => {
-        // Combine PDF text, user-pasted text, and question
-        const combinedText = `${pdfTexts.join('\n\n')}\n\n${userPastedText}\n\n${question}`;
+    async function handleFileUpload(event) {
+        const fileInput = event.target;
+        setFile(fileInput.files[0]);
+    }
 
-        // Chunk the data into 1000 character chunks
-        const chunkSize = 1000;
-        const chunks = [];
-        for (let i = 0; i < combinedText.length; i += chunkSize) {
-            chunks.push(combinedText.slice(i, i + chunkSize));
-        }
+      
+    
 
-        // Generate OpenAI embeddings and send them to Pinecone
+    async function handleAnalyze() {
         try {
-            for (const chunk of chunks) {
-                const embeddings = await PineconeService.generateEmbeddings(chunk);
-                await PineconeService.sendEmbeddingsToIndex(embeddings);
+        
+            if (!file) {
+              console.error('No file selected');
+              return;
             }
-
-            // Signal that the analysis is complete
-            setAnswer('Analysis complete. Data sent to Pinecone.');
+        
+            // Create a FormData object to send the file
+            const formData = new FormData();
+            formData.append('file', file);
+            console.log("asdf" + file.text());
+        
+            // Make the HTTP POST request to your Google Cloud Function
+            const response = await fetch('https://us-central1-personal-teacher-gpt.cloudfunctions.net/on_request_example', {
+              method: 'POST',
+              body: formData,
+            });
+        
+            if (response.ok) {
+              // Handle a successful response from the server
+              const text = await response.text();
+              console.log('Text extracted from PDF:', text);
+            } else {
+              // Handle errors
+              console.error('Error:', response.status, response.statusText);
+            }
         } catch (error) {
-            console.error('Error during analysis:', error);
+        console.error('An error occurred:', error);
         }
-    };
+    }
+    
 
+      
     const handleAskQuestion = async () => {
-        // Send the user's question to Pinecone
         try {
-            const response = await PineconeService.askQuestion(question);
-            setAnswer(response);
-        } catch (error) {
-            console.error('Error asking question:', error);
-        }
+            if (!question) {
+              console.error('No question provided');
+              return;
+            }
+        
+            // Create a FormData object to send the question
+            const requestData = { question };
+            console.log(requestData)
+
+            // Make the HTTP POST request to your Google Cloud Function
+            const response = await fetch('https://us-central1-personal-teacher-gpt.cloudfunctions.net/answer_question', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json', // Specify JSON content type
+              },
+              body: JSON.stringify(requestData),
+            });
+        
+            if (response.ok) {
+              // Handle a successful response from the server
+              const text = await response.text();
+              console.log('Response from the server:', text);
+            } else {
+              // Handle errors
+              console.error('Error:', response.status, response.statusText);
+            }
+          } catch (error) {
+            console.error('An error occurred:', error);
+          }
     };
+
+
+
 
     return (
         <Container>
@@ -99,6 +130,16 @@ function TalkToPDF() {
                     </Paper>
                 </Grid>
                 <Grid item xs={12}>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleAnalyze}
+                        style={{ marginTop: '10px' }}
+                    >
+                        Analyze
+                    </Button>
+                </Grid>
+                <Grid item xs={12}>
                     <Paper>
                         <TextField
                             fullWidth
@@ -109,16 +150,7 @@ function TalkToPDF() {
                         />
                     </Paper>
                 </Grid>
-                <Grid item xs={12}>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={handleAnalyze}
-                        style={{ marginTop: '10px' }}
-                    >
-                        Analyze
-                    </Button>
-                </Grid>
+                
                 <Grid item xs={12}>
                     <Button
                         variant="contained"
