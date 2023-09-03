@@ -51,7 +51,6 @@ function TalkToPDF() {
 
             if (userPastedText) {
                 formData.append('userPastedText', userPastedText);
-                console.log("123123231231231312")
             }
         
             // Make the HTTP POST request to your Google Cloud Function
