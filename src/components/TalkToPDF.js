@@ -8,8 +8,6 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
-import PDFParseService from '../services/PDFParseService'; // Import your PDFParseService
-import PineconeService from '../services/PineconeService'; // Import your PineconeService
 import { auth } from '../config/firebase';
 
 function TalkToPDF() {
@@ -39,9 +37,14 @@ function TalkToPDF() {
 
     async function handleAnalyze() {
         try {
-        
-            
-        
+            const user = auth.currentUser;
+            if(!user) {
+                console.log("User not logged in");
+                return;
+            }
+            const idToken = await user.getIdToken();
+            console.log("idToken")
+            console.log(idToken)
             // Create a FormData object to send the file
             const formData = new FormData();
 
@@ -54,8 +57,12 @@ function TalkToPDF() {
             }
         
             // Make the HTTP POST request to your Google Cloud Function
-            const response = await fetch('https://us-central1-personal-teacher-gpt.cloudfunctions.net/on_request_example', {
+            const response = await fetch('https://us-central1-personal-teacher-gpt.cloudfunctions.net/text-to-pinecone', {
               method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${idToken}`,
+                },
               body: formData,
             });
         
@@ -71,6 +78,7 @@ function TalkToPDF() {
         console.error('An error occurred:', error);
         }
     }
+    
     
 
       
@@ -107,6 +115,48 @@ function TalkToPDF() {
           }
     };
 
+
+    const handleAskQuestion1 = async () => {
+        const user = auth.currentUser;
+        if(!user) {
+            console.log("User not logged in");
+            return;
+        }
+        const idToken = await user.getIdToken();
+        console.log("11111111111111")
+        try {
+            if (!question) {
+              console.error('No question provided');
+              return;
+            }
+            const name = auth.currentUser.displayName;
+            console.log(name);
+            // Create a FormData object to send the question
+            const requestData = { name };
+            console.log(requestData)
+
+            // Make the HTTP POST request to your Google Cloud Function
+            const response = await fetch('https://us-central1-personal-teacher-gpt.cloudfunctions.net/get-answer', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json', // Specify JSON content type
+                'Authorization': `Bearer ${idToken}`,
+              },
+              body: JSON.stringify(requestData),
+            });
+        
+            if (response.ok) {
+              // Handle a successful response from the server
+              const text = await response.text();
+              console.log('Response from the server:', text);
+            } else {
+              // Handle errors
+              console.error('Error:', response.status, response.statusText);
+            }
+          } catch (error) {
+            console.error('An error occurred:', error);
+          }
+    };
 
 
 
